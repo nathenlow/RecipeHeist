@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/browse"
+        android:icon="@drawable/ic_baseline_explore_24"
+        android:title="Browse" />
+    <item
+        android:id="@+id/updates"
+        android:icon="@drawable/ic_baseline_update_24"
+        android:title="Updates" />
+    <item
+        android:id="@+id/download"
+        android:icon="@drawable/ic_baseline_library_books_24"
+        android:title="Download" />
+    <item
+        android:id="@+id/me"
+        android:icon="@drawable/ic_outline_account_circle_24"
+        android:title="Me" />
+</menu>

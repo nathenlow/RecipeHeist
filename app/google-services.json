@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "890899324334",
+    "project_id": "recipeheist-ce646",
+    "storage_bucket": "recipeheist-ce646.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:890899324334:android:073011313a9a2db7333c3f",
+        "android_client_info": {
+          "package_name": "sg.edu.np.mad.recipeheist"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "890899324334-fmvh6guatg5jols42qqvtk1oit6rv034.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_amSFKVXfrhSFQbXmS7Iou3uqxUtYWos"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "890899324334-fmvh6guatg5jols42qqvtk1oit6rv034.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
