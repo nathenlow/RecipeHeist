@@ -19,6 +19,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONArray;
 
@@ -48,28 +49,52 @@ public class SignUp extends AppCompatActivity {
 
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
+
             public void onClick(View view) {
                 if (editEmail.getText().toString().trim().isEmpty() || editPassword.getText().toString().trim().isEmpty()){
                     Toast.makeText(SignUp.this, "Empty fields are not allowed!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                mAuth.createUserWithEmailAndPassword(editEmail.getText().toString().trim(), editPassword.getText().toString().trim())
-                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()){
-                                    //TODO: save user to online db planing to use restful api need to learn
-                                    Intent intent = new Intent(SignUp.this, SignUp.class);
-                                    startActivity(intent);
-                                }
-                                else {
-                                    Toast.makeText(SignUp.this, task.getException().getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                                }
-
-                            }
-                        });
+                SignUpUser();
             }
         });
+    }
+
+    //Function to create authentication to firebase
+    private void SignUpUser(){
+        String email = editEmail.getText().toString().trim();
+        String password = editPassword.getText().toString().trim();
+        String username = editUsername.getText().toString().trim();
+
+        mAuth.createUserWithEmailAndPassword(email,password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            User user = new User(FirebaseAuth.getInstance().getCurrentUser().getUid(), email, username, "", new ArrayList<String>());
+
+                            //To update realtime database
+                            FirebaseDatabase.getInstance("https://recipeheist-ce646-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("Users")
+                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+
+                                    if (task.isSuccessful()){
+                                        Toast.makeText(SignUp.this, "User successfully signed up an account", Toast.LENGTH_SHORT).show();
+                                        //TODO: link to profile page
+                                    }
+                                    else{
+                                        Toast.makeText(SignUp.this, "User sign up failed, please try again!", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                        }
+                        else{
+                            Toast.makeText(SignUp.this, "User sign up failed, please try again!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
 //    public boolean saveUserToDB() {
