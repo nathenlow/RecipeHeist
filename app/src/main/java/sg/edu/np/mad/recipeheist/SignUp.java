@@ -54,13 +54,13 @@ public class SignUp extends AppCompatActivity {
                     Toast.makeText(SignUp.this, "Empty fields are not allowed!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                SignUpUser();
+                signUpUser();
             }
         });
     }
 
     //Function to create authentication to firebase
-    private void SignUpUser(){
+    private void signUpUser(){
         String email = editEmail.getText().toString().trim();
         String password = editPassword.getText().toString().trim();
         String username = editUsername.getText().toString().trim();
@@ -81,7 +81,8 @@ public class SignUp extends AppCompatActivity {
 
                                     if (task.isSuccessful()){
                                         Toast.makeText(SignUp.this, "User successfully signed up an account", Toast.LENGTH_SHORT).show();
-                                        //TODO: link to profile page
+                                        Intent intent = new Intent(SignUp.this, MainActivity.class);
+                                        startActivity(intent);
                                     }
                                     else{
                                         Toast.makeText(SignUp.this, "User sign up failed, please try again!", Toast.LENGTH_SHORT).show();

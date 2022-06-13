@@ -1,5 +1,6 @@
 package sg.edu.np.mad.recipeheist;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
@@ -13,6 +14,13 @@ import android.view.MenuItem;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 import sg.edu.np.mad.recipeheist.databinding.ActivityMainBinding;
 
@@ -64,8 +72,47 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.profile:
                     //TODO: if user login
                     if (currentUser != null){
-                        replaceFragment(new ProfileFragment(), R.id.frameLayout);
-                        getSupportActionBar().setTitle("Profile");
+
+                        User user = new User();
+                        ArrayList<String> following = new ArrayList<>();
+
+                        //Get user data from firebase database
+                        DatabaseReference myRef = FirebaseDatabase.getInstance("https://recipeheist-ce646-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                                .getReference("Users")
+                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                        myRef.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                user.setUsername(snapshot.child("username").getValue().toString());
+                                user.setUserID(snapshot.child("userID").getValue().toString());
+                                user.setEmail(snapshot.child("email").getValue().toString());
+                                user.setDescription(snapshot.child("description").getValue().toString());
+
+                                //Check if user has any following
+                                if (snapshot.hasChild("following")){
+                                    for (int i = 1; i <= snapshot.child("following").getChildrenCount(); i++){
+                                        following.add(snapshot.child("following").child(String.valueOf(i)).getValue(String.class));
+                                    }
+                                }
+                                user.setFollowing(following);
+
+                                // Create bundle to pass user data to fragment
+                                Bundle user_data = new Bundle();
+                                user_data.putParcelable("userData", user);
+                                //set argument to ProfileFragment
+                                ProfileFragment profileFragment = new ProfileFragment();
+                                profileFragment.setArguments(user_data);
+                                // Replace fragment
+                                replaceFragment(profileFragment, R.id.frameLayout);
+                                getSupportActionBar().setTitle("Profile");
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+
                     }
                     else {
                         Intent intent = new Intent(this, SignIn.class);

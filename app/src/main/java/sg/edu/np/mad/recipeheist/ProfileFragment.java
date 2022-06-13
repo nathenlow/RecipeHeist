@@ -8,8 +8,12 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -18,6 +22,9 @@ import com.google.firebase.auth.FirebaseAuth;
  */
 public class ProfileFragment extends Fragment {
 
+    private User user;
+    private TextView username, description,  noOfRecipes, following;
+    private CircleImageView profileImage;
     private FirebaseAuth mAuth;
     FirebaseAuth.AuthStateListener mAuthListener;
     // TODO: Rename parameter arguments, choose names that match
@@ -65,7 +72,23 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        profileImage = view.findViewById(R.id.profileImage);
+        username = view.findViewById(R.id.profileName);
+        description = view.findViewById(R.id.profileDescription);
+
+        // get arguments from bundle
+        Bundle user_data = getArguments();
+
+        user = user_data.getParcelable("userData");
+
+        // update profile page
+        profileImage.setImageResource(R.drawable.default_profile_1);
+        username.setText(user.getUsername());
+        description.setText(user.getDescription());
+
+        return view;
     }
 
     public void goToSignIn()

@@ -1,8 +1,11 @@
 package sg.edu.np.mad.recipeheist;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 
-public class User
+public class User implements Parcelable
 {
     private String userID;
     private String email;
@@ -18,6 +21,26 @@ public class User
         this.description = description;
         this.following = following;
     }
+
+    protected User(Parcel in) {
+        userID = in.readString();
+        email = in.readString();
+        username = in.readString();
+        description = in.readString();
+        following = in.createStringArrayList();
+    }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 
     public String getUserID() {
         return userID;
@@ -57,5 +80,19 @@ public class User
 
     public void setFollowing(ArrayList<String> following) {
         this.following = following;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(userID);
+        dest.writeString(email);
+        dest.writeString(username);
+        dest.writeString(description);
+        dest.writeStringList(following);
     }
 }
