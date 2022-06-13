@@ -49,7 +49,6 @@ public class SignUp extends AppCompatActivity {
 
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
-
             public void onClick(View view) {
                 if (editEmail.getText().toString().trim().isEmpty() || editPassword.getText().toString().trim().isEmpty()){
                     Toast.makeText(SignUp.this, "Empty fields are not allowed!", Toast.LENGTH_SHORT).show();

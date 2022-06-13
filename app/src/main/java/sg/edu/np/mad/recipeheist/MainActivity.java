@@ -61,11 +61,11 @@ public class MainActivity extends AppCompatActivity {
                     replaceFragment(new DownloadFragment(), R.id.frameLayout);
                     getSupportActionBar().setTitle("Download");
                     break;
-                case R.id.me:
+                case R.id.profile:
                     //TODO: if user login
                     if (currentUser != null){
-                        replaceFragment(new MeFragment(), R.id.frameLayout);
-                        getSupportActionBar().setTitle("Me");
+                        replaceFragment(new ProfileFragment(), R.id.frameLayout);
+                        getSupportActionBar().setTitle("Profile");
                     }
                     else {
                         Intent intent = new Intent(this, SignIn.class);

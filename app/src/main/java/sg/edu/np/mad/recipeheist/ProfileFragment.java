@@ -13,10 +13,10 @@ import com.google.firebase.auth.FirebaseAuth;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link MeFragment#newInstance} factory method to
+ * Use the {@link ProfileFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MeFragment extends Fragment {
+public class ProfileFragment extends Fragment {
 
     private FirebaseAuth mAuth;
     FirebaseAuth.AuthStateListener mAuthListener;
@@ -29,7 +29,7 @@ public class MeFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public MeFragment() {
+    public ProfileFragment() {
         // Required empty public constructor
     }
 
@@ -42,8 +42,8 @@ public class MeFragment extends Fragment {
      * @return A new instance of fragment MeFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static MeFragment newInstance(String param1, String param2) {
-        MeFragment fragment = new MeFragment();
+    public static ProfileFragment newInstance(String param1, String param2) {
+        ProfileFragment fragment = new ProfileFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -65,7 +65,7 @@ public class MeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_me, container, false);
+        return inflater.inflate(R.layout.fragment_profile, container, false);
     }
 
     public void goToSignIn()
