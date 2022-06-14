@@ -4,11 +4,15 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -77,6 +81,7 @@ public class ProfileFragment extends Fragment {
         profileImage = view.findViewById(R.id.profileImage);
         username = view.findViewById(R.id.profileName);
         description = view.findViewById(R.id.profileDescription);
+        Button editProfileBtn = view.findViewById(R.id.editProfileBtn);
 
         // get arguments from bundle
         Bundle user_data = getArguments();
@@ -88,9 +93,33 @@ public class ProfileFragment extends Fragment {
         username.setText(user.getUsername());
         description.setText(user.getDescription());
 
+        // when user clicks on "edit profile" button
+        editProfileBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // pass data to next fragment
+                EditProfileFragment editProfileFragment = new EditProfileFragment();
+                editProfileFragment.setArguments(user_data);
+
+                // pass data from this fragment to MainActivity
+                MainActivity mainActivity = (MainActivity) getActivity();
+                mainActivity.replaceFragment(editProfileFragment , mainActivity.findViewById(R.id.frameLayout).getId());
+                mainActivity.getSupportActionBar().setTitle("Profile Settings");
+            }
+        });
+
         return view;
     }
 
+    private void initRecyclerView(View view){
+        RecyclerView recyclerView = view.findViewById(R.id.myRecipeRecyc);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+
+        recyclerView.setLayoutManager(linearLayoutManager);
+
+        //recyclerView.setAdapter();
+    }
     public void goToSignIn()
     {
         Intent intent = new Intent(getActivity(), SignIn.class);
