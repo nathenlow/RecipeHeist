@@ -13,10 +13,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RecipeHeist">
         <activity
-            android:name=".RecipeItem"
-            android:exported="false"
-            android:label="@string/title_activity_recipe_item"
-            android:theme="@style/Theme.RecipeHeist.NoActionBar" />
+            android:name=".AddRecipeActivity"
+            android:exported="false" />
         <activity
             android:name=".SignIn"
             android:exported="false" />

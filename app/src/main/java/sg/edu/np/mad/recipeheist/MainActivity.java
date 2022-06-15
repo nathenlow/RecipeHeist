@@ -31,17 +31,17 @@ import java.util.ArrayList;
 import sg.edu.np.mad.recipeheist.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
-    ActivityMainBinding binding;
+     ActivityMainBinding binding;
 
     private FirebaseAuth mAuth;
 
     @Override
     public void onBackPressed() {
         Fragment f = this.getSupportFragmentManager().findFragmentById(R.id.frameLayout);
-        if (f instanceof BrowseFragment) {
+        if(f instanceof BrowseFragment){
 
             moveTaskToBack(true);
-        } else {
+        }else {
             binding.bottomNavigationView.setSelectedItemId(R.id.browse);
             replaceFragment(new BrowseFragment(), R.id.frameLayout);
             getSupportActionBar().setTitle("Browse");
@@ -51,9 +51,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-//        Intent intent0 = new Intent(this, RecipeItem.class);
-//        startActivity(intent0);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -67,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         checkIfUidStillExist();
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
-            switch (item.getItemId()) {
+            switch (item.getItemId()){
                 case R.id.browse:
                     replaceFragment(new BrowseFragment(), R.id.frameLayout);
                     getSupportActionBar().setTitle("Browse");
@@ -82,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case R.id.profile:
                     //TODO: if user login
-                    if (currentUser != null) {
+                    if (currentUser != null){
 
                         User user = new User();
                         ArrayList<String> following = new ArrayList<>();
@@ -100,8 +97,8 @@ public class MainActivity extends AppCompatActivity {
                                 user.setDescription(snapshot.child("description").getValue().toString());
 
                                 //Check if user has any following
-                                if (snapshot.hasChild("following")) {
-                                    for (int i = 1; i <= snapshot.child("following").getChildrenCount(); i++) {
+                                if (snapshot.hasChild("following")){
+                                    for (int i = 1; i <= snapshot.child("following").getChildrenCount(); i++){
                                         following.add(snapshot.child("following").child(String.valueOf(i)).getValue(String.class));
                                     }
                                 }
@@ -124,7 +121,8 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
 
-                    } else {
+                    }
+                    else {
                         Intent intent = new Intent(this, SignIn.class);
                         startActivity(intent);
                     }
@@ -136,14 +134,14 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void replaceFragment(Fragment fragment, int Rid) {
+    public void replaceFragment(Fragment fragment, int Rid){
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(Rid, fragment);
         fragmentTransaction.commit();
     }
 
-    private void addFragment(Fragment fragment, int Rid) {
+    private void addFragment(Fragment fragment, int Rid){
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(Rid, fragment);
@@ -154,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.top_nav_browse_menu, menu);
         MenuItem menuItem = menu.findItem(R.id.app_bar_search);
-        SearchView searchView = (SearchView) menuItem.getActionView();
+        SearchView searchView = (SearchView)  menuItem.getActionView();
         searchView.setQueryHint("Search Umami");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -170,24 +168,73 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    public boolean isConnected() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        if (networkInfo != null){
+            if (networkInfo.isConnected()) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else{
+            return false;
+        }
+    }
 
-    public void checkIfUidStillExist() {
-        try {
-            mAuth = FirebaseAuth.getInstance();
-            FirebaseUser currentUser = mAuth.getCurrentUser();
-            currentUser.reload().addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    if (e instanceof FirebaseAuthInvalidUserException) {
-                        Toast.makeText(MainActivity.this, "User is deleted or disabled", Toast.LENGTH_SHORT).show();
-                        FirebaseAuth.getInstance().signOut();
+    public void checkIfUidStillExist(){
+        if (isConnected()) {
+            try {
+                mAuth = FirebaseAuth.getInstance();
+                FirebaseUser currentUser = mAuth.getCurrentUser();
+                currentUser.reload().addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        if (e instanceof FirebaseAuthInvalidUserException) {
+                            Toast.makeText(MainActivity.this, "User is deleted or disabled", Toast.LENGTH_SHORT).show();
+                            FirebaseAuth.getInstance().signOut();
+                        }
                     }
-                }
-            });
-        } catch (Exception e) {
+                });
+            }catch (Exception e){
+
+            }
 
         }
     }
 
-}
 
+
+
+
+
+
+
+
+    public void checkIfUsernameExists(){
+        if (isConnected() == true){
+            mAuth = FirebaseAuth.getInstance();
+            FirebaseUser currentUser = mAuth.getCurrentUser();
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+            ref.child("users").child("username").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.hasChild(currentUser.getUid())){
+                        // use "username" already exists
+                        // Let the user know he needs to pick another username.
+                    } else {
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+        }
+    }
+}
