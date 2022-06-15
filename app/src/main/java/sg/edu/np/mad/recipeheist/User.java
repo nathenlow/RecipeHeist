@@ -13,13 +13,24 @@ public class User implements Parcelable
     private String description;
     private ArrayList<String> following;
 
+    public ArrayList<String> getBookmark() {
+        return bookmark;
+    }
+
+    public void setBookmark(ArrayList<String> bookmark) {
+        this.bookmark = bookmark;
+    }
+
+    private ArrayList<String> bookmark;
+
     public User(){}
-    public User(String userID, String email, String username, String description, ArrayList<String> following) {
+    public User(String userID, String email, String username, String description, ArrayList<String> following, ArrayList<String> bookmark) {
         this.userID = userID;
         this.email = email;
         this.username = username;
         this.description = description;
         this.following = following;
+        this.bookmark = bookmark;
     }
 
     protected User(Parcel in) {
