@@ -74,12 +74,19 @@ public class SignUp extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            boolean success0 = true;
                             Toast.makeText(SignUp.this, FirebaseAuth.getInstance().getCurrentUser().getUid(), Toast.LENGTH_SHORT).show();
                             try {
                                 saveUserToDB(email, username);
                             } catch (IOException e) {
                                 e.printStackTrace();
-                                Toast.makeText(SignUp.this, "a User sign up failed, please try again!", Toast.LENGTH_SHORT).show();
+                                success0 = false;
+                                Toast.makeText(SignUp.this, "User sign up failed, please try again!", Toast.LENGTH_SHORT).show();
+                            }
+                            if (success0){
+                                Toast.makeText(SignUp.this, "User has been registered", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(SignUp.this, MainActivity.class);
+                                startActivity(intent);
                             }
                         }
                         else{
@@ -93,7 +100,6 @@ public class SignUp extends AppCompatActivity {
 
         RestDB restDB = new RestDB();
         String json = restDB.createNewUser(email, FirebaseAuth.getInstance().getCurrentUser().getUid(), username);
-        System.out.println(json);
         String response = restDB.post("https://recipeheist-567c.restdb.io/rest/users", json);
     }
 
