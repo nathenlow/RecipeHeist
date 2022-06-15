@@ -8,20 +8,22 @@ public class Recipe {
     private String title;
     private String description;
     private String duration;
+    private String servings;
     private String imagePath;
     private String foodcategory;
     private ArrayList<String> ingridient;
     private ArrayList<String> instructions;
-    private int like;
+    private ArrayList<String> like;
     private String userID;
 
     public Recipe(){}
 
-    public Recipe(int recipeID, String title, String description, String duration, String imagePath, String foodcategory, ArrayList<String> ingridient, ArrayList<String> instructions, int like, String userID) {
+    public Recipe(int recipeID, String title, String description, String duration, String servings, String imagePath, String foodcategory, ArrayList<String> ingridient, ArrayList<String> instructions, ArrayList<String> like, String userID) {
         this.recipeID = recipeID;
         this.title = title;
         this.description = description;
         this.duration = duration;
+        this.servings = servings;
         this.imagePath = imagePath;
         this.foodcategory = foodcategory;
         this.ingridient = ingridient;
@@ -29,7 +31,6 @@ public class Recipe {
         this.like = like;
         this.userID = userID;
     }
-
 
     public int getRecipeID() {
         return recipeID;
@@ -61,6 +62,14 @@ public class Recipe {
 
     public void setDuration(String duration) {
         this.duration = duration;
+    }
+
+    public String getServings() {
+        return servings;
+    }
+
+    public void setServings(String servings) {
+        this.servings = servings;
     }
 
     public String getImagePath() {
@@ -95,11 +104,11 @@ public class Recipe {
         this.instructions = instructions;
     }
 
-    public int getLike() {
+    public ArrayList<String> getLike() {
         return like;
     }
 
-    public void setLike(int like) {
+    public void setLike(ArrayList<String> like) {
         this.like = like;
     }
 
@@ -111,5 +120,6 @@ public class Recipe {
         this.userID = userID;
     }
 }
+
 
 
