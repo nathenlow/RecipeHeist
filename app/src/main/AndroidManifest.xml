@@ -13,6 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RecipeHeist">
         <activity
+            android:name=".RecipeItem"
+            android:exported="false" />
+        <activity
             android:name=".AddRecipeActivity"
             android:exported="false" />
         <activity
