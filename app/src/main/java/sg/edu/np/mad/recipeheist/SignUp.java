@@ -23,6 +23,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 
 public class SignUp extends AppCompatActivity {
@@ -74,23 +75,31 @@ public class SignUp extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            boolean success0 = true;
-                            Toast.makeText(SignUp.this, FirebaseAuth.getInstance().getCurrentUser().getUid(), Toast.LENGTH_SHORT).show();
-                            try {
-                                saveUserToDB(email, username);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                                success0 = false;
-                                Toast.makeText(SignUp.this, "User sign up failed, please try again!", Toast.LENGTH_SHORT).show();
-                            }
-                            if (success0){
-                                Toast.makeText(SignUp.this, "User has been registered", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(SignUp.this, MainActivity.class);
-                                startActivity(intent);
-                            }
-                        }
-                        else{
-                            Toast.makeText(SignUp.this, "User sign up failed, please try again!", Toast.LENGTH_SHORT).show();
+                            User user = new User(FirebaseAuth.getInstance().getCurrentUser().getUid(), email, username, "", new ArrayList<String>(), new ArrayList<String>());
+
+                            //To update realtime database
+                            FirebaseDatabase.getInstance("https://recipeheist-ce646-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("Users")
+                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+
+                                    if (task.isSuccessful()){
+                                        // update restdb
+                                        try {
+                                            saveUserToDB(email, username);
+                                            Toast.makeText(SignUp.this, "User successfully signed up an account", Toast.LENGTH_SHORT).show();
+                                            Intent intent = new Intent(SignUp.this, MainActivity.class);
+                                            startActivity(intent);
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                    else{
+                                        Toast.makeText(SignUp.this, "User sign up failed, please try again!", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
                         }
                     }
                 });

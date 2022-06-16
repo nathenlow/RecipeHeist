@@ -163,7 +163,7 @@ public class AddRecipeActivity extends AppCompatActivity {
     private ArrayList<String> separateString(String stringToBeSeparated){
         ArrayList<String> stringArrayList = new ArrayList<>();
         // separate the string
-        String[] splitArray = stringToBeSeparated.split("; ");
+        String[] splitArray = stringToBeSeparated.split(";");
         // add each section into the arrayList
         for (int i = 0; i < splitArray.length; i++){
             stringArrayList.add(splitArray[i]);
@@ -179,8 +179,9 @@ public class AddRecipeActivity extends AppCompatActivity {
         String json = restDB.createRecipe(title, description, duration, serving, imagePath, foodCategory, ingredient, instruction, userID);
         System.out.println(restDB.client);
         System.out.println(json);
-        restDB.post("https://recipeheist-567c.restdb.io/rest/recipe", json);
+        String response = restDB.post("https://recipeheist-567c.restdb.io/rest/recipe", json);
         System.out.println(restDB.JSON);
+        System.out.println(response);
     }
 
 }
