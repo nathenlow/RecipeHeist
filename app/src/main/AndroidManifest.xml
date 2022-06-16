@@ -13,14 +13,20 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RecipeHeist">
         <activity
-            android:name="sg.edu.np.mad.recipeheist.SignIn"
+            android:name=".RecipeItem"
             android:exported="false" />
         <activity
-            android:name="sg.edu.np.mad.recipeheist.SignUp"
+            android:name=".AddRecipeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SignIn"
+            android:exported="false" />
+        <activity
+            android:name=".SignUp"
             android:exported="false"
             android:usesCleartextTraffic="true" />
         <activity
-            android:name="sg.edu.np.mad.recipeheist.MainActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

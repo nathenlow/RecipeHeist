@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -19,7 +18,7 @@
         android:layout_marginBottom="16dp"
         android:backgroundTint="@color/red_1"
         android:clickable="true"
-        android:src="@drawable/ic_baseline_add_24"/>
+        android:src="@drawable/ic_baseline_add_24" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -28,7 +27,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="232dp">
+            android:layout_height="233dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profileImage"
@@ -45,7 +44,7 @@
                 android:id="@+id/profileName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="50dp"
+                android:layout_marginStart="40dp"
                 android:layout_marginTop="8dp"
                 android:text=""
                 android:textAlignment="center"
@@ -58,7 +57,7 @@
                 android:id="@+id/profileDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="50dp"
+                android:layout_marginStart="40dp"
                 android:layout_marginTop="8dp"
                 android:text=""
                 android:textSize="14sp"
@@ -69,7 +68,7 @@
                 android:id="@+id/noOfRecipes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="100dp"
+                android:layout_marginStart="80dp"
                 android:layout_marginTop="32dp"
                 android:text="0"
                 android:textSize="14sp"
@@ -80,7 +79,7 @@
                 android:id="@+id/following"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="110dp"
+                android:layout_marginStart="100dp"
                 android:layout_marginTop="32dp"
                 android:text="0"
                 android:textSize="14sp"
@@ -91,7 +90,7 @@
                 android:id="@+id/textView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="80dp"
+                android:layout_marginStart="60dp"
                 android:layout_marginTop="4dp"
                 android:text="Recipes"
                 android:textAlignment="center"
@@ -103,7 +102,7 @@
                 android:id="@+id/textView4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="66dp"
+                android:layout_marginStart="48dp"
                 android:layout_marginTop="4dp"
                 android:text="Following"
                 android:textAlignment="center"

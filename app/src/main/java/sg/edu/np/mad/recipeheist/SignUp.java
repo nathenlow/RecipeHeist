@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -21,9 +22,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
-import org.json.JSONArray;
+import java.io.IOException;
 
-import java.util.ArrayList;
 
 public class SignUp extends AppCompatActivity {
     private FirebaseAuth mAuth;
@@ -35,6 +35,9 @@ public class SignUp extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
         setContentView(R.layout.activity_sign_up);
         getSupportActionBar().setTitle("Sign Up");
 
@@ -45,6 +48,7 @@ public class SignUp extends AppCompatActivity {
         editPassword = findViewById(R.id.editPassword);
 
         btnSignUp = findViewById(R.id.btnSignUp);
+
 
 
         btnSignUp.setOnClickListener(new View.OnClickListener() {
@@ -70,25 +74,20 @@ public class SignUp extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            User user = new User(FirebaseAuth.getInstance().getCurrentUser().getUid(), email, username, "", new ArrayList<String>());
-
-                            //To update realtime database
-                            FirebaseDatabase.getInstance("https://recipeheist-ce646-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("Users")
-                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                    .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-
-                                    if (task.isSuccessful()){
-                                        Toast.makeText(SignUp.this, "User successfully signed up an account", Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(SignUp.this, MainActivity.class);
-                                        startActivity(intent);
-                                    }
-                                    else{
-                                        Toast.makeText(SignUp.this, "User sign up failed, please try again!", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
+                            boolean success0 = true;
+                            Toast.makeText(SignUp.this, FirebaseAuth.getInstance().getCurrentUser().getUid(), Toast.LENGTH_SHORT).show();
+                            try {
+                                saveUserToDB(email, username);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                success0 = false;
+                                Toast.makeText(SignUp.this, "User sign up failed, please try again!", Toast.LENGTH_SHORT).show();
+                            }
+                            if (success0){
+                                Toast.makeText(SignUp.this, "User has been registered", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(SignUp.this, MainActivity.class);
+                                startActivity(intent);
+                            }
                         }
                         else{
                             Toast.makeText(SignUp.this, "User sign up failed, please try again!", Toast.LENGTH_SHORT).show();
@@ -97,33 +96,15 @@ public class SignUp extends AppCompatActivity {
                 });
     }
 
-//    public boolean saveUserToDB() {
-//        final boolean[] success = {};
-//        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("User");
-//        User newUser = new User(FirebaseAuth.getInstance().getCurrentUser().getUid() ,editEmail.getText().toString(), editUsername.getText().toString(), "", new ArrayList<String>());
-////        myRef.setValue(newUser).addOnFailureListener(new OnFailureListener() {
-////            @Override
-////            public void onFailure(@NonNull Exception e) {
-////                Toast.makeText(SignUp.this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-////                success[0] = false;
-////            }
-////        });
-//
-//        myRef.setValue(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
-//            @Override
-//            public void onComplete(@NonNull Task<Void> task) {
-//                if (task.isSuccessful()) {
-//                    success[0] = true;
-//                }else {
-//                    Toast.makeText(SignUp.this, task.getException().getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-//                    success[0] = false;
-//                }
-//            }
-//        });
-//
-//        return success[0];
-//    }
-//
+    public void saveUserToDB(String email, String username) throws IOException {
+
+        RestDB restDB = new RestDB();
+        String json = restDB.createNewUser(email, FirebaseAuth.getInstance().getCurrentUser().getUid(), username);
+        String response = restDB.post("https://recipeheist-567c.restdb.io/rest/users", json);
+    }
+
+
+
     private void deleteUser(String email, String password) {
 
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
