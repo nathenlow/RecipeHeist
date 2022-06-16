@@ -3,6 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Denzel/OneDrive/Desktop/HW_stuff/Year 2/MAD/RecipeHeist/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/Users/Denzel/OneDrive/Desktop/HW_stuff/Year 2/MAD/RecipeHeist/app/src/main/res/layout/activity_sign_in.xml" value="0.25" />
+        <entry key="..\:/Users/Denzel/OneDrive/Desktop/HW_stuff/Year 2/MAD/RecipeHeist/app/src/main/res/layout/activity_sign_up.xml" value="0.25" />
+        <entry key="..\:/Users/Denzel/OneDrive/Desktop/HW_stuff/Year 2/MAD/RecipeHeist/app/src/main/res/layout/browse_cardview.xml" value="0.25" />
+        <entry key="..\:/Users/Denzel/OneDrive/Desktop/HW_stuff/Year 2/MAD/RecipeHeist/app/src/main/res/layout/fragment_browse.xml" value="0.25" />
+        <entry key="..\:/Users/Denzel/OneDrive/Desktop/HW_stuff/Year 2/MAD/RecipeHeist/app/src/main/res/layout/fragment_download.xml" value="0.25" />
+        <entry key="..\:/Users/Denzel/OneDrive/Desktop/HW_stuff/Year 2/MAD/RecipeHeist/app/src/main/res/layout/fragment_profile.xml" value="0.25" />
+        <entry key="..\:/Users/Denzel/OneDrive/Desktop/HW_stuff/Year 2/MAD/RecipeHeist/app/src/main/res/layout/fragment_updates.xml" value="0.25" />
         <entry key="..\:/Users/Josep/AndroidStudioProjects/Y2-Sem1/Project/RecipeHeist/app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="..\:/Users/Josep/AndroidStudioProjects/Y2-Sem1/Project/RecipeHeist/app/src/main/res/layout/activity_sign_in.xml" value="0.264" />
         <entry key="..\:/Users/Josep/AndroidStudioProjects/Y2-Sem1/Project/RecipeHeist/app/src/main/res/layout/activity_sign_up.xml" value="0.25" />

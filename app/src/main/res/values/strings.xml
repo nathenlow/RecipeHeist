@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">RecipeHeist</string>
+
+    <string-array name="Recipes">
+        <item></item>
+        <item></item>
+        <item></item>
+        <item></item>
+        <item></item>
+        <item></item>
+        <item></item>
+    </string-array>
 </resources>
