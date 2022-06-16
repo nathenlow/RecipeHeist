@@ -11,12 +11,12 @@ import okhttp3.Response;
 
 
 public class RestDB {
-    public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
+    public static final MediaType JSON = MediaType.get("application/json;charset=utf-8");
 
     final OkHttpClient client = new OkHttpClient();
 
     String post(String url, String json) throws IOException {
-        RequestBody body = RequestBody.create(json, JSON);
+        RequestBody body = RequestBody.create(JSON, json);
         Request request = new Request.Builder()
                 .header("content-type", "application/json")
                 .header("x-apikey", "f5ea7cf6ab1df99619a5f6f3300f1edd2f293")
@@ -26,6 +26,9 @@ public class RestDB {
                 .build();
         try (Response response = client.newCall(request).execute()) {
             return response.body().string();
+        }
+        catch (Exception e){
+            return null;
         }
     }
 

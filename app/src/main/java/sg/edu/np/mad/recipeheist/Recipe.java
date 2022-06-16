@@ -8,7 +8,7 @@ public class Recipe {
     private String title;
     private String description;
     private String duration;
-    private String servings;
+    private int servings;
     private String imagePath;
     private String foodcategory;
     private ArrayList<String> ingridient;
@@ -18,7 +18,7 @@ public class Recipe {
 
     public Recipe(){}
 
-    public Recipe(int recipeID, String title, String description, String duration, String servings, String imagePath, String foodcategory, ArrayList<String> ingridient, ArrayList<String> instructions, ArrayList<String> like, String userID) {
+    public Recipe(int recipeID, String title, String description, String duration, int servings, String imagePath, String foodcategory, ArrayList<String> ingridient, ArrayList<String> instructions, ArrayList<String> like, String userID) {
         this.recipeID = recipeID;
         this.title = title;
         this.description = description;
@@ -64,11 +64,11 @@ public class Recipe {
         this.duration = duration;
     }
 
-    public String getServings() {
+    public int getServings() {
         return servings;
     }
 
-    public void setServings(String servings) {
+    public void setServings(int servings) {
         this.servings = servings;
     }
 

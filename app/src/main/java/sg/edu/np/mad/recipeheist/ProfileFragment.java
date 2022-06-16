@@ -74,7 +74,8 @@ public class ProfileFragment extends Fragment {
         // get users own recipe from db
 
         // if its empty or null
-        mainActivity.replaceFragment(new NoMyRecipeFragment(), R.id.profileFrameLayout);
+        NoMyRecipeFragment noMyRecipeFragment = new NoMyRecipeFragment();
+        mainActivity.replaceFragment(noMyRecipeFragment, view.findViewById(R.id.profileFrameLayout).getId());
 
         // get arguments from bundle
         Bundle user_data = getArguments();
