@@ -7,6 +7,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import android.content.Context;
 import android.content.Intent;
@@ -74,16 +75,21 @@ public class AddRecipeActivity extends AppCompatActivity {
         getImageFromGallery = registerForActivityResult(new ActivityResultContracts.GetContent(), new ActivityResultCallback<Uri>() {
             @Override
             public void onActivityResult(Uri result) {
-                // resize image obtained from gallery
-                try {
-                    Bitmap bitmap = decodeUri(AddRecipeActivity.this, result, 480);
-                    editFoodImage.setImageBitmap(bitmap);
+                if (result != null) {
+                    // resize image obtained from gallery
+                    try {
+                        Bitmap bitmap = decodeUri(AddRecipeActivity.this, result, 480);
+                        editFoodImage.setImageBitmap(bitmap);
 
-                    // set recipes image path
-                    recipe.setImagePath(result.toString());
+                        // set recipes image path
+                        recipe.setImagePath(result.toString());
 
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else{
+                    Toast.makeText(AddRecipeActivity.this, "No image selected, please select an image!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
