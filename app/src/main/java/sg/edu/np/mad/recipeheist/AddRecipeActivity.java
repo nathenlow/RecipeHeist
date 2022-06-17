@@ -5,6 +5,7 @@ import static java.lang.Integer.parseInt;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -21,6 +22,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
 import org.json.JSONArray;
 
 import java.io.FileNotFoundException;
@@ -35,6 +42,8 @@ public class AddRecipeActivity extends AppCompatActivity {
     private ImageButton editFoodImage;
 
     private ActivityResultLauncher<String> getImageFromGallery;
+
+    private StorageReference storageReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,19 +75,16 @@ public class AddRecipeActivity extends AppCompatActivity {
             @Override
             public void onActivityResult(Uri result) {
                 // resize image obtained from gallery
-                //Bitmap bitmap = decodeUri(AddRecipeActivity.this, result, 480);
-                //editFoodImage.setImageBitmap(bitmap);
+                try {
+                    Bitmap bitmap = decodeUri(AddRecipeActivity.this, result, 480);
+                    editFoodImage.setImageBitmap(bitmap);
 
-                //Glide.with(AddRecipeActivity.this)
-                        //.asBitmap()
-                        //.load(result)
-                        //.into(editFoodImage);
+                    // set recipes image path
+                    recipe.setImagePath(result.toString());
 
-                // set recipes image path
-                recipe.setImagePath(editFoodImage.getDrawable().toString());
-
-                System.out.println(recipe.getImagePath());
-
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -98,6 +104,7 @@ public class AddRecipeActivity extends AppCompatActivity {
                 System.out.println("here");
                 // set title of recipe
                 String title = editRecipeName.getText().toString();
+                recipe.setTitle(title);
                 // set description of recipe
                 String description = editRecipeDescription.getText().toString();
                 // set duration of recipe
@@ -110,14 +117,19 @@ public class AddRecipeActivity extends AppCompatActivity {
                 ArrayList<String> ingredientList = separateString(editIngredients.getText().toString());
                 // set instructions of recipe
                 ArrayList<String> instructionList = separateString(editInstructions.getText().toString());
+                // set image name
+                String imagePath = recipe.getUserID() + "_" + recipe.getTitle();
 
                 // convert arrayList to JsonArray
                 JSONArray ingredients = new JSONArray(ingredientList);
                 JSONArray instructions = new JSONArray(instructionList);
 
+                // upload image to firebase
+                uploadImage(recipe, Uri.parse(recipe.getImagePath()));
+
                 // push info to database
                 try {
-                    pushRecipeToDB(title, description, duration, serving, recipe.getImagePath(), category, ingredients, instructions, recipe.getUserID());
+                    pushRecipeToDB(title, description, duration, serving, imagePath, category, ingredients, instructions, recipe.getUserID());
 
                     // message to notify users of post
                     Toast.makeText(AddRecipeActivity.this, "Recipe created successfully!", Toast.LENGTH_SHORT).show();
@@ -183,6 +195,28 @@ public class AddRecipeActivity extends AppCompatActivity {
         String response = restDB.post("https://recipeheist-567c.restdb.io/rest/recipe", json);
         System.out.println(restDB.JSON);
         System.out.println(response);
+    }
+
+    // function to convert bitmap to jpeg
+
+
+    // function to upload image
+    private void uploadImage(Recipe recipe, Uri uri){
+        // create a name of file
+        String fileName = recipe.getUserID() + "_" + recipe.getTitle();
+        storageReference = FirebaseStorage.getInstance().getReference("Recipe_image/"+fileName);
+
+        storageReference.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(AddRecipeActivity.this, "Upload is unsuccessful, please try again!", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 }
