@@ -15,6 +15,7 @@ public class RestDB {
 
     final OkHttpClient client = new OkHttpClient();
 
+    // method to post to rest db
     String post(String url, String json) throws IOException {
         RequestBody body = RequestBody.create(JSON, json);
         Request request = new Request.Builder()
@@ -25,6 +26,21 @@ public class RestDB {
                 .post(body)
                 .build();
         try (Response response = client.newCall(request).execute()) {
+            return response.body().string();
+        }
+        catch (Exception e){
+            return null;
+        }
+    }
+
+    // method to get from restdb
+    String get(String url) throws IOException{
+        Request request = new Request.Builder()
+                .header("x-apikey", "f5ea7cf6ab1df99619a5f6f3300f1edd2f293")
+                .header("cache-control", "no-cache")
+                .url(url)
+                .build();
+        try (Response response = client.newCall(request).execute()){
             return response.body().string();
         }
         catch (Exception e){

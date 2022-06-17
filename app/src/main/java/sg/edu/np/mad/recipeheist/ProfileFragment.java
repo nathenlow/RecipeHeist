@@ -75,6 +75,7 @@ public class ProfileFragment extends Fragment {
 
         // if its empty or null
         NoMyRecipeFragment noMyRecipeFragment = new NoMyRecipeFragment();
+        assert mainActivity != null;
         mainActivity.replaceFragment(noMyRecipeFragment, view.findViewById(R.id.profileFrameLayout).getId());
 
         // get arguments from bundle

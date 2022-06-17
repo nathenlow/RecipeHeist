@@ -20,6 +20,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import org.json.JSONArray;
 
 import java.io.FileNotFoundException;
@@ -65,18 +66,19 @@ public class AddRecipeActivity extends AppCompatActivity {
             @Override
             public void onActivityResult(Uri result) {
                 // resize image obtained from gallery
-                try {
-                    Bitmap bitmap = decodeUri(AddRecipeActivity.this, result, 480);
-                    editFoodImage.setImageBitmap(bitmap);
+                //Bitmap bitmap = decodeUri(AddRecipeActivity.this, result, 480);
+                //editFoodImage.setImageBitmap(bitmap);
 
-                    // set recipes image path
-                    recipe.setImagePath(bitmap.toString());
-                    return;
+                //Glide.with(AddRecipeActivity.this)
+                        //.asBitmap()
+                        //.load(result)
+                        //.into(editFoodImage);
 
+                // set recipes image path
+                recipe.setImagePath(editFoodImage.getDrawable().toString());
 
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
+                System.out.println(recipe.getImagePath());
+
             }
         });
 
@@ -125,18 +127,13 @@ public class AddRecipeActivity extends AppCompatActivity {
                     startActivity(intent);
 
                 } catch (IOException e) {
-                    System.out.println(e);
+                    Toast.makeText(AddRecipeActivity.this, "Recipe creation is unsuccessful, please try again!", Toast.LENGTH_SHORT).show();
                 }
 
 
             }
         });
 
-    }
-
-    private User fetchUser(User currentUser){
-        User user = currentUser;
-        return user;
     }
 
     // function to resize image
