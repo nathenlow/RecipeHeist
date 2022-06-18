@@ -91,6 +91,7 @@
                 android:layout_marginEnd="8dp"
                 android:text="username"
                 android:textSize="16sp"
+                android:textColor="@color/black"
                 app:layout_constraintBottom_toBottomOf="@+id/croptocircle"
                 app:layout_constraintEnd_toStartOf="@+id/download"
                 app:layout_constraintStart_toEndOf="@+id/croptocircle"
@@ -114,6 +115,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="20K"
+                android:textColor="@color/black"
                 app:layout_constraintEnd_toEndOf="@+id/like"
                 app:layout_constraintStart_toStartOf="@+id/like"
                 app:layout_constraintTop_toBottomOf="@+id/like" />
@@ -150,6 +152,7 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 android:text="TextView"
+                android:textColor="@color/black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/ingredient" />
@@ -175,6 +178,7 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 android:text="TextView"
+                android:textColor="@color/black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/instruction" />

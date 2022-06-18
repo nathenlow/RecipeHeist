@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -13,10 +14,12 @@ import com.google.firebase.storage.StorageReference;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.StrictMode;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import androidx.navigation.ui.AppBarConfiguration;
@@ -32,20 +35,22 @@ import sg.edu.np.mad.recipeheist.databinding.ActivityRecipeItemBinding;
 
 public class RecipeItem extends AppCompatActivity {
 
-    private AppBarConfiguration appBarConfiguration;
-    private ActivityRecipeItemBinding binding;
-
     private ImageView foodimage, profileicon;
     private ImageButton download, like;
     private TextView username, noOfLikes, ingredientitems, instructionitems;
     private CollapsingToolbarLayout collapsing_toolbar;
+    private FloatingActionButton bookmarkbtn;
+
+    boolean bookmarkcheck;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
-        binding = ActivityRecipeItemBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        setContentView(R.layout.activity_recipe_item);
+
         getSupportActionBar().hide();
 
         foodimage = findViewById(R.id.foodimage);
@@ -57,6 +62,9 @@ public class RecipeItem extends AppCompatActivity {
         ingredientitems = findViewById(R.id.ingredientitems);
         instructionitems = findViewById(R.id.instructionitems);
         collapsing_toolbar = findViewById(R.id.collapsing_toolbar);
+        bookmarkbtn = findViewById(R.id.fab);
+
+        bookmarkcheck = false;
 
         Intent recievefrombrowse = getIntent();
         String recipeID = recievefrombrowse.getStringExtra("recipeID");
@@ -100,6 +108,28 @@ public class RecipeItem extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        //check whether user bookmark this page
+        String currentuserjsonstring = getUser(FirebaseAuth.getInstance().getUid());
+        JSONObject currentuserobj = null;
+        try {
+            JSONArray currentuserarray = new JSONArray(currentuserjsonstring);
+            currentuserobj = (JSONObject) currentuserarray.get(0);
+            System.out.println(currentuserobj);
+            JSONArray bookmarklist = currentuserobj.getJSONArray("bookmark");
+            for (int i = 0; i < bookmarklist.length(); i++) {
+                if (bookmarklist.get(i).equals(recipeID)){
+                    bookmarkbtn.setImageDrawable(getDrawable(R.drawable.ic_baseline_bookmark_added_24));
+                    bookmarkcheck = true;
+                    break;
+                }
+
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
 
         //get User profile and display
         try {
@@ -114,19 +144,37 @@ public class RecipeItem extends AppCompatActivity {
         }
 
 
-        binding.fab.setOnClickListener(new View.OnClickListener() {
+        JSONObject finalCurrentuserobj = currentuserobj;
+        findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
-
-
-
-
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                if (bookmarkcheck){
+                    bookmarkbtn.setImageDrawable(getDrawable(R.drawable.ic_baseline_bookmarks_24));
+                    bookmarkcheck = false;
+                    try {
+                        bookmarkRecipe(recipeID, finalCurrentuserobj, false);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Toast.makeText(RecipeItem.this, "Bookmark removed", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    bookmarkbtn.setImageDrawable(getDrawable(R.drawable.ic_baseline_bookmark_added_24));
+                    bookmarkcheck = true;
+                    try {
+                        bookmarkRecipe(recipeID, finalCurrentuserobj, true);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Toast.makeText(RecipeItem.this, "Bookmark added", Toast.LENGTH_SHORT).show();
+                }
             }
         });
+
     }
 
     public String getRecipe(String id){
@@ -158,13 +206,24 @@ public class RecipeItem extends AppCompatActivity {
 
 
 
-    public void bookmarkRecipe(String recipeID) throws IOException, JSONException {
-        String userjsonstring = getUser(FirebaseAuth.getInstance().getUid());
-        JSONArray userarray = new JSONArray(userjsonstring);
-        JSONObject userobj = (JSONObject) userarray.get(0);
-        String restdbuserid = userobj.getString("_id");
-        JSONArray bookmark = userobj.getJSONArray("bookmark");
-        bookmark.put(recipeID);
+    public void bookmarkRecipe(String recipeID, JSONObject currentuserobj0, boolean addorremove) throws IOException, JSONException {
+        String restdbuserid = currentuserobj0.getString("_id");
+        JSONArray bookmark = currentuserobj0.getJSONArray("bookmark");
+        if (addorremove){
+            bookmark.put(recipeID);
+        }
+        else {
+            for (int i = 0; i < bookmark.length(); i++) {
+                if(bookmark.get(i).equals(recipeID)){
+                    bookmark.remove(i);
+                    break;
+                }
+
+            }
+
+        }
+
+
         RestDB restDB = new RestDB();
         String json = restDB.bookmarkRecipe(bookmark);
         String response = restDB.patch("https://recipeheist-567c.restdb.io/rest/users/" + restdbuserid, json);
