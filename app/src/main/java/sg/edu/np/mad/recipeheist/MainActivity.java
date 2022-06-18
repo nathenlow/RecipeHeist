@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                     getSupportActionBar().setTitle("Download");
                     break;
                 case R.id.profile:
-                    //TODO: if user login
+
                     if (currentUser != null){
 
                         String uid = "\"" + currentUser.getUid().toString() + "\"";
@@ -110,8 +110,6 @@ public class MainActivity extends AppCompatActivity {
                             user.setFollowing(convertJArrayToArrayList(jsonObject.getJSONArray("following")));
                             user.setBookmark(convertJArrayToArrayList(jsonObject.getJSONArray("bookmark")));
 
-
-                            System.out.println(user.getUserID() + user.getUsername());
                         } catch (IOException | JSONException e) {
                             e.printStackTrace();
                         }
@@ -232,7 +230,6 @@ public class MainActivity extends AppCompatActivity {
     public String getUser(String uid) throws IOException {
         RestDB restDB = new RestDB();
         String response = restDB.get("https://recipeheist-567c.restdb.io/rest/users?q={\"userID\": " + uid + "}");
-        System.out.println(response);
         return response;
     }
 
