@@ -83,7 +83,7 @@ public class RecipeItem extends AppCompatActivity {
             for (int i = 0; i <ingredient.length(); i++) {
                 ingredientlist += "\u2022\t\t";
                 ingredientlist += ingredient.get(i).toString();
-                ingredientlist += "\n";
+                ingredientlist += "\n\n";
             }
             ingredientitems.setText(ingredientlist);
 
@@ -111,22 +111,24 @@ public class RecipeItem extends AppCompatActivity {
         //check whether user bookmark this page
         String currentuserjsonstring = getUser(FirebaseAuth.getInstance().getUid());
         JSONObject currentuserobj = null;
-        try {
-            JSONArray currentuserarray = new JSONArray(currentuserjsonstring);
-            currentuserobj = (JSONObject) currentuserarray.get(0);
-            System.out.println(currentuserobj);
-            JSONArray bookmarklist = currentuserobj.getJSONArray("bookmark");
-            for (int i = 0; i < bookmarklist.length(); i++) {
-                if (bookmarklist.get(i).equals(recipeID)){
-                    bookmarkbtn.setImageDrawable(getDrawable(R.drawable.ic_baseline_bookmark_added_24));
-                    bookmarkcheck = true;
-                    break;
+        if (currentuserjsonstring != null){
+            try {
+                JSONArray currentuserarray = new JSONArray(currentuserjsonstring);
+                currentuserobj = (JSONObject) currentuserarray.get(0);
+                System.out.println(currentuserobj);
+                JSONArray bookmarklist = currentuserobj.getJSONArray("bookmark");
+                for (int i = 0; i < bookmarklist.length(); i++) {
+                    if (bookmarklist.get(i).equals(recipeID)){
+                        bookmarkbtn.setImageDrawable(getDrawable(R.drawable.ic_baseline_bookmark_added_24));
+                        bookmarkcheck = true;
+                        break;
+                    }
+
                 }
 
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
 
 
@@ -137,7 +139,7 @@ public class RecipeItem extends AppCompatActivity {
 
             JSONArray userarray = new JSONArray(userjsonstring);
             JSONObject userobj = (JSONObject) userarray.get(0);
-            username.setText(userobj.getString("username"));
+            username.setText("@" + userobj.getString("username"));
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -148,29 +150,34 @@ public class RecipeItem extends AppCompatActivity {
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (bookmarkcheck){
-                    bookmarkbtn.setImageDrawable(getDrawable(R.drawable.ic_baseline_bookmarks_24));
-                    bookmarkcheck = false;
-                    try {
-                        bookmarkRecipe(recipeID, finalCurrentuserobj, false);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                if (currentuserjsonstring != null){
+                    if (bookmarkcheck){
+                        bookmarkbtn.setImageDrawable(getDrawable(R.drawable.ic_baseline_bookmarks_24));
+                        bookmarkcheck = false;
+                        try {
+                            bookmarkRecipe(recipeID, finalCurrentuserobj, false);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        Toast.makeText(RecipeItem.this, "Bookmark removed", Toast.LENGTH_SHORT).show();
                     }
-                    Toast.makeText(RecipeItem.this, "Bookmark removed", Toast.LENGTH_SHORT).show();
+                    else{
+                        bookmarkbtn.setImageDrawable(getDrawable(R.drawable.ic_baseline_bookmark_added_24));
+                        bookmarkcheck = true;
+                        try {
+                            bookmarkRecipe(recipeID, finalCurrentuserobj, true);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        Toast.makeText(RecipeItem.this, "Bookmark added", Toast.LENGTH_SHORT).show();
+                    }
                 }
-                else{
-                    bookmarkbtn.setImageDrawable(getDrawable(R.drawable.ic_baseline_bookmark_added_24));
-                    bookmarkcheck = true;
-                    try {
-                        bookmarkRecipe(recipeID, finalCurrentuserobj, true);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    Toast.makeText(RecipeItem.this, "Bookmark added", Toast.LENGTH_SHORT).show();
+                else {
+                    Toast.makeText(RecipeItem.this, "User need to be registered", Toast.LENGTH_SHORT).show();
                 }
             }
         });

@@ -79,7 +79,7 @@
                     android:focusable="true"
                     android:foregroundGravity="center_horizontal"
                     android:scaleType="centerCrop"
-                    android:src="@mipmap/ic_launcher_round"
+                    android:src="@drawable/default_profile_1"
                     tools:ignore="ImageContrastCheck" />
             </androidx.cardview.widget.CardView>
 
@@ -91,7 +91,7 @@
                 android:layout_marginEnd="8dp"
                 android:text="username"
                 android:textSize="16sp"
-                android:textColor="@color/black"
+                android:textColor="@color/red_2"
                 app:layout_constraintBottom_toBottomOf="@+id/croptocircle"
                 app:layout_constraintEnd_toStartOf="@+id/download"
                 app:layout_constraintStart_toEndOf="@+id/croptocircle"
