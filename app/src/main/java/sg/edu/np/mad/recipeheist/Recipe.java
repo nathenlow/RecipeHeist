@@ -1,9 +1,13 @@
 package sg.edu.np.mad.recipeheist;
 
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Recipe {
+public class Recipe implements Serializable, Parcelable {
     private int recipeID;
     private String title;
     private String description;
@@ -31,6 +35,32 @@ public class Recipe {
         this.like = like;
         this.userID = userID;
     }
+
+    protected Recipe(Parcel in) {
+        recipeID = in.readInt();
+        title = in.readString();
+        description = in.readString();
+        duration = in.readString();
+        servings = in.readInt();
+        imagePath = in.readString();
+        foodcategory = in.readString();
+        ingridient = in.createStringArrayList();
+        instructions = in.createStringArrayList();
+        like = in.createStringArrayList();
+        userID = in.readString();
+    }
+
+    public static final Creator<Recipe> CREATOR = new Creator<Recipe>() {
+        @Override
+        public Recipe createFromParcel(Parcel in) {
+            return new Recipe(in);
+        }
+
+        @Override
+        public Recipe[] newArray(int size) {
+            return new Recipe[size];
+        }
+    };
 
     public int getRecipeID() {
         return recipeID;
@@ -118,6 +148,26 @@ public class Recipe {
 
     public void setUserID(String userID) {
         this.userID = userID;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(recipeID);
+        dest.writeString(title);
+        dest.writeString(description);
+        dest.writeString(duration);
+        dest.writeInt(servings);
+        dest.writeString(imagePath);
+        dest.writeString(foodcategory);
+        dest.writeStringList(ingridient);
+        dest.writeStringList(instructions);
+        dest.writeStringList(like);
+        dest.writeString(userID);
     }
 }
 
