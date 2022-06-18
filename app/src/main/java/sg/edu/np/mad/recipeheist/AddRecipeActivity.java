@@ -7,6 +7,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +19,7 @@ import android.os.StrictMode;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +42,7 @@ public class AddRecipeActivity extends AppCompatActivity {
     private Recipe recipe = new Recipe();
     private TextView editRecipeName, editRecipeDescription, editDuration, editCategory, editServing, editIngredients, editInstructions;
     private ImageButton editFoodImage;
+    private ProgressBar progressBar;
 
     private ActivityResultLauncher<String> getImageFromGallery;
 
@@ -70,20 +73,26 @@ public class AddRecipeActivity extends AppCompatActivity {
         editInstructions = findViewById(R.id.editInstruction);
         editFoodImage = findViewById(R.id.editFoodImage);
         Button createRecipeBtn = findViewById(R.id.createRecipeBtn);
+        progressBar = findViewById(R.id.progressBar2);
 
         getImageFromGallery = registerForActivityResult(new ActivityResultContracts.GetContent(), new ActivityResultCallback<Uri>() {
             @Override
             public void onActivityResult(Uri result) {
-                // resize image obtained from gallery
-                try {
-                    Bitmap bitmap = decodeUri(AddRecipeActivity.this, result, 480);
-                    editFoodImage.setImageBitmap(bitmap);
+                if (result != null) {
+                    // resize image obtained from gallery
+                    try {
+                        Bitmap bitmap = decodeUri(AddRecipeActivity.this, result, 480);
+                        editFoodImage.setImageBitmap(bitmap);
 
-                    // set recipes image path
-                    recipe.setImagePath(result.toString());
+                        // set recipes image path
+                        recipe.setImagePath(result.toString());
 
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else{
+                    Toast.makeText(AddRecipeActivity.this, "No image selected, please select an image!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -101,51 +110,124 @@ public class AddRecipeActivity extends AppCompatActivity {
         createRecipeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("here");
-                // set title of recipe
-                String title = editRecipeName.getText().toString();
-                recipe.setTitle(title);
-                // set description of recipe
-                String description = editRecipeDescription.getText().toString();
-                // set duration of recipe
-                String duration = editDuration.getText().toString();
-                // set serving size of recipe
-                int serving = parseInt(editServing.getText().toString());
-                // set category of recipe
-                String category = editCategory.getText().toString();
-                // set ingredients of recipe
-                ArrayList<String> ingredientList = separateString(editIngredients.getText().toString());
-                // set instructions of recipe
-                ArrayList<String> instructionList = separateString(editInstructions.getText().toString());
-                // set image name
-                String imagePath = recipe.getUserID() + "_" + recipe.getTitle();
-
-                // convert arrayList to JsonArray
-                JSONArray ingredients = new JSONArray(ingredientList);
-                JSONArray instructions = new JSONArray(instructionList);
-
-                // upload image to firebase
-                uploadImage(recipe, Uri.parse(recipe.getImagePath()));
-
-                // push info to database
+                progressBar.setVisibility(View.VISIBLE);
                 try {
-                    pushRecipeToDB(title, description, duration, serving, imagePath, category, ingredients, instructions, recipe.getUserID());
-
-                    // message to notify users of post
-                    Toast.makeText(AddRecipeActivity.this, "Recipe created successfully!", Toast.LENGTH_SHORT).show();
-
-                    // sent user back to user page
-                    Intent intent = new Intent(AddRecipeActivity.this, MainActivity.class);
-                    startActivity(intent);
-
-                } catch (IOException e) {
-                    Toast.makeText(AddRecipeActivity.this, "Recipe creation is unsuccessful, please try again!", Toast.LENGTH_SHORT).show();
+                    addRecipe();
+                }
+                catch (Exception e){
+                    progressBar.setVisibility(View.GONE);
+                    editServing.setError("Required!");
+                    editServing.requestFocus();
                 }
 
 
             }
         });
 
+    }
+
+    // function to add recipe
+    public void addRecipe(){
+        // set title of recipe
+        String title = editRecipeName.getText().toString().trim();
+        // set description of recipe
+        String description = editRecipeDescription.getText().toString().trim();
+        // set duration of recipe
+        String duration = editDuration.getText().toString().trim();
+        // set serving size of recipe
+        int serving = parseInt(editServing.getText().toString().trim());
+        // set category of recipe
+        String category = editCategory.getText().toString().trim();
+        
+        String ingre = editIngredients.getText().toString().trim();
+        String instr = editInstructions.getText().toString().trim();
+        
+
+        // Start of validation for input
+        // ---------------------------------------------------------------
+
+        // validate title:
+        if (title.isEmpty()){
+            progressBar.setVisibility(View.GONE);
+            editRecipeName.setError("Required!");
+            editRecipeName.requestFocus();
+        }
+        else if (title.length() > 100){
+            progressBar.setVisibility(View.GONE);
+            editRecipeName.setError("Number of characters exceeds the limit of 100!");
+            editRecipeName.requestFocus();
+        }
+
+        // validate the duration
+        else if (duration.isEmpty()){
+            progressBar.setVisibility(View.GONE);
+            editDuration.setError("Required!");
+            editDuration.requestFocus();
+        }
+        else if (!duration.contains("mins") || !duration.contains("hrs")){
+            progressBar.setVisibility(View.GONE);
+            editDuration.setError("must contain \"hrs\" or \"mins\"!");
+            editDuration.requestFocus();
+        }
+
+        // validate serving
+        else if (serving == 0 || serving < 0){
+            progressBar.setVisibility(View.GONE);
+            editServing.setError("Must be 1 or more!");
+            editServing.requestFocus();
+        }
+        
+        // validate ingredients
+        else if (ingre.isEmpty()){
+            progressBar.setVisibility(View.GONE);
+            editIngredients.setError("Required!");
+            editIngredients.requestFocus();
+        }
+        
+        // validate instruction
+        else if (instr.isEmpty()){
+            progressBar.setVisibility(View.GONE);
+            editInstructions.setError("Required!");
+            editInstructions.requestFocus();
+        }
+        
+        // End of validation for input
+
+        else {
+            
+            // set ingredients of recipe
+            ArrayList<String> ingredientList = separateString(ingre);
+            // set instructions of recipe
+            ArrayList<String> instructionList = separateString(instr);
+            
+            recipe.setTitle(title);
+            // set image name
+            String imagePath = recipe.getUserID() + "_" + recipe.getTitle();
+
+            // convert arrayList to JsonArray
+            JSONArray ingredients = new JSONArray(ingredientList);
+            JSONArray instructions = new JSONArray(instructionList);
+
+            // upload image to firebase
+            uploadImage(recipe, Uri.parse(recipe.getImagePath()));
+
+            // push info to database
+            try {
+                pushRecipeToDB(title, description, duration, serving, imagePath, category, ingredients, instructions, recipe.getUserID());
+
+                progressBar.setVisibility(View.GONE);
+                // message to notify users of post
+                Toast.makeText(AddRecipeActivity.this, "Recipe created successfully!", Toast.LENGTH_SHORT).show();
+
+                // sent user back to user page
+                Intent intent = new Intent(AddRecipeActivity.this, MainActivity.class);
+                startActivity(intent);
+
+            } catch (IOException e) {
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(AddRecipeActivity.this, "Recipe creation is unsuccessful, please try again!", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     // function to resize image

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,7 +21,7 @@ public class SignIn extends AppCompatActivity {
     private EditText editEmail, editPassword;
     private Button btnSignIn;
     private TextView txtSignup;
-
+    private ProgressBar progressBar;
     private FirebaseAuth mAuth;
 
     @Override
@@ -36,6 +37,7 @@ public class SignIn extends AppCompatActivity {
         editPassword = findViewById(R.id.editPassword);
         btnSignIn = findViewById(R.id.btnSignIn);
         txtSignup = findViewById(R.id.txtSignUp);
+        progressBar = findViewById(R.id.progressBarSin);
 
         txtSignup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,20 +50,24 @@ public class SignIn extends AppCompatActivity {
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 if (editEmail.getText().toString().trim().isEmpty() || editPassword.getText().toString().trim().isEmpty()){
                     Toast.makeText(SignIn.this, "Empty fields are not allowed!", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                progressBar.setVisibility(View.VISIBLE);
                 mAuth.signInWithEmailAndPassword(editEmail.getText().toString().trim(), editPassword.getText().toString().trim())
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
+                                    progressBar.setVisibility(View.GONE);
                                     // Sign in success, update UI with the signed-in user's information
                                     Toast.makeText(SignIn.this, "User logged in !", Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(SignIn.this, MainActivity.class);
                                     startActivity(intent);
                                 } else {
+                                    progressBar.setVisibility(View.GONE);
                                     // If sign in fails, display a message to the user.
                                     Toast.makeText(SignIn.this, task.getException().getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                                 }
