@@ -20,27 +20,32 @@
         <entry key="..\:/Users/Josep/AndroidStudioProjects/Y2-Sem1/Project/RecipeHeist/app/src/main/res/menu/top_nav_browse_menu.xml" value="0.25" />
         <entry key="..\:/Users/Nathen/Documents/MAD2022/RecipeHeist/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2475" />
         <entry key="..\:/Users/Nathen/Documents/MAD2022/RecipeHeist/app/src/main/res/drawable/ic_baseline_bookmarks_24.xml" value="0.2275" />
+        <entry key="..\:/Users/Nathen/Documents/MAD2022/RecipeHeist/app/src/main/res/drawable/ic_baseline_favorite_24.xml" value="0.2445" />
         <entry key="..\:/Users/Nathen/Documents/MAD2022/RecipeHeist/app/src/main/res/drawable/ic_baseline_search_24.xml" value="0.2475" />
         <entry key="..\:/Users/Nathen/Documents/MAD2022/RecipeHeist/app/src/main/res/drawable/ic_baseline_update_24.xml" value="0.2475" />
         <entry key="..\:/Users/Nathen/Documents/MAD2022/RecipeHeist/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2475" />
         <entry key="..\:/Users/Nathen/Documents/MAD2022/RecipeHeist/app/src/main/res/drawable/ic_outline_account_circle_24.xml" value="0.2475" />
         <entry key="..\:/Users/Nathen/Documents/MAD2022/RecipeHeist/app/src/main/res/drawable/recipe_item_bg.xml" value="0.2265" />
         <entry key="..\:/Users/Nathen/Documents/MAD2022/RecipeHeist/app/src/main/res/drawable/recipe_item_img_bg.xml" value="0.2265" />
+        <entry key="..\:/Users/Nathen/Documents/MAD2022/RecipeHeist/app/src/main/res/layout/activity_add_recipe.xml" value="0.25" />
         <entry key="..\:/Users/Nathen/Documents/MAD2022/RecipeHeist/app/src/main/res/layout/activity_main.xml" value="0.25416666666666665" />
-        <entry key="..\:/Users/Nathen/Documents/MAD2022/RecipeHeist/app/src/main/res/layout/activity_recipe_item.xml" value="0.4" />
+        <entry key="..\:/Users/Nathen/Documents/MAD2022/RecipeHeist/app/src/main/res/layout/activity_recipe_item.xml" value="0.264" />
         <entry key="..\:/Users/Nathen/Documents/MAD2022/RecipeHeist/app/src/main/res/layout/activity_sign_in.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Nathen/Documents/MAD2022/RecipeHeist/app/src/main/res/layout/activity_sign_up.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Nathen/Documents/MAD2022/RecipeHeist/app/src/main/res/layout/browse_cardview.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Nathen/Documents/MAD2022/RecipeHeist/app/src/main/res/layout/content_recipe_item.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Nathen/Documents/MAD2022/RecipeHeist/app/src/main/res/layout/fragment_browse.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Nathen/Documents/MAD2022/RecipeHeist/app/src/main/res/layout/fragment_download.xml" value="0.11302083333333333" />
+        <entry key="..\:/Users/Nathen/Documents/MAD2022/RecipeHeist/app/src/main/res/layout/fragment_edit_profile.xml" value="0.25" />
         <entry key="..\:/Users/Nathen/Documents/MAD2022/RecipeHeist/app/src/main/res/layout/fragment_first.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Nathen/Documents/MAD2022/RecipeHeist/app/src/main/res/layout/fragment_me.xml" value="0.11302083333333333" />
+        <entry key="..\:/Users/Nathen/Documents/MAD2022/RecipeHeist/app/src/main/res/layout/fragment_my_recipe.xml" value="0.25" />
         <entry key="..\:/Users/Nathen/Documents/MAD2022/RecipeHeist/app/src/main/res/layout/fragment_profile.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Nathen/Documents/MAD2022/RecipeHeist/app/src/main/res/layout/fragment_second.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Nathen/Documents/MAD2022/RecipeHeist/app/src/main/res/layout/fragment_updates.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Nathen/Documents/MAD2022/RecipeHeist/app/src/main/res/menu/bottom_nav_menu.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Nathen/Documents/MAD2022/RecipeHeist/app/src/main/res/menu/menu_main.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Nathen/Documents/MAD2022/RecipeHeist/app/src/main/res/menu/top_nav_browse_menu.xml" value="0.25" />
       </map>
     </option>
   </component>
