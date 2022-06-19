@@ -164,7 +164,7 @@ public class AddRecipeActivity extends AppCompatActivity {
             editDuration.setError("Required!");
             editDuration.requestFocus();
         }
-        else if (!duration.contains("min") || !duration.contains("hr")){
+        else if (!duration.contains("min") && !duration.contains("hr")){
             progressBar.setVisibility(View.GONE);
             editDuration.setError("must contain \"hr\" or \"min\"!");
             editDuration.requestFocus();
