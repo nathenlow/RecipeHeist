@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -15,6 +16,8 @@ import com.google.firebase.storage.StorageReference;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.StrictMode;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -22,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import androidx.appcompat.widget.SearchView;
 import androidx.navigation.ui.AppBarConfiguration;
 
 
@@ -37,15 +41,20 @@ public class RecipeItem extends AppCompatActivity {
 
     private ImageView foodimage, profileicon;
     private ImageButton download, like;
-    private TextView username, noOfLikes, ingredientitems, instructionitems;
+    private TextView username, noOfLikes, description, servings, duration, foodcategory, ingredientitems, instructionitems;
     private CollapsingToolbarLayout collapsing_toolbar;
     private FloatingActionButton bookmarkbtn;
+    private AppBarLayout appbar;
 
     boolean bookmarkcheck;
+    boolean likecheck;
+    int numlikes;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+
+
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
@@ -63,8 +72,13 @@ public class RecipeItem extends AppCompatActivity {
         instructionitems = findViewById(R.id.instructionitems);
         collapsing_toolbar = findViewById(R.id.collapsing_toolbar);
         bookmarkbtn = findViewById(R.id.fab);
+        description = findViewById(R.id.description);
+        servings = findViewById(R.id.servings);
+        duration = findViewById(R.id.duration);
+        foodcategory = findViewById(R.id.foodcategory);
 
         bookmarkcheck = false;
+        likecheck = false;
 
         Intent recievefrombrowse = getIntent();
         String recipeID = recievefrombrowse.getStringExtra("recipeID");
@@ -75,7 +89,12 @@ public class RecipeItem extends AppCompatActivity {
             recipeobj = new JSONObject(response);
 
             collapsing_toolbar.setTitle(recipeobj.getString("title"));
-            noOfLikes.setText(String.valueOf(recipeobj.getJSONArray("like").length()));
+            numlikes = recipeobj.getJSONArray("like").length();
+            noOfLikes.setText(String.valueOf(numlikes));
+            description.setText(recipeobj.getString("description"));
+            servings.setText(recipeobj.getString("servings") + " pax");
+            duration.setText(recipeobj.getString("duration"));
+            foodcategory.setText("( " + recipeobj.getString("foodcategory") + " )");
 
             //Display ingredients
             JSONArray ingredient = recipeobj.getJSONArray("ingredient");
@@ -96,6 +115,16 @@ public class RecipeItem extends AppCompatActivity {
                 instructionlist += "\n\n\n";
             }
             instructionitems.setText(instructionlist);
+
+            //check user had liked recipe
+            JSONArray likelist = recipeobj.getJSONArray("like");
+            for (int i = 0; i <likelist.length(); i++) {
+                if (likelist.get(i).equals(FirebaseAuth.getInstance().getUid())){
+                    like.setImageDrawable(getDrawable(R.drawable.ic_baseline_thumb_up_24));
+                    likecheck = true;
+                    break;
+                }
+            }
 
             //Display image
             String imagefilename = recipeobj.getString("imagePath");
@@ -139,11 +168,55 @@ public class RecipeItem extends AppCompatActivity {
 
             JSONArray userarray = new JSONArray(userjsonstring);
             JSONObject userobj = (JSONObject) userarray.get(0);
-            username.setText("@" + userobj.getString("username"));
+            username.setText(userobj.getString("username"));
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        //----On click functions----------------------------------------------------------------------------------------------------------
+
+        like.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String currentuser = FirebaseAuth.getInstance().getUid();
+                if (currentuser != null){
+                    findViewById(R.id.fab).setEnabled(false);
+                    // remove a like
+                    if (likecheck){
+                        like.setImageDrawable(getDrawable(R.drawable.ic_outline_thumb_up_off_alt_24));
+                        likecheck = false;
+                        numlikes -= 1;
+                        noOfLikes.setText(String.valueOf(numlikes));
+                        try {
+                            likeRecipe(recipeID,currentuser, false);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    //add a like
+                    else {
+                        like.setImageDrawable(getDrawable(R.drawable.ic_baseline_thumb_up_24));
+                        likecheck = true;
+                        numlikes += 1;
+                        noOfLikes.setText(String.valueOf(numlikes));
+                        try {
+                            likeRecipe(recipeID,currentuser, true);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    findViewById(R.id.fab).setEnabled(true);
+                }
+                else {
+                    Toast.makeText(RecipeItem.this, "Login is required", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
 
         JSONObject finalCurrentuserobj = currentuserobj;
@@ -151,6 +224,8 @@ public class RecipeItem extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (currentuserjsonstring != null){
+                    findViewById(R.id.fab).setEnabled(false);
+                    //remove a bookmark
                     if (bookmarkcheck){
                         bookmarkbtn.setImageDrawable(getDrawable(R.drawable.ic_baseline_bookmarks_24));
                         bookmarkcheck = false;
@@ -163,6 +238,7 @@ public class RecipeItem extends AppCompatActivity {
                         }
                         Toast.makeText(RecipeItem.this, "Bookmark removed", Toast.LENGTH_SHORT).show();
                     }
+                    //add a bookmark
                     else{
                         bookmarkbtn.setImageDrawable(getDrawable(R.drawable.ic_baseline_bookmark_added_24));
                         bookmarkcheck = true;
@@ -175,14 +251,18 @@ public class RecipeItem extends AppCompatActivity {
                         }
                         Toast.makeText(RecipeItem.this, "Bookmark added", Toast.LENGTH_SHORT).show();
                     }
+                    findViewById(R.id.fab).setEnabled(true);
                 }
                 else {
-                    Toast.makeText(RecipeItem.this, "User need to be registered", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RecipeItem.this, "Login is required", Toast.LENGTH_SHORT).show();
+                    moveTaskToBack(true);
                 }
             }
         });
 
     }
+
+
 
     public String getRecipe(String id){
         RestDB example = new RestDB();
@@ -207,7 +287,26 @@ public class RecipeItem extends AppCompatActivity {
         return response;
     }
 
-    public void likeRecipe(String RecipeID) {
+    public void likeRecipe(String recipeID, String currentuser, boolean addorremove) throws JSONException, IOException {
+        String response0 = getRecipe(recipeID);
+        JSONObject recipeobj0 = new JSONObject(response0);
+        JSONArray likelist0 = recipeobj0.getJSONArray("like");
+        if (addorremove){
+            likelist0.put(currentuser);
+        }
+        else {
+            for (int i = 0; i < likelist0.length(); i++) {
+                if(likelist0.get(i).equals(currentuser)){
+                    likelist0.remove(i);
+                    break;
+                }
+
+            }
+        }
+
+        RestDB restDB = new RestDB();
+        String json = restDB.likeRecipe(likelist0);
+        String response = restDB.patch("https://recipeheist-567c.restdb.io/rest/recipe/" + recipeID, json);
 
     }
 
