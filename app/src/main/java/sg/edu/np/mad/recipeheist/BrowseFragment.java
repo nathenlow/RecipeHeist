@@ -61,7 +61,7 @@ public class BrowseFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_browse, container, false);
-        goToRecipe("62ac7fdd6a50f02a0001e1d2");
+
         return view;
     }
 
