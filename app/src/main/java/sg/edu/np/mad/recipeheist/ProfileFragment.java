@@ -145,6 +145,7 @@ public class ProfileFragment extends Fragment {
                     JSONObject jsonObject = recipeJArray.getJSONObject(i);
 
                     // set recipe details
+                    recipe.setRecipeID(jsonObject.getString("_id"));
                     recipe.setUserID(jsonObject.getString("userID"));
                     recipe.setTitle(jsonObject.getString("title"));
                     recipe.setDescription(jsonObject.getString("description"));

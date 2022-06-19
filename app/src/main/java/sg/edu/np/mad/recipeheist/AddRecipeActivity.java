@@ -164,9 +164,9 @@ public class AddRecipeActivity extends AppCompatActivity {
             editDuration.setError("Required!");
             editDuration.requestFocus();
         }
-        else if (!duration.contains("mins") || !duration.contains("hrs")){
+        else if (!duration.contains("min") || !duration.contains("hr")){
             progressBar.setVisibility(View.GONE);
-            editDuration.setError("must contain \"hrs\" or \"mins\"!");
+            editDuration.setError("must contain \"hr\" or \"min\"!");
             editDuration.requestFocus();
         }
 

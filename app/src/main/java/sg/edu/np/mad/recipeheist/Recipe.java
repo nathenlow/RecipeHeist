@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Recipe implements Serializable, Parcelable {
-    private int recipeID;
+    private String recipeID;
     private String title;
     private String description;
     private String duration;
@@ -22,7 +22,7 @@ public class Recipe implements Serializable, Parcelable {
 
     public Recipe(){}
 
-    public Recipe(int recipeID, String title, String description, String duration, int servings, String imagePath, String foodcategory, ArrayList<String> ingridient, ArrayList<String> instructions, ArrayList<String> like, String userID) {
+    public Recipe(String recipeID, String title, String description, String duration, int servings, String imagePath, String foodcategory, ArrayList<String> ingridient, ArrayList<String> instructions, ArrayList<String> like, String userID) {
         this.recipeID = recipeID;
         this.title = title;
         this.description = description;
@@ -37,7 +37,7 @@ public class Recipe implements Serializable, Parcelable {
     }
 
     protected Recipe(Parcel in) {
-        recipeID = in.readInt();
+        recipeID = in.readString();
         title = in.readString();
         description = in.readString();
         duration = in.readString();
@@ -62,11 +62,11 @@ public class Recipe implements Serializable, Parcelable {
         }
     };
 
-    public int getRecipeID() {
+    public String getRecipeID() {
         return recipeID;
     }
 
-    public void setRecipeID(int recipeID) {
+    public void setRecipeID(String recipeID) {
         this.recipeID = recipeID;
     }
 
@@ -157,7 +157,7 @@ public class Recipe implements Serializable, Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(recipeID);
+        dest.writeString(recipeID);
         dest.writeString(title);
         dest.writeString(description);
         dest.writeString(duration);

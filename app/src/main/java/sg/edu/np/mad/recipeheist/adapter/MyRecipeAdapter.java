@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -50,7 +52,7 @@ public class MyRecipeAdapter extends RecyclerView.Adapter<MyRecipeVH> {
     public void onBindViewHolder(@NonNull MyRecipeVH holder, int position) {
         Recipe recipe = recipes.get(position);
 
-        System.out.println(recipe.getTitle());
+        System.out.println(recipe.getRecipeID());
 
         // set image
         storageReference = FirebaseStorage.getInstance().getReference().child("Recipe_image/"+recipe.getImagePath());
@@ -60,7 +62,8 @@ public class MyRecipeAdapter extends RecyclerView.Adapter<MyRecipeVH> {
                 @Override
                 public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
                     Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
-                    holder.foodImage.setImageBitmap(bitmap);
+                    Bitmap resizedBM = Bitmap.createScaledBitmap(bitmap, 250, 250, true);
+                    holder.foodImage.setImageBitmap(resizedBM);
                 }
             });
         } catch (IOException e) {
@@ -69,17 +72,15 @@ public class MyRecipeAdapter extends RecyclerView.Adapter<MyRecipeVH> {
         // set name
         holder.foodTitle.setText(recipe.getTitle());
         // set noOfLikes
-        holder.noOfLikes.setText(String.valueOf(recipe.getLike().size() - 3));
+        holder.noOfLikes.setText(String.valueOf(recipe.getLike().size()));
 
         // set on click for the card view
         holder.myRecipeCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("recipeData", recipe);
 
                 Intent intent = new Intent(context, RecipeItem.class);
-                intent.putExtras(bundle);
+                intent.putExtra("recipeID", recipe.getRecipeID());
                 context.startActivity(intent);
             }
         });
@@ -89,4 +90,5 @@ public class MyRecipeAdapter extends RecyclerView.Adapter<MyRecipeVH> {
     public int getItemCount() {
         return recipes.size();
     }
+
 }
