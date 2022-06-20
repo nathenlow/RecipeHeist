@@ -93,6 +93,7 @@ public class ProfileFragment extends Fragment {
         // to use methods from MainActivity
         MainActivity mainActivity = (MainActivity) getActivity();
 
+        mainActivity.setActionBarTitle("Profile");
         // update profile page
         profileImage.setImageResource(R.drawable.default_profile_1);
         username.setText(user.getUsername());

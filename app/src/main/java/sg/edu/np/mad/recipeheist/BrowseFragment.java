@@ -3,11 +3,17 @@ package sg.edu.np.mad.recipeheist;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -60,10 +66,15 @@ public class BrowseFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_browse, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_browse, container, false);
 
-        return view;
+        MainActivity mainActivity = (MainActivity) getActivity();
+
+        mainActivity.setActionBarTitle("Browse");
+
+        return rootView;
     }
+
 
     public void goToRecipe(String recipeID)
     {

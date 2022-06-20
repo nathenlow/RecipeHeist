@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
         }else {
             binding.bottomNavigationView.setSelectedItemId(R.id.browse);
             replaceFragment(new BrowseFragment(), R.id.frameLayout);
-            getSupportActionBar().setTitle("Browse");
         }
     }
 
@@ -65,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         replaceFragment(new BrowseFragment(), R.id.frameLayout);
-        getSupportActionBar().setTitle("Browse");
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -76,15 +74,12 @@ public class MainActivity extends AppCompatActivity {
             switch (item.getItemId()){
                 case R.id.browse:
                     replaceFragment(new BrowseFragment(), R.id.frameLayout);
-                    getSupportActionBar().setTitle("Browse");
                     break;
                 case R.id.updates:
                     replaceFragment(new UpdatesFragment(), R.id.frameLayout);
-                    getSupportActionBar().setTitle("Updates");
                     break;
                 case R.id.download:
                     replaceFragment(new DownloadFragment(), R.id.frameLayout);
-                    getSupportActionBar().setTitle("Download");
                     break;
                 case R.id.profile:
 
@@ -123,7 +118,6 @@ public class MainActivity extends AppCompatActivity {
                         profileFragment.setArguments(user_data);
                         // Replace fragment
                         replaceFragment(profileFragment, R.id.frameLayout);
-                        getSupportActionBar().setTitle("Profile");
 
 
                     }
@@ -153,24 +147,8 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.top_nav_browse_menu, menu);
-        MenuItem menuItem = menu.findItem(R.id.app_bar_search);
-        SearchView searchView = (SearchView)  menuItem.getActionView();
-        searchView.setQueryHint("Search Umami");
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-        return super.onCreateOptionsMenu(menu);
+    public void setActionBarTitle(String title){
+        getSupportActionBar().setTitle(title);
     }
 
     public boolean isConnected() {
