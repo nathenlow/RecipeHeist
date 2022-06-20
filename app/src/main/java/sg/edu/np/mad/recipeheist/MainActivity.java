@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -26,6 +27,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 
 import sg.edu.np.mad.recipeheist.databinding.ActivityMainBinding;
@@ -51,6 +57,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -78,48 +87,44 @@ public class MainActivity extends AppCompatActivity {
                     getSupportActionBar().setTitle("Download");
                     break;
                 case R.id.profile:
-                    //TODO: if user login
+
                     if (currentUser != null){
 
+                        String uid = "\"" + currentUser.getUid().toString() + "\"";
+
                         User user = new User();
-                        ArrayList<String> following = new ArrayList<>();
 
-                        //Get user data from firebase database
-                        DatabaseReference myRef = FirebaseDatabase.getInstance("https://recipeheist-ce646-default-rtdb.asia-southeast1.firebasedatabase.app/")
-                                .getReference("Users")
-                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                        myRef.addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                user.setUsername(snapshot.child("username").getValue().toString());
-                                user.setUserID(snapshot.child("userID").getValue().toString());
-                                user.setEmail(snapshot.child("email").getValue().toString());
-                                user.setDescription(snapshot.child("description").getValue().toString());
+                        // get user info from database
+                        try {
+                            String dataBaseUsers = getUser(uid);
+                            dataBaseUsers = dataBaseUsers.substring(1, dataBaseUsers.length()-1);
+                            System.out.println(dataBaseUsers);
 
-                                //Check if user has any following
-                                if (snapshot.hasChild("following")){
-                                    for (int i = 1; i <= snapshot.child("following").getChildrenCount(); i++){
-                                        following.add(snapshot.child("following").child(String.valueOf(i)).getValue(String.class));
-                                    }
-                                }
-                                user.setFollowing(following);
+                            JSONObject jsonObject = new JSONObject(dataBaseUsers);
+                            System.out.println(jsonObject);
 
-                                // Create bundle to pass user data to fragment
-                                Bundle user_data = new Bundle();
-                                user_data.putParcelable("userData", user);
-                                //set argument to ProfileFragment
-                                ProfileFragment profileFragment = new ProfileFragment();
-                                profileFragment.setArguments(user_data);
-                                // Replace fragment
-                                replaceFragment(profileFragment, R.id.frameLayout);
-                                getSupportActionBar().setTitle("Profile");
-                            }
+                            user.setUserID(jsonObject.getString("userID"));
+                            user.setEmail(jsonObject.getString("email"));
+                            user.setUsername(jsonObject.getString("username"));
+                            user.setDescription(jsonObject.getString("description"));
+                            user.setFollowing(convertJArrayToArrayList(jsonObject.getJSONArray("following")));
+                            user.setBookmark(convertJArrayToArrayList(jsonObject.getJSONArray("bookmark")));
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
+                        } catch (IOException | JSONException e) {
+                            e.printStackTrace();
+                        }
 
-                            }
-                        });
+
+                        // Create bundle to pass user data to fragment
+                        Bundle user_data = new Bundle();
+                        user_data.putParcelable("userData", user);
+                        //set argument to ProfileFragment
+                        ProfileFragment profileFragment = new ProfileFragment();
+                        profileFragment.setArguments(user_data);
+                        // Replace fragment
+                        replaceFragment(profileFragment, R.id.frameLayout);
+                        getSupportActionBar().setTitle("Profile");
+
 
                     }
                     else {
@@ -205,9 +210,28 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // function to convert jsonArray to ArrayList
+    public ArrayList<String> convertJArrayToArrayList(JSONArray jsonArray) throws JSONException {
+        ArrayList<String> arrayList = new ArrayList<>();
+
+        if (jsonArray != null){
+            for (int i = 0; i < jsonArray.length(); i++){
+                arrayList.add(jsonArray.getString(i));
+            }
+             return arrayList;
+        }
+        else{
+            return arrayList;
+        }
+    }
 
 
-
+    // function to get users from restDB
+    public String getUser(String uid) throws IOException {
+        RestDB restDB = new RestDB();
+        String response = restDB.get("https://recipeheist-567c.restdb.io/rest/users?q={\"userID\": " + uid + "}");
+        return response;
+    }
 
 
 

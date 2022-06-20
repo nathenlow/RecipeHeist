@@ -1,68 +1,98 @@
 package sg.edu.np.mad.recipeheist;
 
+import static java.lang.Integer.parseInt;
+
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.FileNotFoundException;
 
-import sg.edu.np.mad.recipeheist.databinding.ActivityMainBinding;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import org.json.JSONArray;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class AddRecipeActivity extends AppCompatActivity {
 
-    private User user;
-    private Recipe recipe;
-    private TextView editFoodName, editFoodDescription, editDuration, editCategory, editIngredients, editInstructions;
+    private User user = new User();
+    private Recipe recipe = new Recipe();
+    private TextView editRecipeName, editRecipeDescription, editDuration, editCategory, editServing, editIngredients, editInstructions;
     private ImageButton editFoodImage;
-    private Button createBtn;
+    private ProgressBar progressBar;
 
     private ActivityResultLauncher<String> getImageFromGallery;
+
+    private StorageReference storageReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_recipe);
 
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        // update page header
+        getSupportActionBar().setTitle("Create recipe");
+
         // retrieve data passed
         user = getIntent().getParcelableExtra("userData");
+        // update recipe's userID
+        recipe.setUserID(user.getUserID());
 
-        editFoodName = findViewById(R.id.editFoodName);
-        editFoodDescription = findViewById(R.id.editFoodDescription);
+        editRecipeName = findViewById(R.id.editRecipeName);
+        editRecipeDescription = findViewById(R.id.editRecipeDescription);
         editDuration = findViewById(R.id.editDuration);
         editCategory = findViewById(R.id.editCategory);
+        editServing = findViewById(R.id.editServing);
         editIngredients = findViewById(R.id.editIngredient);
         editInstructions = findViewById(R.id.editInstruction);
         editFoodImage = findViewById(R.id.editFoodImage);
-        createBtn = findViewById(R.id.createBtn);
+        Button createRecipeBtn = findViewById(R.id.createRecipeBtn);
+        progressBar = findViewById(R.id.progressBar2);
 
         getImageFromGallery = registerForActivityResult(new ActivityResultContracts.GetContent(), new ActivityResultCallback<Uri>() {
             @Override
             public void onActivityResult(Uri result) {
-                // resize image obtained from gallery
-                try {
-                    editFoodImage.setImageBitmap(decodeUri(AddRecipeActivity.this, result, 480));
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
+                if (result != null) {
+                    // resize image obtained from gallery
+                    try {
+                        Bitmap bitmap = decodeUri(AddRecipeActivity.this, result, 480);
+                        editFoodImage.setImageBitmap(bitmap);
+
+                        // set recipes image path
+                        recipe.setImagePath(result.toString());
+
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else{
+                    Toast.makeText(AddRecipeActivity.this, "No image selected, please select an image!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -77,18 +107,127 @@ public class AddRecipeActivity extends AppCompatActivity {
         });
 
         // set onclick listener for "create button"
-        createBtn.setOnClickListener(new View.OnClickListener() {
+        createRecipeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressBar.setVisibility(View.VISIBLE);
+                try {
+                    addRecipe();
+                }
+                catch (Exception e){
+                    progressBar.setVisibility(View.GONE);
+                    editServing.setError("Required!");
+                    editServing.requestFocus();
+                }
+
 
             }
         });
 
     }
 
-    private User fetchUser(User currentUser){
-        User user = currentUser;
-        return user;
+    // function to add recipe
+    public void addRecipe(){
+        // set title of recipe
+        String title = editRecipeName.getText().toString().trim();
+        // set description of recipe
+        String description = editRecipeDescription.getText().toString().trim();
+        // set duration of recipe
+        String duration = editDuration.getText().toString().trim();
+        // set serving size of recipe
+        int serving = parseInt(editServing.getText().toString().trim());
+        // set category of recipe
+        String category = editCategory.getText().toString().trim();
+        
+        String ingre = editIngredients.getText().toString().trim();
+        String instr = editInstructions.getText().toString().trim();
+        
+
+        // Start of validation for input
+        // ---------------------------------------------------------------
+
+        // validate title:
+        if (title.isEmpty()){
+            progressBar.setVisibility(View.GONE);
+            editRecipeName.setError("Required!");
+            editRecipeName.requestFocus();
+        }
+        else if (title.length() > 100){
+            progressBar.setVisibility(View.GONE);
+            editRecipeName.setError("Number of characters exceeds the limit of 100!");
+            editRecipeName.requestFocus();
+        }
+
+        // validate the duration
+        else if (duration.isEmpty()){
+            progressBar.setVisibility(View.GONE);
+            editDuration.setError("Required!");
+            editDuration.requestFocus();
+        }
+        else if (!duration.contains("min") && !duration.contains("hr")){
+            progressBar.setVisibility(View.GONE);
+            editDuration.setError("must contain \"hr\" or \"min\"!");
+            editDuration.requestFocus();
+        }
+
+        // validate serving
+        else if (serving == 0 || serving < 0){
+            progressBar.setVisibility(View.GONE);
+            editServing.setError("Must be 1 or more!");
+            editServing.requestFocus();
+        }
+        
+        // validate ingredients
+        else if (ingre.isEmpty()){
+            progressBar.setVisibility(View.GONE);
+            editIngredients.setError("Required!");
+            editIngredients.requestFocus();
+        }
+        
+        // validate instruction
+        else if (instr.isEmpty()){
+            progressBar.setVisibility(View.GONE);
+            editInstructions.setError("Required!");
+            editInstructions.requestFocus();
+        }
+        
+        // End of validation for input
+
+        else {
+            
+            // set ingredients of recipe
+            ArrayList<String> ingredientList = separateString(ingre);
+            // set instructions of recipe
+            ArrayList<String> instructionList = separateString(instr);
+            
+            recipe.setTitle(title);
+            // set image name
+            String imagePath = recipe.getUserID() + "_" + recipe.getTitle();
+
+            // convert arrayList to JsonArray
+            JSONArray ingredients = new JSONArray(ingredientList);
+            JSONArray instructions = new JSONArray(instructionList);
+
+            // upload image to firebase
+            uploadImage(recipe, Uri.parse(recipe.getImagePath()));
+
+            // push info to database
+            try {
+                pushRecipeToDB(title, description, duration, serving, imagePath, category, ingredients, instructions, recipe.getUserID());
+
+                progressBar.setVisibility(View.GONE);
+                // message to notify users of post
+                Toast.makeText(AddRecipeActivity.this, "Recipe created successfully!", Toast.LENGTH_SHORT).show();
+
+                // sent user back to user page
+                Intent intent = new Intent(AddRecipeActivity.this, MainActivity.class);
+                startActivity(intent);
+
+            } catch (IOException e) {
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(AddRecipeActivity.this, "Recipe creation is unsuccessful, please try again!", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     // function to resize image
@@ -115,5 +254,51 @@ public class AddRecipeActivity extends AppCompatActivity {
         return BitmapFactory.decodeStream(context.getContentResolver().openInputStream(uri), null, option2);
     }
 
+    // function to filter/sort string to an array (;)
+    private ArrayList<String> separateString(String stringToBeSeparated){
+        ArrayList<String> stringArrayList = new ArrayList<>();
+        // separate the string
+        String[] splitArray = stringToBeSeparated.split(";");
+        // add each section into the arrayList
+        for (int i = 0; i < splitArray.length; i++){
+            stringArrayList.add(splitArray[i]);
+        }
+
+        return stringArrayList;
+    }
+
+    // function to update recipe to database
+    public void pushRecipeToDB (String title, String description, String duration, int serving, String imagePath, String foodCategory, JSONArray ingredient, JSONArray instruction, String userID) throws IOException {
+        RestDB restDB = new RestDB();
+        System.out.println("still working");
+        String json = restDB.createRecipe(title, description, duration, serving, imagePath, foodCategory, ingredient, instruction, userID);
+        System.out.println(restDB.client);
+        System.out.println(json);
+        String response = restDB.post("https://recipeheist-567c.restdb.io/rest/recipe", json);
+        System.out.println(restDB.JSON);
+        System.out.println(response);
+    }
+
+    // function to convert bitmap to jpeg
+
+
+    // function to upload image
+    private void uploadImage(Recipe recipe, Uri uri){
+        // create a name of file
+        String fileName = recipe.getUserID() + "_" + recipe.getTitle();
+        storageReference = FirebaseStorage.getInstance().getReference("Recipe_image/"+fileName);
+
+        storageReference.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(AddRecipeActivity.this, "Upload is unsuccessful, please try again!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
 }

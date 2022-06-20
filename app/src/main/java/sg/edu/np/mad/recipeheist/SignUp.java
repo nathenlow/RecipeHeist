@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 
@@ -20,9 +21,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
+import android.util.Patterns;
 
 
 public class SignUp extends AppCompatActivity {
@@ -30,6 +31,7 @@ public class SignUp extends AppCompatActivity {
 
     private EditText editEmail, editUsername, editPassword;
     private Button btnSignUp;
+    private ProgressBar progressBar;
 
 
     @Override
@@ -47,6 +49,8 @@ public class SignUp extends AppCompatActivity {
         editUsername = findViewById(R.id.editTextTUsername);
         editPassword = findViewById(R.id.editPassword);
 
+        progressBar = findViewById(R.id.progressBar);
+
         btnSignUp = findViewById(R.id.btnSignUp);
 
 
@@ -54,10 +58,8 @@ public class SignUp extends AppCompatActivity {
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (editEmail.getText().toString().trim().isEmpty() || editPassword.getText().toString().trim().isEmpty()){
-                    Toast.makeText(SignUp.this, "Empty fields are not allowed!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+                // show progress bar
+                progressBar.setVisibility(View.VISIBLE);
                 signUpUser();
             }
         });
@@ -69,31 +71,73 @@ public class SignUp extends AppCompatActivity {
         String password = editPassword.getText().toString().trim();
         String username = editUsername.getText().toString().trim();
 
-        mAuth.createUserWithEmailAndPassword(email,password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            boolean success0 = true;
-                            Toast.makeText(SignUp.this, FirebaseAuth.getInstance().getCurrentUser().getUid(), Toast.LENGTH_SHORT).show();
-                            try {
-                                saveUserToDB(email, username);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                                success0 = false;
+        // validate user input
+
+        // validate the email:
+        if (email.isEmpty()){
+            progressBar.setVisibility(View.GONE);
+            editEmail.setError("Required!");
+            editEmail.requestFocus();
+            return;
+        }
+        else if (Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+            progressBar.setVisibility(View.GONE);
+            editEmail.setError("Please enter a valid email!");
+            editEmail.requestFocus();
+            return;
+        }
+
+        // validate username
+        else if (username.isEmpty()){
+            progressBar.setVisibility(View.GONE);
+            editUsername.setError("Required!");
+            editUsername.requestFocus();
+            return;
+        }
+
+        // validate the password:
+        else if (password.isEmpty()){
+            progressBar.setVisibility(View.GONE);
+            editPassword.setError("Required!");
+            editPassword.requestFocus();
+            return;
+        }
+        else if (password.length() < 6){
+            progressBar.setVisibility(View.GONE);
+            editPassword.setError("Minimum password length is 6 characters!");
+            editPassword.requestFocus();
+            return;
+        }
+        else {
+
+            mAuth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                boolean success0 = true;
+                                Toast.makeText(SignUp.this, FirebaseAuth.getInstance().getCurrentUser().getUid(), Toast.LENGTH_SHORT).show();
+                                try {
+                                    saveUserToDB(email, username);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                    success0 = false;
+                                    progressBar.setVisibility(View.GONE);
+                                    Toast.makeText(SignUp.this, "User sign up failed, please try again!", Toast.LENGTH_SHORT).show();
+                                }
+                                if (success0) {
+                                    progressBar.setVisibility(View.GONE);
+                                    Toast.makeText(SignUp.this, "User has been registered", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(SignUp.this, MainActivity.class);
+                                    startActivity(intent);
+                                }
+                            } else {
+                                progressBar.setVisibility(View.GONE);
                                 Toast.makeText(SignUp.this, "User sign up failed, please try again!", Toast.LENGTH_SHORT).show();
                             }
-                            if (success0){
-                                Toast.makeText(SignUp.this, "User has been registered", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(SignUp.this, MainActivity.class);
-                                startActivity(intent);
-                            }
                         }
-                        else{
-                            Toast.makeText(SignUp.this, "User sign up failed, please try again!", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+                    });
+        }
     }
 
     public void saveUserToDB(String email, String username) throws IOException {

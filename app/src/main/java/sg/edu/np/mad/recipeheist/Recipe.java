@@ -1,14 +1,18 @@
 package sg.edu.np.mad.recipeheist;
 
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Recipe {
-    private int recipeID;
+public class Recipe implements Serializable, Parcelable {
+    private String recipeID;
     private String title;
     private String description;
     private String duration;
-    private String servings;
+    private int servings;
     private String imagePath;
     private String foodcategory;
     private ArrayList<String> ingridient;
@@ -18,7 +22,7 @@ public class Recipe {
 
     public Recipe(){}
 
-    public Recipe(int recipeID, String title, String description, String duration, String servings, String imagePath, String foodcategory, ArrayList<String> ingridient, ArrayList<String> instructions, ArrayList<String> like, String userID) {
+    public Recipe(String recipeID, String title, String description, String duration, int servings, String imagePath, String foodcategory, ArrayList<String> ingridient, ArrayList<String> instructions, ArrayList<String> like, String userID) {
         this.recipeID = recipeID;
         this.title = title;
         this.description = description;
@@ -32,11 +36,37 @@ public class Recipe {
         this.userID = userID;
     }
 
-    public int getRecipeID() {
+    protected Recipe(Parcel in) {
+        recipeID = in.readString();
+        title = in.readString();
+        description = in.readString();
+        duration = in.readString();
+        servings = in.readInt();
+        imagePath = in.readString();
+        foodcategory = in.readString();
+        ingridient = in.createStringArrayList();
+        instructions = in.createStringArrayList();
+        like = in.createStringArrayList();
+        userID = in.readString();
+    }
+
+    public static final Creator<Recipe> CREATOR = new Creator<Recipe>() {
+        @Override
+        public Recipe createFromParcel(Parcel in) {
+            return new Recipe(in);
+        }
+
+        @Override
+        public Recipe[] newArray(int size) {
+            return new Recipe[size];
+        }
+    };
+
+    public String getRecipeID() {
         return recipeID;
     }
 
-    public void setRecipeID(int recipeID) {
+    public void setRecipeID(String recipeID) {
         this.recipeID = recipeID;
     }
 
@@ -64,11 +94,11 @@ public class Recipe {
         this.duration = duration;
     }
 
-    public String getServings() {
+    public int getServings() {
         return servings;
     }
 
-    public void setServings(String servings) {
+    public void setServings(int servings) {
         this.servings = servings;
     }
 
@@ -118,6 +148,26 @@ public class Recipe {
 
     public void setUserID(String userID) {
         this.userID = userID;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(recipeID);
+        dest.writeString(title);
+        dest.writeString(description);
+        dest.writeString(duration);
+        dest.writeInt(servings);
+        dest.writeString(imagePath);
+        dest.writeString(foodcategory);
+        dest.writeStringList(ingridient);
+        dest.writeStringList(instructions);
+        dest.writeStringList(like);
+        dest.writeString(userID);
     }
 }
 
