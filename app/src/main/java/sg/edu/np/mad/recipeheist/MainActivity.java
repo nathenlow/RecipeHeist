@@ -135,6 +135,12 @@ public class MainActivity extends AppCompatActivity {
 
     //methods
 
+    public void stack(Fragment fragment){
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.frameLayout, fragment);
+        ft.addToBackStack(null);
+        ft.commit();
+    }
 
 
     public void replaceFragment(Fragment fragment, int Rid){

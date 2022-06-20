@@ -1,12 +1,35 @@
 package sg.edu.np.mad.recipeheist;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.TypedArray;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import sg.edu.np.mad.recipeheist.adapter.RecentSearchAdapter;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -16,49 +39,159 @@ import android.view.ViewGroup;
 public class SearchFoodFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String SHARED_PREFS = "sharedPrefs";
+    private static final String RECENT_SEARCH = "recentSearches";
+    private View rootview;
+    private JSONArray recentlist;
+    private EditText editTextsearch;
+    private TextView clearall;
+    MainActivity mainActivity;
+
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     public SearchFoodFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SearchFoodFragment.
-     */
+
     // TODO: Rename and change types and number of parameters
-    public static SearchFoodFragment newInstance(String param1, String param2) {
+    public static SearchFoodFragment newInstance() {
         SearchFoodFragment fragment = new SearchFoodFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        setHasOptionsMenu(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_search_food, container, false);
+        rootview = inflater.inflate(R.layout.fragment_search_food, container, false);
+        mainActivity = (MainActivity) getActivity();
+
+        //change actionbar
+        mainActivity.getSupportActionBar().setCustomView(R.layout.search_action_bar);
+        mainActivity.getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        mainActivity.getSupportActionBar().setDisplayShowCustomEnabled(true);
+        mainActivity.getSupportActionBar().setCustomView(R.layout.search_action_bar);
+        mainActivity.getSupportActionBar().setElevation(0);
+
+        editTextsearch = mainActivity.findViewById(R.id.editTextsearch);
+        clearall = rootview.findViewById(R.id.clearall);
+
+
+        mrecycler();
+
+        //click search on keyboard
+        editTextsearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    performSearch();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        clearall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteall();
+                mrecycler();
+            }
+        });
+
+
+
+        return rootview;
     }
+
+
+
+    public void performSearch(){
+        String query = editTextsearch.getText().toString().trim();
+        savedata(query);
+        mrecycler();
+        Bundle result = new Bundle();
+        result.putString("query", query);
+        getParentFragmentManager().setFragmentResult("search", result);
+        mainActivity.stack(new BrowseFragment());
+    }
+
+    public void fillSearch(String query){
+        editTextsearch.setText(query);
+
+    }
+
+
+    public void savedata(String query) {
+        SharedPreferences sharedPreferences = mainActivity.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        recentlist.put(query.trim());
+        editor.putString(RECENT_SEARCH, recentlist.toString());
+        editor.apply();
+    }
+
+    public void deletedata(int position){
+        SharedPreferences sharedPreferences = mainActivity.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        recentlist.remove(position);
+        editor.putString(RECENT_SEARCH, recentlist.toString());
+        editor.apply();
+    }
+
+    public void deleteall(){
+        SharedPreferences sharedPreferences = mainActivity.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.apply();
+    }
+
+    public void loaddata() throws JSONException {
+        SharedPreferences sharedPreferences = mainActivity.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
+        String recentsearch = sharedPreferences.getString(RECENT_SEARCH, "[]");
+        recentlist = new JSONArray(recentsearch);
+    }
+
+
+    //recyclerview adappter
+    public void mrecycler (){
+        try {
+            loaddata();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        RecyclerView recyclerView;
+        recyclerView = rootview.findViewById(R.id.recentitems);
+        if (!recentlist.equals(new JSONArray())){
+            recyclerView.setVisibility(View.VISIBLE);
+            RecentSearchAdapter adapter = new RecentSearchAdapter(this.mainActivity, recentlist,
+                new DeleteListener() {
+                    @Override
+                    public void onDelete(int position) {
+                        deletedata(position);
+                        mrecycler();
+                    }
+                },
+                new RecentListener() {
+                    @Override
+                    public void onRecent(String query) {
+                        fillSearch(query);
+                    }
+                }
+            );
+            recyclerView.setAdapter(adapter);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this.mainActivity));
+        }
+        else {
+            recyclerView.setVisibility(View.GONE);
+        }
+    }
+
 }
