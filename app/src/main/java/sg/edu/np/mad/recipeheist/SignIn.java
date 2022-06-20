@@ -2,6 +2,7 @@ package sg.edu.np.mad.recipeheist;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -76,5 +77,11 @@ public class SignIn extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intentback = new Intent(SignIn.this, MainActivity.class);
+        startActivity(intentback);
     }
 }
