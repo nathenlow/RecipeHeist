@@ -31,6 +31,8 @@ public class BrowseFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    MainActivity mainActivity;
+
     public BrowseFragment() {
         // Required empty public constructor
     }
@@ -60,6 +62,8 @@ public class BrowseFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -67,12 +71,34 @@ public class BrowseFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_browse, container, false);
-
-        MainActivity mainActivity = (MainActivity) getActivity();
-
-        mainActivity.setActionBarTitle("Browse");
+        mainActivity = (MainActivity) getActivity();
+        mainActivity.getSupportActionBar().setTitle("Browse");
 
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.top_nav_browse_menu, menu);
+        MenuItem menusearch = menu.findItem(R.id.app_bar_search);
+        MenuItem menubookmark = menu.findItem(R.id.viewbookmark);
+        //for search
+        menusearch.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                mainActivity.replaceFragment(new SearchFoodFragment(), R.id.frameLayout);
+                return false;
+            }
+        });
+
+        //for bookmark
+        menubookmark.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                return false;
+            }
+        });
+
     }
 
 

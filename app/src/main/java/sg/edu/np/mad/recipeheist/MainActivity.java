@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         Fragment f = this.getSupportFragmentManager().findFragmentById(R.id.frameLayout);
         if(f instanceof BrowseFragment){
-
             moveTaskToBack(true);
         }else {
             binding.bottomNavigationView.setSelectedItemId(R.id.browse);
@@ -132,6 +131,11 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
     }
+
+
+    //methods
+
+
 
     public void replaceFragment(Fragment fragment, int Rid){
         FragmentManager fragmentManager = getSupportFragmentManager();
