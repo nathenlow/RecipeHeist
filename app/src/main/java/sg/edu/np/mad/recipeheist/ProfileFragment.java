@@ -6,7 +6,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +22,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -34,10 +34,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ProfileFragment extends Fragment {
 
     private User user;
-    private TextView username, description,  noOfRecipes, following;
-    private CircleImageView profileImage;
-    private Button editProfileBtn;
-    private FloatingActionButton addRecipeBtn;
+    private TextView noOfRecipes;
     private Bundle user_data;
     private JSONArray recipeJArray;
     private View rootView;
@@ -48,10 +45,8 @@ public class ProfileFragment extends Fragment {
         // Required empty public constructor
     }
 
-    // TODO: Rename and change types and number of parameters
     public static ProfileFragment newInstance() {
-        ProfileFragment fragment = new ProfileFragment();
-        return fragment;
+        return new ProfileFragment();
     }
 
     @Override
@@ -82,11 +77,11 @@ public class ProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        profileImage = rootView.findViewById(R.id.profileImage);
-        username = rootView.findViewById(R.id.profileName);
-        description = rootView.findViewById(R.id.profileDescription);
-        editProfileBtn = rootView.findViewById(R.id.editProfileBtn);
-        addRecipeBtn = rootView.findViewById(R.id.addRecipeBtn);
+        CircleImageView profileImage = rootView.findViewById(R.id.profileImage);
+        TextView username = rootView.findViewById(R.id.profileName);
+        TextView description = rootView.findViewById(R.id.profileDescription);
+        Button editProfileBtn = rootView.findViewById(R.id.editProfileBtn);
+        FloatingActionButton addRecipeBtn = rootView.findViewById(R.id.addRecipeBtn);
         noOfRecipes = rootView.findViewById(R.id.noOfRecipes);
         progressBar = rootView.findViewById(R.id.progressBarProfile);
 
@@ -109,8 +104,9 @@ public class ProfileFragment extends Fragment {
                 editProfileFragment.setArguments(user_data);
 
                 // pass data from this fragment to MainActivity
+                assert mainActivity != null;
                 mainActivity.replaceFragment(editProfileFragment , mainActivity.findViewById(R.id.frameLayout).getId());
-                mainActivity.getSupportActionBar().setTitle("Profile Settings");
+                Objects.requireNonNull(mainActivity.getSupportActionBar()).setTitle("Profile Settings");
             }
         });
 
@@ -214,13 +210,7 @@ public class ProfileFragment extends Fragment {
     // function to get users from restDB
     public String getUserRecipes(String uid) throws IOException {
         RestDB restDB = new RestDB();
-        String response = restDB.get("https://recipeheist-567c.restdb.io/rest/recipe?q={\"userID\": " + uid + "}");
-        return response;
+        return restDB.get("https://recipeheist-567c.restdb.io/rest/recipe?q={\"userID\": " + uid + "}");
     }
-    
-    public void goToSignIn()
-    {
-        Intent intent = new Intent(getActivity(), SignIn.class);
-        startActivity(intent);
-    }
+
 }

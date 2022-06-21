@@ -32,9 +32,8 @@ import sg.edu.np.mad.recipeheist.adapter.BrowseAdapter;
 
 public class BrowseFragment extends Fragment {
 
-    private int count = 0;
     private int pagecount = 0;
-    boolean needanotherpage = false;
+    boolean needanotherpage;
     private int perpage = 10;
     private ArrayList<RecipePreview> recipelist;
     private RecyclerView RView;
@@ -88,6 +87,7 @@ public class BrowseFragment extends Fragment {
             }
         });
 
+        // because sometimes the query from the fragment takes some time to get back
         new CountDownTimer(2000, 1000) {
 
             public void onTick(long millisUntilFinished) {
@@ -102,24 +102,20 @@ public class BrowseFragment extends Fragment {
 
 
 
+        // grid layout splitting display into two columns
         GridLayoutManager manager = new GridLayoutManager(mainActivity, 2);
         RView.setLayoutManager(manager);
         nestedSV.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
-            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()) {
-                    // in this method we are incrementing page number,
-                    // making progress bar visible and calling get data method.
-                    count++;
-                    // on below line we are making our progress bar visible.
-                    PBLoading.setVisibility(View.VISIBLE);
-                    if (count % 5 == 0) {
-                        // on below line we are again calling
-                        // a method to load data in our array list.
-                        if (needanotherpage){
-                            searchordefault();
-                        }
+            public void onScrollChange(NestedScrollView scrollView, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
 
+                View view = (View) scrollView.getChildAt(scrollView.getChildCount() - 1);
+                int diff = (view.getBottom() - (scrollView.getHeight() + scrollView.getScrollY()));
+
+                if (needanotherpage){
+                    // if diff is zero, then the bottom has been reached
+                    if (diff == 0) {
+                        searchordefault();
                     }
                 }
             }
@@ -153,7 +149,9 @@ public class BrowseFragment extends Fragment {
 
     }
 
+    //combine all the fuctions for get from restdb
     public  void searchordefault(){
+        needanotherpage = false;
         try {
             if (query.equals("")){
                 defaultRecipe(pagecount);
@@ -163,6 +161,8 @@ public class BrowseFragment extends Fragment {
             }
             pagecount += 1;
             getData();
+            if (needanotherpage){PBLoading.setVisibility(View.VISIBLE);}
+            else {PBLoading.setVisibility(View.GONE);}
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
@@ -179,9 +179,6 @@ public class BrowseFragment extends Fragment {
         if (recipearray.length() == perpage){
             needanotherpage = true;
         }
-        else {
-            PBLoading.setVisibility(View.GONE);
-        }
     }
 
 
@@ -194,11 +191,9 @@ public class BrowseFragment extends Fragment {
         if (recipearray.length() >= perpage){
             needanotherpage = true;
         }
-        else {
-            PBLoading.setVisibility(View.GONE);
-        }
     }
 
+    //to convert json object into RecipePreview object to pass to recycler view
     public void getData() throws JSONException {
         for (int i = 0; i < recipearray.length(); i++) {
             JSONObject recipeobj = (JSONObject) recipearray.get(i);
@@ -212,18 +207,6 @@ public class BrowseFragment extends Fragment {
             RView.setAdapter(browseAdapter);
         }
 
-    }
-
-    public String getUser(String userid){
-        //String userid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        RestDB example = new RestDB();
-        String response = null;
-        try {
-            response = example.get("https://recipeheist-567c.restdb.io/rest/users?q={\"userID\":\"" + userid + "\"}&h{\"$fields\":{\"username\":1}}");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return response;
     }
 
 }
