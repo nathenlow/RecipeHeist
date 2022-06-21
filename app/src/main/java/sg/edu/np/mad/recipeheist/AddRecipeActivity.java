@@ -261,7 +261,7 @@ public class AddRecipeActivity extends AppCompatActivity {
         String[] splitArray = stringToBeSeparated.split(";");
         // add each section into the arrayList
         for (int i = 0; i < splitArray.length; i++){
-            stringArrayList.add(splitArray[i]);
+            stringArrayList.add(splitArray[i].trim());
         }
 
         return stringArrayList;
