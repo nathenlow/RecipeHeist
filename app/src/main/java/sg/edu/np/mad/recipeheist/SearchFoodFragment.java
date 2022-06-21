@@ -184,7 +184,7 @@ public class SearchFoodFragment extends Fragment {
     }
 
 
-    //recyclerview adappter
+    //recyclerview adapter
     public void mrecycler (){
         try {
             loaddata();
