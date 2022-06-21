@@ -2,9 +2,12 @@ package sg.edu.np.mad.recipeheist;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
@@ -42,6 +45,7 @@ public class BrowseFragment extends Fragment {
     private NestedScrollView nestedSV;
     private JSONArray recipearray;
     private String query = "";
+    private ConstraintLayout loadingview;
 
     MainActivity mainActivity;
 
@@ -75,7 +79,7 @@ public class BrowseFragment extends Fragment {
         RView = rootView.findViewById(R.id.RView);
         PBLoading = rootView.findViewById(R.id.PBLoading);
         nestedSV = rootView.findViewById(R.id.nestedSV);
-
+        loadingview = rootView.findViewById(R.id.loadingview);
 
 
         //get data from search
@@ -91,9 +95,7 @@ public class BrowseFragment extends Fragment {
         new CountDownTimer(2000, 1000) {
 
             public void onTick(long millisUntilFinished) {
-
             }
-
             public void onFinish() {
                 searchordefault();
             }
@@ -174,7 +176,7 @@ public class BrowseFragment extends Fragment {
     public void searchRecipes(String query, int page) throws IOException, JSONException {
         int skip = perpage * page;
         RestDB restDB = new RestDB();
-        String response = restDB.get("https://recipeheist-567c.restdb.io/rest/recipe?q={\"title\": {\"$regex\" :\"" + query + "\"}}&h={\"$fields\":{\"_id\":1,\"title\":1,\"duration\":1,\"imagePath\":1},\"$max\":"+perpage+",\"$skip\":"+skip+",\"$orderby\":{\"_created\":1}}");
+        String response = restDB.get("https://recipeheist-567c.restdb.io/rest/recipe?q={\"title\": {\"$regex\" :\"" + query + "\"}}&h={\"$fields\":{\"_id\":1,\"title\":1,\"duration\":1,\"imagePath\":1},\"$max\":"+perpage+",\"$skip\":"+skip+",\"$orderby\":{\"_created\":-1}}");
         recipearray = new JSONArray(response);
         if (recipearray.length() == perpage){
             needanotherpage = true;
@@ -186,7 +188,7 @@ public class BrowseFragment extends Fragment {
     public void defaultRecipe(int page) throws IOException, JSONException {
         int skip = perpage * page;
         RestDB restDB = new RestDB();
-        String response = restDB.get("https://recipeheist-567c.restdb.io/rest/recipe?h={\"$fields\":{\"_id\":1,\"title\":1,\"duration\":1,\"imagePath\":1},\"$max\":"+perpage+",\"$skip\":"+skip+",\"$orderby\":{\"_created\":1}}");
+        String response = restDB.get("https://recipeheist-567c.restdb.io/rest/recipe?h={\"$fields\":{\"_id\":1,\"title\":1,\"duration\":1,\"imagePath\":1},\"$max\":"+perpage+",\"$skip\":"+skip+",\"$orderby\":{\"_created\":-1}}");
         recipearray = new JSONArray(response);
         if (recipearray.length() >= perpage){
             needanotherpage = true;
@@ -203,10 +205,34 @@ public class BrowseFragment extends Fragment {
             String duration = recipeobj.getString("duration");
 
             recipelist.add(new RecipePreview(id, title, imagePath, duration));
-            browseAdapter = new BrowseAdapter(mainActivity, recipelist);
+            browseAdapter = new BrowseAdapter(mainActivity, recipelist, new RecipeLoadListener() {
+                @Override
+                public void onLoad(String recipeID) {
+                    goToRecipe(recipeID);
+                }
+            });
             RView.setAdapter(browseAdapter);
         }
 
+    }
+
+
+
+    // go to recipe page
+    public void goToRecipe(String recipeID)
+    {
+        loadingview.setVisibility(View.VISIBLE);
+        // because sometimes the query from the fragment takes some time to get back
+        new CountDownTimer(1000, 1000) {
+            public void onTick(long millisUntilFinished) {
+            }
+            public void onFinish() {
+                loadingview.setVisibility(View.GONE);
+            }
+        }.start();
+        Intent intent = new Intent(mainActivity, RecipeItem.class);
+        intent.putExtra("recipeID", recipeID);
+        mainActivity.startActivity(intent);
     }
 
 }

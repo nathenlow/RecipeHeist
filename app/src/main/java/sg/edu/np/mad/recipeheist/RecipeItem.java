@@ -89,6 +89,7 @@ public class RecipeItem extends AppCompatActivity {
             recipeobj = new JSONObject(response);
 
             collapsing_toolbar.setTitle(recipeobj.getString("title"));
+            collapsing_toolbar.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
             numlikes = recipeobj.getJSONArray("like").length();
             noOfLikes.setText(String.valueOf(numlikes));
             description.setText(recipeobj.getString("description"));
