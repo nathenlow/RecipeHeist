@@ -1,10 +1,11 @@
 # RecipeHeist
-# Stage 1
-<hr>
-## Description
 
-## Team members
+## Stage 1
 
-## Roles and contributions
+### Description
 
-## Appendices
+### Team members
+
+### Roles and contributions
+
+### Appendices
