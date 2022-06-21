@@ -2,41 +2,47 @@ package sg.edu.np.mad.recipeheist;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.SearchView;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.CountDownTimer;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.ProgressBar;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link BrowseFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import sg.edu.np.mad.recipeheist.adapter.BrowseAdapter;
+
+
 public class BrowseFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private int count = 0;
     private int pagecount = 0;
+    boolean needanotherpage = false;
     private int perpage = 15;
+    private ArrayList<RecipePreview> recipelist;
+    private RecyclerView RView;
+    private BrowseAdapter browseAdapter;
+    private ProgressBar PBLoading;
+    private NestedScrollView nestedSV;
+    private JSONArray recipearray;
+    private String query = "";
 
     MainActivity mainActivity;
 
@@ -44,32 +50,14 @@ public class BrowseFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment BrowseFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static BrowseFragment newInstance(String param1, String param2) {
+    public static BrowseFragment newInstance() {
         BrowseFragment fragment = new BrowseFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
         setHasOptionsMenu(true);
     }
 
@@ -80,27 +68,68 @@ public class BrowseFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_browse, container, false);
         mainActivity = (MainActivity) getActivity();
+
+        //change action bar back to default
         mainActivity.getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
         mainActivity.getSupportActionBar().setTitle("Browse");
+        recipelist = new ArrayList<>();
+        RView = rootView.findViewById(R.id.RView);
+        PBLoading = rootView.findViewById(R.id.PBLoading);
+        nestedSV = rootView.findViewById(R.id.nestedSV);
 
+
+
+        //get data from search
         getParentFragmentManager().setFragmentResultListener("search", this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                String query = result.getString("query");
-                try {
-                    String response = searchRecipes(query, pagecount);
-                    System.out.println(response);
-                    pagecount += 1;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                onStart();
+                query = result.getString("query");
+            }
+        });
 
+        new CountDownTimer(3000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            public void onFinish() {
+                searchordefault();
+            }
+        }.start();
+
+
+
+
+        GridLayoutManager manager = new GridLayoutManager(mainActivity, 2);
+        RView.setLayoutManager(manager);
+        nestedSV.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()) {
+                    // in this method we are incrementing page number,
+                    // making progress bar visible and calling get data method.
+                    count++;
+                    // on below line we are making our progress bar visible.
+                    PBLoading.setVisibility(View.VISIBLE);
+                    if (count < 7) {
+                        // on below line we are again calling
+                        // a method to load data in our array list.
+                        if (needanotherpage){
+                            searchordefault();
+                        }
+
+                    }
+                }
             }
         });
 
         return rootView;
     }
 
+
+    //menu bar
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.top_nav_browse_menu, menu);
@@ -114,7 +143,6 @@ public class BrowseFragment extends Fragment {
                 return false;
             }
         });
-
         //for bookmark
         menubookmark.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
@@ -125,25 +153,79 @@ public class BrowseFragment extends Fragment {
 
     }
 
-    // function to get users from restDB
-    public String searchRecipes(String query, int page) throws IOException {
+    public  void searchordefault(){
+        try {
+            if (query.equals("")){
+                defaultRecipe(pagecount);
+            }
+            else {
+                searchRecipes(query,pagecount);
+            }
+            pagecount += 1;
+            getData();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // to get query data from rest db
+    public void searchRecipes(String query, int page) throws IOException, JSONException {
         int skip = perpage * page;
         RestDB restDB = new RestDB();
         String response = restDB.get("https://recipeheist-567c.restdb.io/rest/recipe?q={\"title\": {\"$regex\" :\"" + query + "\"}}&h={\"$fields\":{\"_id\":1,\"title\":1,\"userID\":1,\"imagePath\":1},\"$max\":"+perpage+",\"$skip\":"+skip+",\"$orderby\":{\"_created\":1}}");
-        return response;
+        recipearray = new JSONArray(response);
+        if (recipearray.length() == perpage){
+            needanotherpage = true;
+        }
+        else {
+            PBLoading.setVisibility(View.GONE);
+        }
     }
 
-    public String defaultRecipe(String query, int page) throws IOException {
+
+    //to get default data from rest db
+    public void defaultRecipe(int page) throws IOException, JSONException {
         int skip = perpage * page;
         RestDB restDB = new RestDB();
         String response = restDB.get("https://recipeheist-567c.restdb.io/rest/recipe?h={\"$fields\":{\"_id\":1,\"title\":1,\"userID\":1,\"imagePath\":1},\"$max\":"+perpage+",\"$skip\":"+skip+",\"$orderby\":{\"_created\":1}}");
+        recipearray = new JSONArray(response);
+        if (recipearray.length() >= perpage){
+            needanotherpage = true;
+        }
+        else {
+            PBLoading.setVisibility(View.GONE);
+        }
+    }
+
+    public void getData() throws JSONException {
+        for (int i = 0; i < recipearray.length(); i++) {
+            JSONObject recipeobj = (JSONObject) recipearray.get(i);
+            String id = recipeobj.getString("_id");
+            String title = recipeobj.getString("title");
+            String imagePath = recipeobj.getString("imagePath");
+            String userapiresponse = getUser(recipeobj.getString("userID"));
+            JSONArray userarray = new JSONArray(userapiresponse);
+            JSONObject userobj = (JSONObject) userarray.get(0);
+            String username = userobj.getString("username");
+            recipelist.add(new RecipePreview(id, title, imagePath, username));
+            browseAdapter = new BrowseAdapter(mainActivity, recipelist);
+            RView.setAdapter(browseAdapter);
+        }
+
+    }
+
+    public String getUser(String userid){
+        //String userid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        RestDB example = new RestDB();
+        String response = null;
+        try {
+            response = example.get("https://recipeheist-567c.restdb.io/rest/users?q={\"userID\":\"" + userid + "\"}&h{\"$fields\":{\"username\":1}}");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return response;
     }
 
-    public void goToRecipe(String recipeID)
-    {
-        Intent intent = new Intent(getActivity(), RecipeItem.class);
-        intent.putExtra("recipeID", recipeID);
-        startActivity(intent);
-    }
 }

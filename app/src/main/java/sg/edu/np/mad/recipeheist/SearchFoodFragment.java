@@ -21,8 +21,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -45,6 +47,7 @@ public class SearchFoodFragment extends Fragment {
     private JSONArray recentlist;
     private EditText editTextsearch;
     private TextView clearall;
+    private ImageView backarrow;
     MainActivity mainActivity;
 
 
@@ -82,6 +85,7 @@ public class SearchFoodFragment extends Fragment {
         mainActivity.getSupportActionBar().setElevation(0);
 
         editTextsearch = mainActivity.findViewById(R.id.editTextsearch);
+        backarrow = mainActivity.findViewById(R.id.back);
         clearall = rootview.findViewById(R.id.clearall);
 
 
@@ -99,11 +103,21 @@ public class SearchFoodFragment extends Fragment {
             }
         });
 
+        //click clear all text
         clearall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 deleteall();
                 mrecycler();
+            }
+        });
+
+        //click arrow back
+        backarrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainActivity.onBackPressed();
+                editTextsearch.clearFocus();
             }
         });
 
@@ -116,18 +130,28 @@ public class SearchFoodFragment extends Fragment {
 
     public void performSearch(){
         String query = editTextsearch.getText().toString().trim();
-        savedata(query);
-        mrecycler();
+        editTextsearch.clearFocus();
         Bundle result = new Bundle();
         result.putString("query", query);
         getParentFragmentManager().setFragmentResult("search", result);
+        savedata(query);
+        mrecycler();
         mainActivity.stack(new BrowseFragment());
     }
 
     public void fillSearch(String query){
         editTextsearch.setText(query);
-
+        showSoftKeyboard(editTextsearch);
     }
+
+    public void showSoftKeyboard(View view) {
+        if(view.requestFocus()){
+            InputMethodManager imm =(InputMethodManager)
+                    mainActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(view,InputMethodManager.SHOW_IMPLICIT);
+        }
+    }
+
 
 
     public void savedata(String query) {
