@@ -42,7 +42,7 @@ public class BrowseAdapter extends RecyclerView.Adapter<BrowseAdapter.ViewHolder
     public void onBindViewHolder(@NonNull BrowseAdapter.ViewHolder holder, int position) {
         RecipePreview recipePreview = recipeArrayList.get(position);
         holder.foodtitle.setText(recipePreview.getTitle());
-        holder.username.setText(recipePreview.getUsername());
+        holder.duration.setText(recipePreview.getduration());
 
 
         //Display image
@@ -68,13 +68,13 @@ public class BrowseAdapter extends RecyclerView.Adapter<BrowseAdapter.ViewHolder
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        TextView username, foodtitle;
+        TextView duration, foodtitle;
         ImageView foodimagepreview;
         View main;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             foodtitle = itemView.findViewById(R.id.foodtitle);
-            username = itemView.findViewById(R.id.ausername);
+            duration = itemView.findViewById(R.id.aduration);
             foodimagepreview = itemView.findViewById(R.id.foodimagepreview);
             main = itemView;
         }

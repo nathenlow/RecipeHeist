@@ -4,13 +4,13 @@ public class RecipePreview {
     private String id;
     private String title;
     private String imagePath;
-    private String username;
+    private String duration;
 
-    public RecipePreview(String id, String title, String imagePath, String username) {
+    public RecipePreview(String id, String title, String imagePath, String duration) {
         this.id = id;
         this.title = title;
         this.imagePath = imagePath;
-        this.username = username;
+        this.duration = duration;
     }
 
     public String getId() {
@@ -37,11 +37,11 @@ public class RecipePreview {
         this.imagePath = imagePath;
     }
 
-    public String getUsername() {
-        return username;
+    public String getduration() {
+        return duration;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setduration(String duration) {
+        this.duration = duration;
     }
 }

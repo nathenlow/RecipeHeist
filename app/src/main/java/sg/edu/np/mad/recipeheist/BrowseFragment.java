@@ -35,7 +35,7 @@ public class BrowseFragment extends Fragment {
     private int count = 0;
     private int pagecount = 0;
     boolean needanotherpage = false;
-    private int perpage = 15;
+    private int perpage = 10;
     private ArrayList<RecipePreview> recipelist;
     private RecyclerView RView;
     private BrowseAdapter browseAdapter;
@@ -88,7 +88,7 @@ public class BrowseFragment extends Fragment {
             }
         });
 
-        new CountDownTimer(3000, 1000) {
+        new CountDownTimer(2000, 1000) {
 
             public void onTick(long millisUntilFinished) {
 
@@ -113,7 +113,7 @@ public class BrowseFragment extends Fragment {
                     count++;
                     // on below line we are making our progress bar visible.
                     PBLoading.setVisibility(View.VISIBLE);
-                    if (count < 7) {
+                    if (count % 5 == 0) {
                         // on below line we are again calling
                         // a method to load data in our array list.
                         if (needanotherpage){
@@ -174,7 +174,7 @@ public class BrowseFragment extends Fragment {
     public void searchRecipes(String query, int page) throws IOException, JSONException {
         int skip = perpage * page;
         RestDB restDB = new RestDB();
-        String response = restDB.get("https://recipeheist-567c.restdb.io/rest/recipe?q={\"title\": {\"$regex\" :\"" + query + "\"}}&h={\"$fields\":{\"_id\":1,\"title\":1,\"userID\":1,\"imagePath\":1},\"$max\":"+perpage+",\"$skip\":"+skip+",\"$orderby\":{\"_created\":1}}");
+        String response = restDB.get("https://recipeheist-567c.restdb.io/rest/recipe?q={\"title\": {\"$regex\" :\"" + query + "\"}}&h={\"$fields\":{\"_id\":1,\"title\":1,\"duration\":1,\"imagePath\":1},\"$max\":"+perpage+",\"$skip\":"+skip+",\"$orderby\":{\"_created\":1}}");
         recipearray = new JSONArray(response);
         if (recipearray.length() == perpage){
             needanotherpage = true;
@@ -189,7 +189,7 @@ public class BrowseFragment extends Fragment {
     public void defaultRecipe(int page) throws IOException, JSONException {
         int skip = perpage * page;
         RestDB restDB = new RestDB();
-        String response = restDB.get("https://recipeheist-567c.restdb.io/rest/recipe?h={\"$fields\":{\"_id\":1,\"title\":1,\"userID\":1,\"imagePath\":1},\"$max\":"+perpage+",\"$skip\":"+skip+",\"$orderby\":{\"_created\":1}}");
+        String response = restDB.get("https://recipeheist-567c.restdb.io/rest/recipe?h={\"$fields\":{\"_id\":1,\"title\":1,\"duration\":1,\"imagePath\":1},\"$max\":"+perpage+",\"$skip\":"+skip+",\"$orderby\":{\"_created\":1}}");
         recipearray = new JSONArray(response);
         if (recipearray.length() >= perpage){
             needanotherpage = true;
@@ -205,11 +205,9 @@ public class BrowseFragment extends Fragment {
             String id = recipeobj.getString("_id");
             String title = recipeobj.getString("title");
             String imagePath = recipeobj.getString("imagePath");
-            String userapiresponse = getUser(recipeobj.getString("userID"));
-            JSONArray userarray = new JSONArray(userapiresponse);
-            JSONObject userobj = (JSONObject) userarray.get(0);
-            String username = userobj.getString("username");
-            recipelist.add(new RecipePreview(id, title, imagePath, username));
+            String duration = recipeobj.getString("duration");
+
+            recipelist.add(new RecipePreview(id, title, imagePath, duration));
             browseAdapter = new BrowseAdapter(mainActivity, recipelist);
             RView.setAdapter(browseAdapter);
         }
