@@ -60,13 +60,17 @@ public class SignUp extends AppCompatActivity {
             public void onClick(View view) {
                 // show progress bar
                 progressBar.setVisibility(View.VISIBLE);
-                signUpUser();
+                try {
+                    signUpUser();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
 
     //Function to create authentication to firebase
-    private void signUpUser(){
+    private void signUpUser() throws IOException {
         String email = editEmail.getText().toString().trim();
         String password = editPassword.getText().toString().trim();
         String username = editUsername.getText().toString().trim();
@@ -80,7 +84,7 @@ public class SignUp extends AppCompatActivity {
             editEmail.requestFocus();
             return;
         }
-        else if (Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+        else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
             progressBar.setVisibility(View.GONE);
             editEmail.setError("Please enter a valid email!");
             editEmail.requestFocus();
@@ -148,6 +152,11 @@ public class SignUp extends AppCompatActivity {
     }
 
 
+    // function to check database for same username
+    public String checkUserName(String username) throws IOException {
+        RestDB restDB = new RestDB();
+        return restDB.get("https://recipeheist-567c.restdb.io/rest/users?q={\"username\": " + username + "}");
+    }
 
     private void deleteUser(String email, String password) {
 

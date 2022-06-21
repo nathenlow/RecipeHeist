@@ -130,7 +130,7 @@
                 android:layout_height="match_parent"
                 android:layout_below="@id/constraint"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="20dp">
+                android:layout_marginBottom="40dp">
 
                 <ProgressBar
                     android:id="@+id/progressBarProfile"
@@ -142,20 +142,23 @@
 
             </FrameLayout>
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/addRecipeBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginBottom="16dp"
-                android:layout_marginEnd="16dp"
-                android:backgroundTint="@color/red_1"
-                android:clickable="true"
-                android:contentDescription="@string/app_name"
-                android:src="@drawable/ic_baseline_add_24" />
+
 
         </RelativeLayout>
     </androidx.core.widget.NestedScrollView>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addRecipeBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        app:layout_anchor="@id/nestedSV"
+        app:layout_anchorGravity="bottom|end"
+        android:layout_marginBottom="66dp"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="@color/red_1"
+        android:clickable="true"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/ic_baseline_add_24"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
