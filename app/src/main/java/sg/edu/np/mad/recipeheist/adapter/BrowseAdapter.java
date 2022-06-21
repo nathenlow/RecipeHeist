@@ -20,14 +20,18 @@ import java.util.ArrayList;
 
 import sg.edu.np.mad.recipeheist.R;
 import sg.edu.np.mad.recipeheist.RecipeItem;
+import sg.edu.np.mad.recipeheist.RecipeLoadListener;
 import sg.edu.np.mad.recipeheist.RecipePreview;
 
 public class BrowseAdapter extends RecyclerView.Adapter<BrowseAdapter.ViewHolder> {
     private Context ct;
     private ArrayList<RecipePreview> recipeArrayList;
-    public BrowseAdapter(Context ct, ArrayList<RecipePreview> recipeArrayList) {
+    private RecipeLoadListener load;
+
+    public BrowseAdapter(Context ct, ArrayList<RecipePreview> recipeArrayList, RecipeLoadListener load) {
         this.ct = ct;
         this.recipeArrayList = recipeArrayList;
+        this.load = load;
     }
 
     @NonNull
@@ -55,7 +59,7 @@ public class BrowseAdapter extends RecyclerView.Adapter<BrowseAdapter.ViewHolder
         holder.main.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goToRecipe(ct, recipePreview.getId());
+                load.onLoad(recipePreview.getId());
             }
         });
 
@@ -78,14 +82,5 @@ public class BrowseAdapter extends RecyclerView.Adapter<BrowseAdapter.ViewHolder
             foodimagepreview = itemView.findViewById(R.id.foodimagepreview);
             main = itemView;
         }
-    }
-
-
-    // go to recipe page
-    public void goToRecipe(Context context, String recipeID)
-    {
-        Intent intent = new Intent(context, RecipeItem.class);
-        intent.putExtra("recipeID", recipeID);
-        context.startActivity(intent);
     }
 }
