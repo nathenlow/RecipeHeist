@@ -1,12 +1,23 @@
 package sg.edu.np.mad.recipeheist;
 
+import android.app.ActionBar;
 import android.os.Bundle;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+
+import org.json.JSONArray;
+
+import java.util.ArrayList;
+
+import sg.edu.np.mad.recipeheist.adapter.BrowseAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -15,15 +26,14 @@ import android.view.ViewGroup;
  */
 public class BookmarkFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
+    private ArrayList<RecipePreview> recipelist;
+    private RecyclerView RView;
+    private BrowseAdapter browseAdapter;
+    private ProgressBar PBLoading;
+    private NestedScrollView nestedSV;
+    private JSONArray recipearray;
+    private String query = "";
+    private ConstraintLayout loadingview;
     MainActivity mainActivity;
 
     public BookmarkFragment() {
@@ -33,8 +43,6 @@ public class BookmarkFragment extends Fragment {
     public static BookmarkFragment newInstance(String param1, String param2) {
         BookmarkFragment fragment = new BookmarkFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -43,8 +51,7 @@ public class BookmarkFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+
         }
     }
 
@@ -52,6 +59,12 @@ public class BookmarkFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_bookmark, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_bookmark, container, false);
+        mainActivity = (MainActivity) getActivity();
+
+        //change action bar back to default
+        //mainActivity.getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
+        mainActivity.getSupportActionBar().setTitle("Bookmark Recipies");
+        return rootView;
     }
 }
