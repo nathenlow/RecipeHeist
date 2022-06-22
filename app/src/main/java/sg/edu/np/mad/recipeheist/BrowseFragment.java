@@ -145,6 +145,7 @@ public class BrowseFragment extends Fragment {
         menubookmark.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
+                mainActivity.replaceFragment(new BookmarkFragment(), R.id.frameLayout);
                 return false;
             }
         });
