@@ -9,10 +9,12 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.SearchView;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.UserHandle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -48,6 +50,7 @@ public class SearchFoodFragment extends Fragment {
     private EditText editTextsearch;
     private TextView clearall;
     private ImageView backarrow;
+    private ImageView UserButton;
     MainActivity mainActivity;
 
 
@@ -87,6 +90,7 @@ public class SearchFoodFragment extends Fragment {
         editTextsearch = mainActivity.findViewById(R.id.editTextsearch);
         backarrow = mainActivity.findViewById(R.id.back);
         clearall = rootview.findViewById(R.id.clearall);
+        UserButton = rootview.findViewById(R.id.UserButton);
 
 
         mrecycler();
@@ -121,11 +125,20 @@ public class SearchFoodFragment extends Fragment {
             }
         });
 
+        //click arrow next to user button
+        UserButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                performSearch();
+            }
+        });
 
 
+
+
+        
         return rootview;
     }
-
 
 
     public void performSearch(){
