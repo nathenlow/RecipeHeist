@@ -2,7 +2,7 @@ package sg.edu.np.mad.recipeheist;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -13,19 +13,13 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -83,42 +77,11 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.profile:
 
                     if (currentUser != null){
-
-                        String uid = "\"" + currentUser.getUid().toString() + "\"";
-
-                        User user = new User();
-
-                        // get user info from database
                         try {
-                            String dataBaseUsers = getUser(uid);
-                            dataBaseUsers = dataBaseUsers.substring(1, dataBaseUsers.length()-1);
-                            System.out.println(dataBaseUsers);
-
-                            JSONObject jsonObject = new JSONObject(dataBaseUsers);
-                            System.out.println(jsonObject);
-
-                            user.setUserID(jsonObject.getString("userID"));
-                            user.setEmail(jsonObject.getString("email"));
-                            user.setUsername(jsonObject.getString("username"));
-                            user.setDescription(jsonObject.getString("description"));
-                            user.setFollowing(convertJArrayToArrayList(jsonObject.getJSONArray("following")));
-                            user.setBookmark(convertJArrayToArrayList(jsonObject.getJSONArray("bookmark")));
-
-                        } catch (IOException | JSONException e) {
+                            getUserProfile();
+                        } catch (IOException e) {
                             e.printStackTrace();
                         }
-
-
-                        // Create bundle to pass user data to fragment
-                        Bundle user_data = new Bundle();
-                        user_data.putParcelable("userData", user);
-                        //set argument to ProfileFragment
-                        ProfileFragment profileFragment = new ProfileFragment();
-                        profileFragment.setArguments(user_data);
-                        // Replace fragment
-                        replaceFragment(profileFragment, R.id.frameLayout);
-
-
                     }
                     else {
                         Intent intent = new Intent(this, SignIn.class);
@@ -132,8 +95,66 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public void getUserProfile() throws IOException {
+        showloading(true);
+        binding.bottomNavigationView.setVisibility(View.GONE);
+        getSupportActionBar().setTitle("Profile");
+        String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String uid = "\"" + currentUserID + "\"";
+
+        User user = new User();
+
+        // function to get users from restDB
+        RestDB restDB = new RestDB();
+        restDB.asyncGet("https://recipeheist-567c.restdb.io/rest/users?q={\"userID\": " + uid + "}", new SuccessListener() {
+            @Override
+            public void onSuccess(String jsonresponse) throws JSONException {
+                String dataBaseUsers = jsonresponse;
+                dataBaseUsers = dataBaseUsers.substring(1, dataBaseUsers.length()-1);
+                System.out.println(dataBaseUsers);
+
+                JSONObject jsonObject = new JSONObject(dataBaseUsers);
+                System.out.println(jsonObject);
+
+                user.setUserID(jsonObject.getString("userID"));
+                user.setEmail(jsonObject.getString("email"));
+                user.setUsername(jsonObject.getString("username"));
+                user.setDescription(jsonObject.getString("description"));
+                user.setFollowing(convertJArrayToArrayList(jsonObject.getJSONArray("following")));
+                user.setBookmark(convertJArrayToArrayList(jsonObject.getJSONArray("bookmark")));
+
+                // Create bundle to pass user data to fragment
+                Bundle user_data = new Bundle();
+                user_data.putParcelable("userData", user);
+                //set argument to ProfileFragment
+                ProfileFragment profileFragment = new ProfileFragment();
+                profileFragment.setArguments(user_data);
+                // Replace fragment
+                replaceFragment(profileFragment, R.id.frameLayout);
+                // Remove loading page
+                // Remove loading page
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showloading(false);
+                        binding.bottomNavigationView.setVisibility(View.VISIBLE);
+                    }
+                });
+            }
+        });
+    }
 
     //methods
+
+    public void showloading(Boolean show){
+        if(show){
+            binding.loadinglayout.setVisibility(View.VISIBLE);
+        }
+        else {
+            binding.loadinglayout.setVisibility(View.GONE);
+        }
+
+    }
 
     public void stack(Fragment fragment){
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -213,40 +234,4 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-    // function to get users from restDB
-    public String getUser(String uid) throws IOException {
-        RestDB restDB = new RestDB();
-        String response = restDB.get("https://recipeheist-567c.restdb.io/rest/users?q={\"userID\": " + uid + "}");
-        return response;
-    }
-
-
-
-
-
-    public void checkIfUsernameExists(){
-        if (isConnected() == true){
-            mAuth = FirebaseAuth.getInstance();
-            FirebaseUser currentUser = mAuth.getCurrentUser();
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-            ref.child("users").child("username").addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if(dataSnapshot.hasChild(currentUser.getUid())){
-                        // use "username" already exists
-                        // Let the user know he needs to pick another username.
-                    } else {
-
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-
-        }
-    }
 }

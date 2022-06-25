@@ -2,7 +2,6 @@ package sg.edu.np.mad.recipeheist;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -80,7 +79,7 @@ public class BrowseFragment extends Fragment {
         RView = rootView.findViewById(R.id.RView);
         PBLoading = rootView.findViewById(R.id.PBLoading);
         nestedSV = rootView.findViewById(R.id.nestedSV);
-        loadingview = rootView.findViewById(R.id.loadingview);
+        loadingview = rootView.findViewById(R.id.loadinglayout);
 
 
         //get data from search

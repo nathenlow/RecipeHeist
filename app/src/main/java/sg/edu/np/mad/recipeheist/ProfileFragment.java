@@ -15,6 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,6 +40,9 @@ public class ProfileFragment extends Fragment {
     private JSONArray recipeJArray;
     private View rootView;
     private ProgressBar progressBar;
+    private ArrayList<Recipe> recipeList;
+    private MainActivity mainActivity;
+    private String query;
 
 
     public ProfileFragment() {
@@ -57,17 +61,8 @@ public class ProfileFragment extends Fragment {
             user_data = getArguments();
             user = user_data.getParcelable("userData");
 
-            String query = "\"" + user.getUserID() + "\"";
+            query = "\"" + user.getUserID() + "\"";
 
-            // get data from database
-            try {
-                String dbResults = "{ \"recipe\": " + getUserRecipes(query) + "}";
-                JSONObject jsonObject = new JSONObject(dbResults);
-                recipeJArray = jsonObject.getJSONArray("recipe");
-
-            } catch (IOException | JSONException e) {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -86,7 +81,7 @@ public class ProfileFragment extends Fragment {
         progressBar = rootView.findViewById(R.id.progressBarProfile);
 
         // to use methods from MainActivity
-        MainActivity mainActivity = (MainActivity) getActivity();
+        mainActivity = (MainActivity) getActivity();
 
         mainActivity.setActionBarTitle("Profile");
         // update profile page
@@ -130,12 +125,22 @@ public class ProfileFragment extends Fragment {
         // to use methods from MainActivity
         MainActivity mainActivity = (MainActivity) getActivity();
 
+        try {
+            getUserRecipes(query);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void getData(){
+
         // get users own recipe from db
         if (recipeJArray.length() >= 1) {
-            ArrayList<Recipe> recipeList = new ArrayList<>();
+            recipeList = new ArrayList<>();
 
             // extract data and create a recipe object
-            for (int i = 0; i < recipeJArray.length(); i++){
+            for (int i = 0; i < recipeJArray.length(); i++) {
                 System.out.println(recipeJArray);
                 Recipe recipe = new Recipe();
                 try {
@@ -178,19 +183,27 @@ public class ProfileFragment extends Fragment {
             // replace fragment
             assert mainActivity != null;
             mainActivity.replaceFragment(myRecipeFragment, rootView.findViewById(R.id.profileFrameLayout).getId());
-
-        }
-        else {
-            // if its empty or null
-            progressBar.setVisibility(View.GONE);
-            NoMyRecipeFragment noMyRecipeFragment = new NoMyRecipeFragment();
-            assert mainActivity != null;
-            mainActivity.replaceFragment(noMyRecipeFragment, rootView.findViewById(R.id.profileFrameLayout).getId());
         }
     }
 
-
-
+    // function to get users from restDB
+    public void getUserRecipes(String uid) throws IOException {
+        RestDB restDB = new RestDB();
+        restDB.asyncGet("https://recipeheist-567c.restdb.io/rest/recipe?q={\"userID\": " + uid + "}", new SuccessListener() {
+            @Override
+            public void onSuccess(String jsonresponse) throws JSONException {
+                String dbResults = "{ \"recipe\": " + jsonresponse + "}";
+                JSONObject jsonObject = new JSONObject(dbResults);
+                recipeJArray = jsonObject.getJSONArray("recipe");
+                mainActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        getData();
+                    }
+                });
+            }
+        });
+    }
 
     // function to convert jsonArray to ArrayList
     public ArrayList<String> convertJArrayToArrayList(JSONArray jsonArray) throws JSONException {
@@ -205,12 +218,6 @@ public class ProfileFragment extends Fragment {
         else{
             return arrayList;
         }
-    }
-
-    // function to get users from restDB
-    public String getUserRecipes(String uid) throws IOException {
-        RestDB restDB = new RestDB();
-        return restDB.get("https://recipeheist-567c.restdb.io/rest/recipe?q={\"userID\": " + uid + "}");
     }
 
 }
