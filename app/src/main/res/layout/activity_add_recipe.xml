@@ -207,21 +207,45 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Ingredients (seperate each with a semi-colon ; ) :"
+                    android:text="Ingredients:"
                     android:textSize="16sp" />
 
-                <EditText
-                    android:id="@+id/editIngredient"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/ingredientDisplayR"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:ems="10"
-                    android:gravity="start|top"
-                    android:hint="e.g. 5 boneless chicken;1 tsp of white pepper; etc..."
-                    android:inputType="textMultiLine"
-                    android:textSize="20sp" />
+                    android:layout_marginTop="5dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/editIngredient"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="8dp"
+                        android:layout_weight="2"
+                        android:ems="10"
+                        android:gravity="start|top"
+                        android:hint="e.g. 5 boneless chicken"
+                        android:inputType="text"
+                        android:textSize="20sp" />
+
+                    <Button
+                        android:id="@+id/addIngreBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Add"
+                        android:textAllCaps="false"
+                        android:textSize="12sp"
+                        android:layout_marginStart="3dp"/>
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -236,21 +260,45 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Instructions (seperate each with a semi-colon ; ) :"
+                    android:text="Instructions:"
                     android:textSize="16sp" />
 
-                <EditText
-                    android:id="@+id/editInstruction"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/instructionDisplayR"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:ems="10"
-                    android:gravity="start|top"
-                    android:hint="e.g. do something; do something, etc..."
-                    android:inputType="textMultiLine"
-                    android:textSize="20sp" />
+                    android:layout_marginTop="5dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/editInstruction"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="8dp"
+                        android:layout_weight="2"
+                        android:ems="10"
+                        android:gravity="start|top"
+                        android:hint="e.g. fry the garlic at low-heat..."
+                        android:inputType="text"
+                        android:textSize="20sp" />
+
+                    <Button
+                        android:id="@+id/addInstrBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Add"
+                        android:textAllCaps="false"
+                        android:textSize="12sp"
+                        android:layout_marginStart="3dp"/>
+                </LinearLayout>
             </LinearLayout>
 
             <Button
