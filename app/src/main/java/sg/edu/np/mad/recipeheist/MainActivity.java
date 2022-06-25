@@ -97,11 +97,13 @@ public class MainActivity extends AppCompatActivity {
 
     public void getUserProfile() throws IOException {
         binding.loadinglayout.setVisibility(View.VISIBLE);
+        getSupportActionBar().setTitle("Profile");
         String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         String uid = "\"" + currentUserID + "\"";
 
         User user = new User();
 
+        // function to get users from restDB
         RestDB restDB = new RestDB();
         restDB.asyncGet("https://recipeheist-567c.restdb.io/rest/users?q={\"userID\": " + uid + "}", new SuccessListener() {
             @Override
@@ -126,6 +128,8 @@ public class MainActivity extends AppCompatActivity {
                 //set argument to ProfileFragment
                 ProfileFragment profileFragment = new ProfileFragment();
                 profileFragment.setArguments(user_data);
+                // Replace fragment
+                replaceFragment(profileFragment, R.id.frameLayout);
                 // Remove loading page
                 runOnUiThread(new Runnable() {
                     @Override
@@ -133,8 +137,6 @@ public class MainActivity extends AppCompatActivity {
                         binding.loadinglayout.setVisibility(View.GONE);
                     }
                 });
-                // Replace fragment
-                replaceFragment(profileFragment, R.id.frameLayout);
             }
         });
     }
@@ -217,14 +219,6 @@ public class MainActivity extends AppCompatActivity {
         else{
             return arrayList;
         }
-    }
-
-
-    // function to get users from restDB
-    public String getUser(String uid) throws IOException {
-        RestDB restDB = new RestDB();
-        String response = restDB.get("https://recipeheist-567c.restdb.io/rest/users?q={\"userID\": " + uid + "}");
-        return response;
     }
 
 }
