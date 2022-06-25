@@ -70,7 +70,9 @@ public class SearchFoodFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mainActivity = (MainActivity) getActivity();
         setHasOptionsMenu(true);
+        mainActivity.showbottomnav(false);
     }
 
     @Override
@@ -78,7 +80,7 @@ public class SearchFoodFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootview = inflater.inflate(R.layout.fragment_search_food, container, false);
-        mainActivity = (MainActivity) getActivity();
+
 
         //change actionbar
         mainActivity.getSupportActionBar().setCustomView(R.layout.search_action_bar);
