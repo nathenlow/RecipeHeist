@@ -97,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void getUserProfile() throws IOException {
         showloading(true);
+        binding.bottomNavigationView.setVisibility(View.GONE);
         getSupportActionBar().setTitle("Profile");
         String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         String uid = "\"" + currentUserID + "\"";
@@ -136,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         showloading(false);
+                        binding.bottomNavigationView.setVisibility(View.VISIBLE);
                     }
                 });
             }
