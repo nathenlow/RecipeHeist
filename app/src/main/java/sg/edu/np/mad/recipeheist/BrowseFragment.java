@@ -164,7 +164,7 @@ public class BrowseFragment extends Fragment {
                 searchRecipes(query,pagecount);
             }
             pagecount += 1;
-            if (!needanotherpage){PBLoading.setVisibility(View.GONE);}
+
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
@@ -245,6 +245,7 @@ public class BrowseFragment extends Fragment {
                 }
             });
             RView.setAdapter(browseAdapter);
+            if (!needanotherpage){PBLoading.setVisibility(View.GONE);}
         }
 
     }
