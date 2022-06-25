@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getUserProfile() throws IOException {
-        binding.loadinglayout.setVisibility(View.VISIBLE);
+        showloading(true);
         getSupportActionBar().setTitle("Profile");
         String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         String uid = "\"" + currentUserID + "\"";
@@ -131,10 +131,11 @@ public class MainActivity extends AppCompatActivity {
                 // Replace fragment
                 replaceFragment(profileFragment, R.id.frameLayout);
                 // Remove loading page
+                // Remove loading page
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        binding.loadinglayout.setVisibility(View.GONE);
+                        showloading(false);
                     }
                 });
             }
@@ -142,6 +143,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //methods
+
+    public void showloading(Boolean show){
+        if(show){
+            binding.loadinglayout.setVisibility(View.VISIBLE);
+        }
+        else {
+            binding.loadinglayout.setVisibility(View.GONE);
+        }
+
+    }
 
     public void stack(Fragment fragment){
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
