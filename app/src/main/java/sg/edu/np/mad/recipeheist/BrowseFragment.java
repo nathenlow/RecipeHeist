@@ -155,6 +155,7 @@ public class BrowseFragment extends Fragment {
     //combine all the fuctions for get from restdb
     public  void searchordefault(){
         needanotherpage = false;
+        PBLoading.setVisibility(View.VISIBLE);
         try {
             if (query.equals("")){
                 defaultRecipe(pagecount);
@@ -163,9 +164,7 @@ public class BrowseFragment extends Fragment {
                 searchRecipes(query,pagecount);
             }
             pagecount += 1;
-            getData();
-            if (needanotherpage){PBLoading.setVisibility(View.VISIBLE);}
-            else {PBLoading.setVisibility(View.GONE);}
+            if (!needanotherpage){PBLoading.setVisibility(View.GONE);}
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
@@ -177,11 +176,27 @@ public class BrowseFragment extends Fragment {
     public void searchRecipes(String query, int page) throws IOException, JSONException {
         int skip = perpage * page;
         RestDB restDB = new RestDB();
-        String response = restDB.get("https://recipeheist-567c.restdb.io/rest/recipe?q={\"title\": {\"$regex\" :\"" + query + "\"}}&h={\"$fields\":{\"_id\":1,\"title\":1,\"duration\":1,\"imagePath\":1},\"$max\":"+perpage+",\"$skip\":"+skip+",\"$orderby\":{\"_created\":-1}}");
-        recipearray = new JSONArray(response);
-        if (recipearray.length() == perpage){
-            needanotherpage = true;
-        }
+        restDB.asyncGet("https://recipeheist-567c.restdb.io/rest/recipe?q={\"title\": {\"$regex\" :\"" + query + "\"}}&h={\"$fields\":{\"_id\":1,\"title\":1,\"duration\":1,\"imagePath\":1},\"$max\":"+perpage+",\"$skip\":"+skip+",\"$orderby\":{\"_created\":-1}}",
+            new SuccessListener() {
+                @Override
+                public void onSuccess(String jsonresponse) throws JSONException {
+                    recipearray = new JSONArray(jsonresponse);
+                    if (recipearray.length() == perpage){
+                        needanotherpage = true;
+                    }
+                    mainActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                getData();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
+            }
+        );
     }
 
 
@@ -189,11 +204,28 @@ public class BrowseFragment extends Fragment {
     public void defaultRecipe(int page) throws IOException, JSONException {
         int skip = perpage * page;
         RestDB restDB = new RestDB();
-        String response = restDB.get("https://recipeheist-567c.restdb.io/rest/recipe?h={\"$fields\":{\"_id\":1,\"title\":1,\"duration\":1,\"imagePath\":1},\"$max\":"+perpage+",\"$skip\":"+skip+",\"$orderby\":{\"_created\":-1}}");
-        recipearray = new JSONArray(response);
-        if (recipearray.length() >= perpage){
-            needanotherpage = true;
-        }
+        restDB.asyncGet("https://recipeheist-567c.restdb.io/rest/recipe?h={\"$fields\":{\"_id\":1,\"title\":1,\"duration\":1,\"imagePath\":1},\"$max\":" + perpage + ",\"$skip\":" + skip + ",\"$orderby\":{\"_created\":-1}}",
+            new SuccessListener() {
+                @Override
+                public void onSuccess(String jsonresponse) throws JSONException {
+                    System.out.println(jsonresponse);
+                    recipearray = new JSONArray(jsonresponse);
+                    if (recipearray.length() >= perpage){
+                        needanotherpage = true;
+                    }
+                    mainActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                getData();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
+            }
+        );
     }
 
     //to convert json object into RecipePreview object to pass to recycler view

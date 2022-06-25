@@ -2,8 +2,12 @@ package sg.edu.np.mad.recipeheist;
 
 
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -29,6 +33,32 @@ public class RestDB {
         catch (Exception e){
             return null;
         }
+    }
+
+    void asyncGet(String url, SuccessListener successListener) throws IOException {
+        Request request = new Request.Builder()
+                .header("x-apikey", "f5ea7cf6ab1df99619a5f6f3300f1edd2f293")
+                .header("cache-control", "no-cache")
+                .url(url)
+                .build();
+        // Get a handler that can be used to post to the main thread
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    try {
+                        successListener.onSuccess(response.body().string());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
     }
 
     // method to post to rest db (Create a new document in a collection)
