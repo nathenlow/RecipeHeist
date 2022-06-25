@@ -8,7 +8,11 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -36,6 +40,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import sg.edu.np.mad.recipeheist.adapter.IngredientAdapter;
+
 public class AddRecipeActivity extends AppCompatActivity {
 
     private User user = new User();
@@ -43,6 +49,9 @@ public class AddRecipeActivity extends AppCompatActivity {
     private TextView editRecipeName, editRecipeDescription, editDuration, editCategory, editServing, editIngredients, editInstructions;
     private ImageButton editFoodImage;
     private ProgressBar progressBar;
+    private Button addIngreBtn, addInstrBtn;
+    private ArrayList<String> ingredientList = new ArrayList<>(), instructionList = new ArrayList<>();
+    private RecyclerView ingredientDisplayR, instructionDisplayR;
 
     private ActivityResultLauncher<String> getImageFromGallery;
 
@@ -64,6 +73,7 @@ public class AddRecipeActivity extends AppCompatActivity {
         // update recipe's userID
         recipe.setUserID(user.getUserID());
 
+        // get widgets
         editRecipeName = findViewById(R.id.editRecipeName);
         editRecipeDescription = findViewById(R.id.editRecipeDescription);
         editDuration = findViewById(R.id.editDuration);
@@ -73,8 +83,28 @@ public class AddRecipeActivity extends AppCompatActivity {
         editInstructions = findViewById(R.id.editInstruction);
         editFoodImage = findViewById(R.id.editFoodImage);
         Button createRecipeBtn = findViewById(R.id.createRecipeBtn);
+        addIngreBtn = findViewById(R.id.addIngreBtn);
+        addInstrBtn = findViewById(R.id.addInstrBtn);
         progressBar = findViewById(R.id.progressBar2);
+        ingredientDisplayR = findViewById(R.id.ingredientDisplayR);
+        instructionDisplayR = findViewById(R.id.instructionDisplayR);
 
+        // set up recyclerViews:
+
+        // for ingredients
+        IngredientAdapter ingredAdapter = new IngredientAdapter(this, ingredientList);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        ingredientDisplayR.setLayoutManager(linearLayoutManager);
+        ingredientDisplayR.setItemAnimator(new DefaultItemAnimator());
+        ingredientDisplayR.setAdapter(ingredAdapter);
+        // for instructions
+        IngredientAdapter instrucAdapter = new IngredientAdapter(this, instructionList);
+        LinearLayoutManager instrLM = new LinearLayoutManager(this);
+        instructionDisplayR.setLayoutManager(instrLM);
+        instructionDisplayR.setItemAnimator(new DefaultItemAnimator());
+        instructionDisplayR.setAdapter(instrucAdapter);
+
+        // for getting image from gallery
         getImageFromGallery = registerForActivityResult(new ActivityResultContracts.GetContent(), new ActivityResultCallback<Uri>() {
             @Override
             public void onActivityResult(Uri result) {
@@ -103,6 +133,59 @@ public class AddRecipeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 getImageFromGallery.launch("image/*");
+            }
+        });
+
+        // set onclick listener for add ingredient
+        addIngreBtn.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onClick(View v) {
+                // get input
+                String uInput = editIngredients.getText().toString().trim();
+
+                if (uInput.equals("")){
+                    editIngredients.setError("Can't be blank!");
+                    editIngredients.requestFocus();
+                }
+                else{
+                    // add user input in list
+                    ingredientList.add(uInput);
+                }
+
+                // clear text area
+                editIngredients.setText("");
+
+                // Recyclerview
+
+                ingredAdapter.notifyDataSetChanged();
+
+            }
+        });
+
+        // set onclick listener for add instructions
+        addInstrBtn.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onClick(View v) {
+                // get input
+                String uInput = editInstructions.getText().toString().trim();
+
+                if (uInput.equals("")){
+                    editInstructions.setError("Can't be blank!");
+                    editInstructions.requestFocus();
+                }
+                else{
+                    // add user input in list
+                    instructionList.add(uInput);
+                }
+
+                // clear text area
+                editInstructions.setText("");
+
+                // Recyclerview
+
+                instrucAdapter.notifyDataSetChanged();
             }
         });
 
@@ -138,9 +221,6 @@ public class AddRecipeActivity extends AppCompatActivity {
         int serving = parseInt(editServing.getText().toString().trim());
         // set category of recipe
         String category = editCategory.getText().toString().trim();
-        
-        String ingre = editIngredients.getText().toString().trim();
-        String instr = editInstructions.getText().toString().trim();
         
 
         // Start of validation for input
@@ -178,14 +258,14 @@ public class AddRecipeActivity extends AppCompatActivity {
         }
         
         // validate ingredients
-        else if (ingre.isEmpty()){
+        else if (ingredientList.isEmpty()){
             progressBar.setVisibility(View.GONE);
             editIngredients.setError("Required!");
             editIngredients.requestFocus();
         }
         
         // validate instruction
-        else if (instr.isEmpty()){
+        else if (instructionList.isEmpty()){
             progressBar.setVisibility(View.GONE);
             editInstructions.setError("Required!");
             editInstructions.requestFocus();
@@ -194,11 +274,6 @@ public class AddRecipeActivity extends AppCompatActivity {
         // End of validation for input
 
         else {
-            
-            // set ingredients of recipe
-            ArrayList<String> ingredientList = separateString(ingre);
-            // set instructions of recipe
-            ArrayList<String> instructionList = separateString(instr);
             
             recipe.setTitle(title);
             // set image name
