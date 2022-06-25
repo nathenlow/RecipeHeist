@@ -182,7 +182,7 @@ public class RecipeItem extends AppCompatActivity {
             public void onClick(View v) {
                 String currentuser = FirebaseAuth.getInstance().getUid();
                 if (currentuser != null){
-                    findViewById(R.id.fab).setEnabled(false);
+                    findViewById(R.id.like).setEnabled(false);
                     // remove a like
                     if (likecheck){
                         like.setImageDrawable(getDrawable(R.drawable.ic_outline_thumb_up_off_alt_24));
@@ -211,7 +211,7 @@ public class RecipeItem extends AppCompatActivity {
                             e.printStackTrace();
                         }
                     }
-                    findViewById(R.id.fab).setEnabled(true);
+                    findViewById(R.id.like).setEnabled(true);
                 }
                 else {
                     Toast.makeText(RecipeItem.this, "Login is required", Toast.LENGTH_SHORT).show();
@@ -224,7 +224,8 @@ public class RecipeItem extends AppCompatActivity {
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (currentuserjsonstring != null){
+                String currentuser = FirebaseAuth.getInstance().getUid();
+                if (currentuser != null){
                     findViewById(R.id.fab).setEnabled(false);
                     //remove a bookmark
                     if (bookmarkcheck){
@@ -255,8 +256,8 @@ public class RecipeItem extends AppCompatActivity {
                     findViewById(R.id.fab).setEnabled(true);
                 }
                 else {
-                    Toast.makeText(RecipeItem.this, "Login is required", Toast.LENGTH_SHORT).show();
-                    moveTaskToBack(true);
+                    Snackbar.make(view, "Login is required", Snackbar.LENGTH_SHORT)
+                            .setAction("Action", null).show();
                 }
             }
         });

@@ -44,6 +44,7 @@ public class BrowseFragment extends Fragment {
     private ProgressBar PBLoading;
     private NestedScrollView nestedSV;
     private JSONArray recipearray;
+    private View rootView;
     private String query = "";
     private ConstraintLayout loadingview;
 
@@ -69,7 +70,7 @@ public class BrowseFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_browse, container, false);
+        rootView = inflater.inflate(R.layout.fragment_browse, container, false);
         mainActivity = (MainActivity) getActivity();
 
         //change action bar back to default
