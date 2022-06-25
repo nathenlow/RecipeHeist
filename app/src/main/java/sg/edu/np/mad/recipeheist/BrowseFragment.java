@@ -92,7 +92,7 @@ public class BrowseFragment extends Fragment {
         });
 
         // because sometimes the query from the fragment takes some time to get back
-        new CountDownTimer(2000, 1000) {
+        new CountDownTimer(1000, 1000) {
 
             public void onTick(long millisUntilFinished) {
             }
