@@ -20,9 +20,9 @@ RecipeHeist is an app that allows users to get inspirations and ideas for their 
     - created the browse page. it has some features that help one browsing experience such as pagination. (refer to appendix Browse)
     
 - Joseph Wong
-    - created the layout for profile page.
-    - created the add recipe page
-    - created simple edit profile page (currently only has one button "logout").
+    - created the layout for profile page, displays the user details and recipe.
+    - created the add recipe page, located at the user profile page once they have logged in.
+    - created simple edit profile page (currently only has one button "logout"), to allow the user to logout of their account.
     - manage the publishing of app.
     - created app logo.
 
