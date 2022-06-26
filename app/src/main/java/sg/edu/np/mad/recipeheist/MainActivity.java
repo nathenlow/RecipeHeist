@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void getUserProfile() throws IOException {
         showloading(true);
-        binding.bottomNavigationView.setVisibility(View.GONE);
+        showbottomnav(false);
         getSupportActionBar().setTitle("Profile");
         String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         String uid = "\"" + currentUserID + "\"";
@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         showloading(false);
-                        binding.bottomNavigationView.setVisibility(View.VISIBLE);
+                        showbottomnav(true);
                     }
                 });
             }
@@ -145,6 +145,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //methods
+
+    public void showbottomnav(Boolean show){
+        if(show){
+            binding.bottomNavigationView.setVisibility(View.VISIBLE);
+        }
+        else {
+            binding.bottomNavigationView.setVisibility(View.GONE);
+        }
+
+    }
+
 
     public void showloading(Boolean show){
         if(show){
