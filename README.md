@@ -12,12 +12,12 @@ RecipeHeist is an app that allows users to get inspirations and ideas for their 
 
 ### Roles and contributions
 - Nathen Low 
-    - created the foundation of the app which consists of bottom navigation view which navigates User to different pages and the 4 main fragments (Browse,Updates,Download,Profile)
+    - created the foundation of the app consisting of bottom navigation view which navigates User to different pages and the 4 main fragments (Browse,Updates,Download,Profile)
     - created the sign up and sign in page
-    - tried many different HTTP client and found the most optimal HTTP client for our online database (OkHttp) and then created a class that is filled with get, post, put, patch methods for my team to use.
-    - created the RecipeItem activity which display the recipe infomation (refer to appendix RecipeItem) and handles actions such as like and bookmark.
-    - created the search function to search for recipes. it saves recent searches too. (refer to appendix SearchRecipe)
-    - created the browse page. it has some features that help one browsing experience such as pagination. (refer to appendix Browse)
+    - tried many different HTTP clients and decided on the most optimal HTTP client for our online database (OkHttp) and created a class that is filled with get, post, put, patch methods for my team to use.
+    - created the RecipeItem activity which displays the recipe infomation (refer to appendix RecipeItem) and handles actions such as like and bookmark.
+    - created the search function to search for recipes. It saves recent searches too. (refer to appendix SearchRecipe)
+    - created the browse page. it has contains features to emhance one's browsing experience such as pagination. (refer to appendix Browse)
     
 - Joseph Wong
     - created the layout for profile page, displays the user details and recipe.
