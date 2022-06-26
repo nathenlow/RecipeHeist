@@ -1,5 +1,6 @@
 package sg.edu.np.mad.recipeheist.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,14 +34,23 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientVH> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull IngredientVH holder, int position) {
+    public void onBindViewHolder(@NonNull IngredientVH holder, @SuppressLint("RecyclerView") int position) {
         String itemInList = data.get(position);
         holder.noItem.setText(String.valueOf(position + 1) + ".");
         holder.itemContent.setText(itemInList);
+
+        holder.cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                data.remove(position);
+                notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
         return data.size();
     }
+
 }
