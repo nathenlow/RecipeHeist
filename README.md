@@ -9,6 +9,8 @@ RecipeHeist is an app that allows users to get inspirations and ideas for their 
 - Hsu Yuan (10223040?)
 
 ## Stage 1
+
+### Roles and contributions
 - Nathen Low 
     - created the foundation of the app which consists of bottom navigation view which navigates User to different pages and the 4 main fragments (Browse,Updates,Download,Profile)
     - created the sign up and sign in page
@@ -17,8 +19,12 @@ RecipeHeist is an app that allows users to get inspirations and ideas for their 
     - created the search function to search for recipes. it saves recent searches too. (refer to appendix SearchRecipe)
     - created the browse page. it has some features that help one browsing experience such as pagination. (refer to appendix Browse)
     
-
-### Roles and contributions
+- Joseph Wong
+    - created the layout for profile page.
+    - created the add recipe page
+    - created simple edit profile page (currently only has one button "logout").
+    - manage the publishing of app.
+    - created app logo.
 
 ### Appendices
 #### Browse
