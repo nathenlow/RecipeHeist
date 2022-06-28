@@ -1,6 +1,5 @@
 package sg.edu.np.mad.recipeheist;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -9,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -23,7 +21,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import sg.edu.np.mad.recipeheist.adapter.BookmarkAdapter;
-import sg.edu.np.mad.recipeheist.adapter.BrowseAdapter;
 
 public class BookmarkActivity extends AppCompatActivity {
 
@@ -38,7 +35,8 @@ public class BookmarkActivity extends AppCompatActivity {
     private NestedScrollView BmScroll;
     private BookmarkAdapter bookmarkAdapter;
     private ProgressBar BookmarkPB;
-
+    private NestedScrollView nestedSV;
+    private BookmarkActivity bookmarkActivity;
 
 
     @Override
@@ -50,15 +48,44 @@ public class BookmarkActivity extends AppCompatActivity {
         Intent receive = getIntent();
         getSupportActionBar().setTitle("Bookmark");
 
-
+        //Assigning values
         SavedRView = (RecyclerView) findViewById(R.id.SavedRview);
         BmScroll = findViewById(R.id.nestedSV);
         BookmarkPB = findViewById(R.id.savedPB);
+        nestedSV = findViewById(R.id.savedSV);
+
+
+        // because sometimes the query from the fragment takes some time to get back
+        new CountDownTimer(1000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+            }
+            public void onFinish() {
+                searchordefault();
+            }
+        }.start();
+
+
 
         // Grid layout used to have 2 rows for recycler view.
         GridLayoutManager manager = new GridLayoutManager(this, 2);
         SavedRView.setLayoutManager(new GridLayoutManager(this, 2));
-        //
+
+        nestedSV.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView scrollView, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+
+                View view = (View) scrollView.getChildAt(scrollView.getChildCount() - 1);
+                int diff = (view.getBottom() - (scrollView.getHeight() + scrollView.getScrollY()));
+
+                if (needanotherpage){
+                    // if diff is zero, then the bottom has been reached
+                    if (diff == 0) {
+                        searchordefault();
+                    }
+                }
+            }
+        });
 
 
         //
@@ -85,7 +112,7 @@ public class BookmarkActivity extends AppCompatActivity {
                             String duration = recipeobj.getString("duration");
 
                             BookmarkList.add(new RecipePreview(id, title, imagePath, duration));
-                            bookmarkAdapter = new BookmarkAdapter(BookmarkList, new RecipeLoadListener() {
+                            bookmarkAdapter = new BookmarkAdapter(bookmarkActivity, BookmarkList, new RecipeLoadListener() {
                                 @Override
                                 public void onLoad(String recipeID) {
                                     goToRecipe(recipeID);
@@ -108,6 +135,25 @@ public class BookmarkActivity extends AppCompatActivity {
 
 
 
+    }
+
+    public  void searchordefault(){
+        needanotherpage = false;
+        BookmarkPB.setVisibility(View.VISIBLE);
+        try {
+            if (query.equals("")){
+                defaultRecipe(pagecount);
+            }
+            else {
+                searchRecipes(query,pagecount);
+            }
+            pagecount += 1;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     public void searchRecipes(String query, int page) throws IOException, JSONException {

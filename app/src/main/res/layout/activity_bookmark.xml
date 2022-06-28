@@ -12,6 +12,7 @@
     android:layout_marginBottom="55dp">
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/savedSV"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
@@ -29,7 +30,7 @@
                 android:id="@+id/SavedRview"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1" >
+                android:layout_weight="1">
 
             </androidx.recyclerview.widget.RecyclerView>
 
