@@ -3,6 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Class/Sem3/MAD/RecipeHeist/app/src/main/res/layout/activity_bookmark.xml" value="0.1" />
+        <entry key="..\:/Class/Sem3/MAD/RecipeHeist/app/src/main/res/layout/bookmark_cardview.xml" value="0.1" />
+        <entry key="..\:/Class/Sem3/MAD/RecipeHeist/app/src/main/res/layout/browse_cardview.xml" value="0.1" />
+        <entry key="..\:/Class/Sem3/MAD/RecipeHeist/app/src/main/res/layout/fragment_bookmark.xml" value="0.1" />
+        <entry key="..\:/Class/Sem3/MAD/RecipeHeist/app/src/main/res/layout/fragment_browse.xml" value="0.1" />
         <entry key="..\:/Users/Josep/AndroidStudioProjects/Y2-Sem1/Project/RecipeHeist/app/src/main/res/drawable/bottom_border.xml" value="0.1515" />
         <entry key="..\:/Users/Josep/AndroidStudioProjects/Y2-Sem1/Project/RecipeHeist/app/src/main/res/drawable/ic_baseline_bookmarks_24.xml" value="0.2555" />
         <entry key="..\:/Users/Josep/AndroidStudioProjects/Y2-Sem1/Project/RecipeHeist/app/src/main/res/layout-w360dp/fragment_profile.xml" value="0.4" />
