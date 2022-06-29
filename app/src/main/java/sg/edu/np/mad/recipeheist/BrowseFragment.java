@@ -11,6 +11,7 @@ import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.CountDownTimer;
@@ -21,6 +22,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import org.json.JSONArray;
@@ -108,7 +110,9 @@ public class BrowseFragment extends Fragment {
 
 
         // grid layout splitting display into two columns
-        GridLayoutManager manager = new GridLayoutManager(mainActivity, 2);
+        int columns = 2;
+        GridLayoutManager manager = new GridLayoutManager(mainActivity, columns);
+        RView.addItemDecoration(new GridSpacingItemDecoration(columns, 12, false));
         RView.setLayoutManager(manager);
         nestedSV.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
