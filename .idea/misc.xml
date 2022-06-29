@@ -3,10 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Denzel/OneDrive/Desktop/HW_stuff/Year 2/MAD/RecipeHeist/app/src/main/res/layout/activity_user_search.xml" value="0.17844202898550723" />
+        <entry key="..\:/Users/Denzel/OneDrive/Desktop/HW_stuff/Year 2/MAD/RecipeHeist/app/src/main/res/layout/fragment_search_food.xml" value="0.20742753623188406" />
+        <entry key="..\:/Users/Denzel/OneDrive/Desktop/HW_stuff/Year 2/MAD/RecipeHeist/app/src/main/res/layout/search_action_bar.xml" value="0.25" />
+        <entry key="..\:/Users/Denzel/OneDrive/Desktop/HW_stuff/Year 2/MAD/RecipeHeist/app/src/main/res/layout/user_search_bar.xml" value="0.25" />
         <entry key="..\:/Users/Josep/AndroidStudioProjects/Y2-Sem1/Project/RecipeHeist/app/src/main/res/drawable/bottom_border.xml" value="0.1515" />
         <entry key="..\:/Users/Josep/AndroidStudioProjects/Y2-Sem1/Project/RecipeHeist/app/src/main/res/drawable/ic_baseline_bookmarks_24.xml" value="0.2555" />
         <entry key="..\:/Users/Josep/AndroidStudioProjects/Y2-Sem1/Project/RecipeHeist/app/src/main/res/layout-w360dp/fragment_profile.xml" value="0.4" />
-        <entry key="..\:/Users/Josep/AndroidStudioProjects/Y2-Sem1/Project/RecipeHeist/app/src/main/res/layout/activity_add_recipe.xml" value="0.264" />
+        <entry key="..\:/Users/Josep/AndroidStudioProjects/Y2-Sem1/Project/RecipeHeist/app/src/main/res/layout/activity_add_recipe.xml" value="0.23316582914572864" />
         <entry key="..\:/Users/Josep/AndroidStudioProjects/Y2-Sem1/Project/RecipeHeist/app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="..\:/Users/Josep/AndroidStudioProjects/Y2-Sem1/Project/RecipeHeist/app/src/main/res/layout/activity_recipe_item.xml" value="0.375" />
         <entry key="..\:/Users/Josep/AndroidStudioProjects/Y2-Sem1/Project/RecipeHeist/app/src/main/res/layout/activity_sign_in.xml" value="0.264" />

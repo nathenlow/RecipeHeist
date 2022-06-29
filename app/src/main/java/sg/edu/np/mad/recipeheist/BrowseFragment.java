@@ -43,8 +43,10 @@ public class BrowseFragment extends Fragment {
     private ProgressBar PBLoading;
     private NestedScrollView nestedSV;
     private JSONArray recipearray;
+    private JSONArray userarray;
     private View rootView;
     private String query = "";
+    private String user = "";
     private ConstraintLayout loadingview;
 
     MainActivity mainActivity;
@@ -92,6 +94,7 @@ public class BrowseFragment extends Fragment {
                 query = result.getString("query");
             }
         });
+
 
         // because sometimes the query from the fragment takes some time to get back
         new CountDownTimer(1000, 1000) {
@@ -164,6 +167,7 @@ public class BrowseFragment extends Fragment {
             }
             else {
                 searchRecipes(query,pagecount);
+                searchUser(user, pagecount);
             }
             pagecount += 1;
 
@@ -198,6 +202,32 @@ public class BrowseFragment extends Fragment {
                     });
                 }
             }
+        );
+    }
+
+    public void searchUser(String user, int page) throws IOException, JSONException {
+        int skip = perpage * page;
+        RestDB restDB = new RestDB();
+        restDB.asyncGet("https://recipeheist-567c.restdb.io/rest/users?q={\"username\": {\"$regex\" :\"" + user + "\"}}&h={\"$fields\":{\"_id\":1,\"username\":1,\"$max\":"+perpage+",\"$skip\":"+skip+",\"$orderby\":{\"_created\":-1}}",
+                new SuccessListener() {
+                    @Override
+                    public void onSuccess(String jsonresponse) throws JSONException {
+                        userarray = new JSONArray(jsonresponse);
+                        if (userarray.length() == perpage){
+                            needanotherpage = true;
+                        }
+                        mainActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    getData();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                    }
+                }
         );
     }
 

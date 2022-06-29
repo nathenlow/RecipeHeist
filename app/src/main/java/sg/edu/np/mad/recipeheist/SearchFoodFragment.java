@@ -1,30 +1,22 @@
 package sg.edu.np.mad.recipeheist;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.TypedArray;
-import android.os.Build;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.SearchView;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.UserHandle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -50,7 +42,7 @@ public class SearchFoodFragment extends Fragment {
     private EditText editTextsearch;
     private TextView clearall;
     private ImageView backarrow;
-    private ImageView UserButton;
+    private CardView UserButton;
     MainActivity mainActivity;
 
 
@@ -92,7 +84,7 @@ public class SearchFoodFragment extends Fragment {
         editTextsearch = mainActivity.findViewById(R.id.editTextsearch);
         backarrow = mainActivity.findViewById(R.id.back);
         clearall = rootview.findViewById(R.id.clearall);
-        UserButton = rootview.findViewById(R.id.UserButton);
+        UserButton = rootview.findViewById(R.id.searchuserbtn);
 
 
         mrecycler();
@@ -131,7 +123,7 @@ public class SearchFoodFragment extends Fragment {
         UserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                performSearch();
+                UserSearch();
             }
         });
 
@@ -153,6 +145,13 @@ public class SearchFoodFragment extends Fragment {
         mrecycler();
         mainActivity.stack(new BrowseFragment());
     }
+
+    public void UserSearch(){
+        Intent intent = new Intent(SearchFoodFragment.this.getActivity(), UserSearch.class);;
+        startActivity(intent);
+    }
+
+
 
     public void fillSearch(String query){
         editTextsearch.setText(query);
