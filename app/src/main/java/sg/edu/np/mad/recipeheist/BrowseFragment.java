@@ -244,15 +244,18 @@ public class BrowseFragment extends Fragment {
             String title = recipeobj.getString("title");
             String imagePath = recipeobj.getString("imagePath");
             String duration = recipeobj.getString("duration");
-
-            recipelist.add(new RecipePreview(id, title, imagePath, duration));
-            browseAdapter = new BrowseAdapter(mainActivity, recipelist, new RecipeLoadListener() {
-                @Override
-                public void onLoad(String recipeID) {
-                    goToRecipe(recipeID);
-                }
-            });
-            RView.setAdapter(browseAdapter);
+            RecipePreview recipePreview = new RecipePreview(id, title, imagePath, duration);
+            //In case a new recipe comes out, resulting a Recipe that is already displayed to move to the next page. Causing a duplicate display.
+            if (!recipelist.contains(recipePreview)){
+                recipelist.add(new RecipePreview(id, title, imagePath, duration));
+                browseAdapter = new BrowseAdapter(mainActivity, recipelist, new RecipeLoadListener() {
+                    @Override
+                    public void onLoad(String recipeID) {
+                        goToRecipe(recipeID);
+                    }
+                });
+                RView.setAdapter(browseAdapter);
+            }
             if (!needanotherpage){PBLoading.setVisibility(View.GONE);}
         }
     }
