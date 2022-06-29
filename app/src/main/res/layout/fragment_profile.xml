@@ -8,17 +8,15 @@
     android:orientation="vertical"
     tools:context=".ProfileFragment">
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/nestedSV"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
-        app:layout_anchor="@id/nestedSV"
         app:layout_anchorGravity="center">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraint"
@@ -131,8 +129,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@id/constraint"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="40dp">
+                android:layout_marginTop="10dp">
 
                 <ProgressBar
                     android:id="@+id/progressBarProfile"
@@ -143,20 +140,18 @@
                     android:visibility="visible" />
             </FrameLayout>
 
-        </RelativeLayout>
-    </androidx.core.widget.NestedScrollView>
-
+        </LinearLayout>
+    </ScrollView>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addRecipeBtn"
+        android:clickable="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="@dimen/fab_margin"
         android:layout_marginBottom="66dp"
         android:backgroundTint="@color/red_1"
-        android:clickable="true"
         android:contentDescription="@string/app_name"
-        android:src="@drawable/ic_baseline_add_24"
-        app:layout_anchor="@id/nestedSV"
-        app:layout_anchorGravity="bottom|right|end" />
+        android:src="@drawable/ic_baseline_add_24"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
