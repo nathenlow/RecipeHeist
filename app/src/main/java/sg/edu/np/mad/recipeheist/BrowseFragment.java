@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.CountDownTimer;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -150,7 +151,8 @@ public class BrowseFragment extends Fragment {
         menubookmark.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                mainActivity.replaceFragment(new BookmarkFragment(), R.id.frameLayout);
+                Intent bookmarkIntent = new Intent(getActivity(), BookmarkActivity.class);
+                startActivity(bookmarkIntent);
                 return false;
             }
         });
@@ -279,10 +281,7 @@ public class BrowseFragment extends Fragment {
             RView.setAdapter(browseAdapter);
             if (!needanotherpage){PBLoading.setVisibility(View.GONE);}
         }
-
     }
-
-
 
     // go to recipe page
     public void goToRecipe(String recipeID)
@@ -299,6 +298,9 @@ public class BrowseFragment extends Fragment {
         Intent intent = new Intent(mainActivity, RecipeItem.class);
         intent.putExtra("recipeID", recipeID);
         mainActivity.startActivity(intent);
+
     }
+
+
 
 }
