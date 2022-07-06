@@ -2,7 +2,6 @@ package sg.edu.np.mad.recipeheist;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -72,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                     replaceFragment(new UpdatesFragment(), R.id.frameLayout);
                     break;
                 case R.id.download:
-                    replaceFragment(new DownloadFragment(), R.id.frameLayout);
+                    replaceFragment(new HistoryFragment(), R.id.frameLayout);
                     break;
                 case R.id.profile:
 

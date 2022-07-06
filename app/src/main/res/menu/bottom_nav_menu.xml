@@ -8,12 +8,12 @@
         android:title="Browse" />
     <item
         android:id="@+id/updates"
-        android:icon="@drawable/ic_baseline_update_24"
+        android:icon="@drawable/ic_updates_outline_24dp"
         android:title="Updates" />
     <item
         android:id="@+id/download"
-        android:icon="@drawable/ic_baseline_library_books_24"
-        android:title="Download" />
+        android:icon="@drawable/ic_baseline_history_24"
+        android:title="History" />
     <item
         android:id="@+id/profile"
         android:icon="@drawable/ic_outline_account_circle_24"

@@ -40,7 +40,7 @@ import sg.edu.np.mad.recipeheist.databinding.ActivityRecipeItemBinding;
 public class RecipeItem extends AppCompatActivity {
 
     private ImageView foodimage, profileicon;
-    private ImageButton download, like;
+    private ImageButton like;
     private TextView username, noOfLikes, description, servings, duration, foodcategory, ingredientitems, instructionitems;
     private CollapsingToolbarLayout collapsing_toolbar;
     private FloatingActionButton bookmarkbtn;
@@ -64,7 +64,6 @@ public class RecipeItem extends AppCompatActivity {
 
         foodimage = findViewById(R.id.foodimage);
         profileicon = findViewById(R.id.profileicon);
-        download = findViewById(R.id.download);
         like = findViewById(R.id.like);
         username = findViewById(R.id.username);
         noOfLikes = findViewById(R.id.noOfLikes);
