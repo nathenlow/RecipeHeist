@@ -1,6 +1,7 @@
 package sg.edu.np.mad.recipeheist;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.bumptech.glide.Glide;
@@ -34,6 +35,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 
 import sg.edu.np.mad.recipeheist.databinding.ActivityRecipeItemBinding;
 
@@ -44,7 +46,7 @@ public class RecipeItem extends AppCompatActivity {
     private TextView username, noOfLikes, description, servings, duration, foodcategory, ingredientitems, instructionitems;
     private CollapsingToolbarLayout collapsing_toolbar;
     private FloatingActionButton bookmarkbtn;
-    private AppBarLayout appbar;
+    String recipeID;
 
     boolean bookmarkcheck;
     boolean likecheck;
@@ -80,7 +82,7 @@ public class RecipeItem extends AppCompatActivity {
         likecheck = false;
 
         Intent recievefrombrowse = getIntent();
-        String recipeID = recievefrombrowse.getStringExtra("recipeID");
+        recipeID = recievefrombrowse.getStringExtra("recipeID");
         String response = getRecipe(recipeID);
         JSONObject recipeobj = null;
         //display recipe data
@@ -181,36 +183,7 @@ public class RecipeItem extends AppCompatActivity {
             public void onClick(View v) {
                 String currentuser = FirebaseAuth.getInstance().getUid();
                 if (currentuser != null){
-                    findViewById(R.id.like).setEnabled(false);
-                    // remove a like
-                    if (likecheck){
-                        like.setImageDrawable(getDrawable(R.drawable.ic_outline_thumb_up_off_alt_24));
-                        likecheck = false;
-                        numlikes -= 1;
-                        noOfLikes.setText(String.valueOf(numlikes));
-                        try {
-                            likeRecipe(recipeID,currentuser, false);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    //add a like
-                    else {
-                        like.setImageDrawable(getDrawable(R.drawable.ic_baseline_thumb_up_24));
-                        likecheck = true;
-                        numlikes += 1;
-                        noOfLikes.setText(String.valueOf(numlikes));
-                        try {
-                            likeRecipe(recipeID,currentuser, true);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    findViewById(R.id.like).setEnabled(true);
+                    new LikeAsync(RecipeItem.this).execute();
                 }
                 else {
                     Toast.makeText(RecipeItem.this, "Login is required", Toast.LENGTH_SHORT).show();
@@ -327,13 +300,67 @@ public class RecipeItem extends AppCompatActivity {
                 }
 
             }
-
         }
-
 
         RestDB restDB = new RestDB();
         String json = restDB.bookmarkRecipe(bookmark);
         String response = restDB.patch("https://recipeheist-567c.restdb.io/rest/users/" + restdbuserid, json);
+    }
+
+    private static class LikeAsync extends AsyncTask<Void,Void,Void>{
+        private WeakReference<RecipeItem> activityWeakReference;
+
+        LikeAsync(RecipeItem activity){
+            activityWeakReference = new WeakReference<RecipeItem>(activity);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            RecipeItem activity = activityWeakReference.get();
+            activity.findViewById(R.id.like).setEnabled(false);
+        }
+        @Override
+        protected Void doInBackground(Void... voids) {
+            RecipeItem activity = activityWeakReference.get();
+            String currentuser = FirebaseAuth.getInstance().getUid();
+            // remove a like
+            if (activity.likecheck){
+                activity.like.setImageDrawable(activity.getDrawable(R.drawable.ic_outline_thumb_up_off_alt_24));
+                activity.likecheck = false;
+                activity.numlikes -= 1;
+                try {
+                    activity.likeRecipe(activity.recipeID,currentuser, false);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            //add a like
+            else {
+                activity.like.setImageDrawable(activity.getDrawable(R.drawable.ic_baseline_thumb_up_24));
+                activity.likecheck = true;
+                activity.numlikes += 1;
+                try {
+                    activity.likeRecipe(activity.recipeID,currentuser, true);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void unused) {
+            super.onPostExecute(unused);
+            RecipeItem activity = activityWeakReference.get();
+            activity.findViewById(R.id.like).setEnabled(true);
+            activity.noOfLikes.setText(String.valueOf(activity.numlikes));
+        }
     }
 
 
