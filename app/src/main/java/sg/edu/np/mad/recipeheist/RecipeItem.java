@@ -214,7 +214,6 @@ public class RecipeItem extends AppCompatActivity {
     }
 
     public String getUser(String userid){
-        //String userid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         RestDB example = new RestDB();
         String response = null;
         try {
@@ -288,7 +287,6 @@ public class RecipeItem extends AppCompatActivity {
 
         protected Void doInBackground(JSONObject... currentuserobjs) {
             RecipeItem activity = activityWeakReference.get();
-            String currentuser = FirebaseAuth.getInstance().getUid();
             //remove a bookmark
             if (activity.bookmarkcheck){
                 activity.bookmarkbtn.setImageDrawable(activity.getDrawable(R.drawable.ic_baseline_bookmarks_24));
