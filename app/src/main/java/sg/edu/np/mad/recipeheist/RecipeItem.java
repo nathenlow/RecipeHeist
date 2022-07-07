@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.bumptech.glide.Glide;
-import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -17,17 +16,11 @@ import com.google.firebase.storage.StorageReference;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.StrictMode;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-
-import androidx.appcompat.widget.SearchView;
-import androidx.navigation.ui.AppBarConfiguration;
 
 
 import org.json.JSONArray;
@@ -36,8 +29,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-
-import sg.edu.np.mad.recipeheist.databinding.ActivityRecipeItemBinding;
 
 public class RecipeItem extends AppCompatActivity {
 
@@ -198,34 +189,7 @@ public class RecipeItem extends AppCompatActivity {
             public void onClick(View view) {
                 String currentuser = FirebaseAuth.getInstance().getUid();
                 if (currentuser != null){
-                    findViewById(R.id.fab).setEnabled(false);
-                    //remove a bookmark
-                    if (bookmarkcheck){
-                        bookmarkbtn.setImageDrawable(getDrawable(R.drawable.ic_baseline_bookmarks_24));
-                        bookmarkcheck = false;
-                        try {
-                            bookmarkRecipe(recipeID, finalCurrentuserobj, false);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        Toast.makeText(RecipeItem.this, "Bookmark removed", Toast.LENGTH_SHORT).show();
-                    }
-                    //add a bookmark
-                    else{
-                        bookmarkbtn.setImageDrawable(getDrawable(R.drawable.ic_baseline_bookmark_added_24));
-                        bookmarkcheck = true;
-                        try {
-                            bookmarkRecipe(recipeID, finalCurrentuserobj, true);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        Toast.makeText(RecipeItem.this, "Bookmark added", Toast.LENGTH_SHORT).show();
-                    }
-                    findViewById(R.id.fab).setEnabled(true);
+                    new BookmarkAsync(RecipeItem.this).execute(finalCurrentuserobj);
                 }
                 else {
                     Snackbar.make(view, "Login is required", Snackbar.LENGTH_SHORT)
@@ -261,6 +225,7 @@ public class RecipeItem extends AppCompatActivity {
         return response;
     }
 
+    //update like data to restdb
     public void likeRecipe(String recipeID, String currentuser, boolean addorremove) throws JSONException, IOException {
         String response0 = getRecipe(recipeID);
         JSONObject recipeobj0 = new JSONObject(response0);
@@ -285,7 +250,7 @@ public class RecipeItem extends AppCompatActivity {
     }
 
 
-
+    //update bookmark data to restdb
     public void bookmarkRecipe(String recipeID, JSONObject currentuserobj0, boolean addorremove) throws IOException, JSONException {
         String restdbuserid = currentuserobj0.getString("_id");
         JSONArray bookmark = currentuserobj0.getJSONArray("bookmark");
@@ -307,13 +272,70 @@ public class RecipeItem extends AppCompatActivity {
         String response = restDB.patch("https://recipeheist-567c.restdb.io/rest/users/" + restdbuserid, json);
     }
 
+    private static class BookmarkAsync extends AsyncTask<JSONObject,Void,Void>{
+        private WeakReference<RecipeItem> activityWeakReference;
+
+        BookmarkAsync(RecipeItem activity){
+            activityWeakReference = new WeakReference<RecipeItem>(activity);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            RecipeItem activity = activityWeakReference.get();
+            activity.findViewById(R.id.fab).setEnabled(false);
+        }
+
+        protected Void doInBackground(JSONObject... currentuserobjs) {
+            RecipeItem activity = activityWeakReference.get();
+            String currentuser = FirebaseAuth.getInstance().getUid();
+            //remove a bookmark
+            if (activity.bookmarkcheck){
+                activity.bookmarkbtn.setImageDrawable(activity.getDrawable(R.drawable.ic_baseline_bookmarks_24));
+                activity.bookmarkcheck = false;
+                try {
+                    activity.bookmarkRecipe(activity.recipeID, currentuserobjs[0], false);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            //add a bookmark
+            else{
+                activity.bookmarkbtn.setImageDrawable(activity.getDrawable(R.drawable.ic_baseline_bookmark_added_24));
+                activity.bookmarkcheck = true;
+                try {
+                    activity.bookmarkRecipe(activity.recipeID, currentuserobjs[0], true);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+            protected void onPostExecute(Void unused) {
+            super.onPostExecute(unused);
+            RecipeItem activity = activityWeakReference.get();
+            activity.findViewById(R.id.fab).setEnabled(true);
+        }
+    }
+
+
+
+
+
+
+
+    //like Async
     private static class LikeAsync extends AsyncTask<Void,Void,Void>{
         private WeakReference<RecipeItem> activityWeakReference;
 
         LikeAsync(RecipeItem activity){
             activityWeakReference = new WeakReference<RecipeItem>(activity);
         }
-
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -353,7 +375,6 @@ public class RecipeItem extends AppCompatActivity {
             }
             return null;
         }
-
         @Override
         protected void onPostExecute(Void unused) {
             super.onPostExecute(unused);
