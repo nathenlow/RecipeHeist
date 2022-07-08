@@ -82,7 +82,6 @@ public class RecipeItem extends AppCompatActivity {
 
             collapsing_toolbar.setTitle(recipeobj.getString("title"));
             collapsing_toolbar.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
-            numlikes = recipeobj.getJSONArray("like").length();
             noOfLikes.setText(String.valueOf(numlikes));
             description.setText(recipeobj.getString("description"));
             servings.setText(recipeobj.getString("servings") + " pax");
@@ -109,16 +108,6 @@ public class RecipeItem extends AppCompatActivity {
             }
             instructionitems.setText(instructionlist);
 
-            //check user had liked recipe
-            JSONArray likelist = recipeobj.getJSONArray("like");
-            for (int i = 0; i <likelist.length(); i++) {
-                if (likelist.get(i).equals(FirebaseAuth.getInstance().getUid())){
-                    like.setImageDrawable(getDrawable(R.drawable.ic_baseline_thumb_up_24));
-                    likecheck = true;
-                    break;
-                }
-            }
-
             //Display image
             String imagefilename = recipeobj.getString("imagePath");
             StorageReference storageReference = FirebaseStorage.getInstance().getReference("Recipe_image/"+imagefilename);
@@ -130,8 +119,16 @@ public class RecipeItem extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        //check whether user bookmark this page
-        String currentuserjsonstring = getUser(FirebaseAuth.getInstance().getUid());
+        String currentuser = FirebaseAuth.getInstance().getUid();
+        //check whether user like this recipe
+        try {
+            getLike(currentuser);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //check whether user bookmark this recipe
+        String currentuserjsonstring = getUser(currentuser);
         JSONObject currentuserobj = null;
         if (currentuserjsonstring != null){
             try {
@@ -224,27 +221,43 @@ public class RecipeItem extends AppCompatActivity {
         return response;
     }
 
+    public void getLike(String userid) throws IOException {
+        RestDB example = new RestDB();
+        String response = null;
+        //check whether user liked the recipe
+        example.asyncGet("https://recipeheist-567c.restdb.io/rest/like?q={\"userID\":\"" + userid + "\", \"recipeID\": \"" + recipeID + "\"}&totals=true&count=true", new SuccessListener() {
+            @Override
+            public void onSuccess(String jsonresponse) throws JSONException {
+                JSONObject likejsonobj = new JSONObject(jsonresponse);
+                JSONObject totaljsonobj = likejsonobj.getJSONObject("totals");
+                if (totaljsonobj.getInt("count") != 0) {
+                    like.setImageDrawable(getDrawable(R.drawable.ic_baseline_thumb_up_24));
+                    likecheck = true;
+                }
+            }
+        });
+        //get the numeber of likes in this recipe
+        example.asyncGet("https://recipeheist-567c.restdb.io/rest/like?q={\"recipeID\": \"" + recipeID + "\"}&totals=true&count=true", new SuccessListener() {
+            @Override
+            public void onSuccess(String jsonresponse) throws JSONException {
+                JSONObject likejsonobj = new JSONObject(jsonresponse);
+                JSONObject totaljsonobj = likejsonobj.getJSONObject("totals");
+                numlikes = totaljsonobj.getInt("count");
+                noOfLikes.setText(String.valueOf(numlikes));
+            }
+        });
+    }
+
     //update like data to restdb
-    public void likeRecipe(String recipeID, String currentuser, boolean addorremove) throws JSONException, IOException {
-        String response0 = getRecipe(recipeID);
-        JSONObject recipeobj0 = new JSONObject(response0);
-        JSONArray likelist0 = recipeobj0.getJSONArray("like");
-        if (addorremove){
-            likelist0.put(currentuser);
+    public void likeRecipe(String recipeID, String currentuser, boolean addorremove) throws IOException {
+        RestDB restDB = new RestDB();
+        if (addorremove) {
+            String json = restDB.likeRecipe(recipeID, currentuser);
+            String response = restDB.post("https://recipeheist-567c.restdb.io/rest/like/" + recipeID, json);
         }
         else {
-            for (int i = 0; i < likelist0.length(); i++) {
-                if(likelist0.get(i).equals(currentuser)){
-                    likelist0.remove(i);
-                    break;
-                }
-
-            }
+            String response = restDB.delete("https://recipeheist-567c.restdb.io/rest/like/*?q={\"recipeID\":\"" + recipeID + "\",\"userID\":\"" + currentuser + "\"}");
         }
-
-        RestDB restDB = new RestDB();
-        String json = restDB.likeRecipe(likelist0);
-        String response = restDB.patch("https://recipeheist-567c.restdb.io/rest/recipe/" + recipeID, json);
 
     }
 
@@ -352,8 +365,6 @@ public class RecipeItem extends AppCompatActivity {
                 activity.numlikes -= 1;
                 try {
                     activity.likeRecipe(activity.recipeID,currentuser, false);
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -365,8 +376,6 @@ public class RecipeItem extends AppCompatActivity {
                 activity.numlikes += 1;
                 try {
                     activity.likeRecipe(activity.recipeID,currentuser, true);
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

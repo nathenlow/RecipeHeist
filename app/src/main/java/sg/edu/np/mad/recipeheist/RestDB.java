@@ -155,12 +155,12 @@ public class RestDB {
                 + "\"foodcategory\":\"" + foodcategory + "\","
                 + "\"ingredient\":" + ingredient + ","
                 + "\"instructions\":" + instructions + ","
-                + "\"like\":[],"
                 + "\"userID\":\"" + userID + "\"}";
     }
 
-    String likeRecipe(JSONArray like) {
-        return "{\"like\":" + like + "}";
+    String likeRecipe(String recipeID, String userID) {
+        return "{\"recipeID\":\"" + recipeID + "\","
+                + "\"userID\":\"" + userID + "\"}";
     }
 
     String bookmarkRecipe(JSONArray bookmark) {
