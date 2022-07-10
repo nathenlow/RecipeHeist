@@ -2,8 +2,11 @@ package sg.edu.np.mad.recipeheist;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import java.util.ArrayList;
 
 public class DataBaseHandler extends SQLiteOpenHelper {
     public static String DATABASE_NAME = "RecipeDB";
@@ -11,9 +14,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public static String TABLE_UPDATES = "Updates";
     public static String COLUMN_RECIPEID = "RecipeID";
     public static String COLUMN_TITLE = "Title";
-    public static String COLUMN_DURATION = "Duration";
     public static String COLUMN_IMAGEPATH = "ImagePath";
-    public static String[] COLUMNS = {TABLE_UPDATES, COLUMN_RECIPEID, COLUMN_TITLE, COLUMN_DURATION, COLUMN_IMAGEPATH};
+    public static String COLUMN_DURATION = "Duration";
+    public static String[] COLUMNS = {COLUMN_RECIPEID, COLUMN_TITLE, COLUMN_IMAGEPATH, COLUMN_DURATION};
 
 
     public DataBaseHandler(Context context) {
@@ -26,8 +29,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 "CREATE TABLE " + TABLE_UPDATES +"("  +
                         COLUMN_RECIPEID + " TEXT PRIMARY KEY," +
                         COLUMN_TITLE + " TEXT NOT NULL," +
-                        COLUMN_DURATION + " TEXT NOT NULL," +
-                        COLUMN_IMAGEPATH + " TEXT NOT NULL);";
+                        COLUMN_IMAGEPATH + " TEXT NOT NULL," +
+                        COLUMN_DURATION + " TEXT NOT NULL);";
         db.execSQL(CREATE_TABLE_UPDATES);
     }
 
@@ -43,10 +46,32 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(COLUMN_RECIPEID, recipePreview.getId());
         values.put(COLUMN_TITLE, recipePreview.getTitle());
-        values.put(COLUMN_DURATION, recipePreview.getduration());
         values.put(COLUMN_IMAGEPATH, recipePreview.getImagePath());
+        values.put(COLUMN_DURATION, recipePreview.getduration());
         SQLiteDatabase db = this.getWritableDatabase();
-        db.insert(TABLE_UPDATES, null, values);
+        db.replace(TABLE_UPDATES, null, values);
         db.close();
     }
+
+    public ArrayList<RecipePreview> chefUpdates(){
+        ArrayList<RecipePreview> updatelist = new ArrayList<>();
+        String query = "SELECT * FROM " + TABLE_UPDATES;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        RecipePreview recipePreview = null;
+        if (cursor.moveToFirst()){
+            do {
+                recipePreview = new RecipePreview(
+                        cursor.getString(0),
+                        cursor.getString(1),
+                        cursor.getString(2),
+                        cursor.getString(3)
+                );
+                updatelist.add(recipePreview);
+            }while (cursor.moveToNext());
+        }
+        return updatelist;
+    }
+
+
 }

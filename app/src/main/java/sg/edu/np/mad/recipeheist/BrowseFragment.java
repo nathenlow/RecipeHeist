@@ -11,18 +11,15 @@ import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.CountDownTimer;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import org.json.JSONArray;
@@ -139,7 +136,7 @@ public class BrowseFragment extends Fragment {
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.top_nav_browse_menu, menu);
         MenuItem menusearch = menu.findItem(R.id.app_bar_search);
-        MenuItem menubookmark = menu.findItem(R.id.viewbookmark);
+        MenuItem menubookmark = menu.findItem(R.id.bookmarkbtn);
         //for search
         menusearch.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
@@ -216,7 +213,6 @@ public class BrowseFragment extends Fragment {
             new SuccessListener() {
                 @Override
                 public void onSuccess(String jsonresponse) throws JSONException {
-                    System.out.println(jsonresponse);
                     recipearray = new JSONArray(jsonresponse);
                     if (recipearray.length() >= perpage){
                         needanotherpage = true;

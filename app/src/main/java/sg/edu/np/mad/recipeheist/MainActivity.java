@@ -2,14 +2,20 @@ package sg.edu.np.mad.recipeheist;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.View;
@@ -25,13 +31,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import sg.edu.np.mad.recipeheist.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
-     ActivityMainBinding binding;
-
+    ActivityMainBinding binding;
     private FirebaseAuth mAuth;
 
     @Override
@@ -243,5 +249,4 @@ public class MainActivity extends AppCompatActivity {
             return arrayList;
         }
     }
-
 }

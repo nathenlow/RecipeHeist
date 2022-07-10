@@ -77,6 +77,7 @@ public class EditProfileFragment extends Fragment {
             public void onClick(View v) {
                 // logout user
                 FirebaseAuth.getInstance().signOut();
+                getActivity().deleteDatabase(DataBaseHandler.DATABASE_NAME);
 
                 // redirect back to main activity
                 Intent intent = new Intent(getActivity(), MainActivity.class);

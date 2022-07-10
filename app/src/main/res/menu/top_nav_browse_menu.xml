@@ -7,7 +7,7 @@
         android:title="Search"
         app:showAsAction="ifRoom"/>
     <item
-        android:id="@+id/viewbookmark"
+        android:id="@+id/bookmarkbtn"
         android:icon="@drawable/ic_baseline_bookmarks_24"
         android:title="Bookmark"
         app:showAsAction="ifRoom" />

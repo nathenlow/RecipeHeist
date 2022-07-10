@@ -57,6 +57,13 @@ public class RestDB {
                         e.printStackTrace();
                     }
                 }
+                else {
+                    try {
+                        successListener.onSuccess(null);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         });
     }
