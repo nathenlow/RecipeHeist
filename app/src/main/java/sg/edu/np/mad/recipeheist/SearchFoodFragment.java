@@ -43,7 +43,7 @@ import sg.edu.np.mad.recipeheist.adapter.RecentSearchAdapter;
 public class SearchFoodFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
-    private static final String SHARED_PREFS = "sharedPrefs";
+    private static final String SHARED_PREFS = "recentSearch";
     private static final String RECENT_SEARCH = "recentSearches";
     private View rootview;
     private JSONArray recentlist;

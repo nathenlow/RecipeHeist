@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -185,20 +186,25 @@ public class BrowseFragment extends Fragment {
             new SuccessListener() {
                 @Override
                 public void onSuccess(String jsonresponse) throws JSONException {
-                    recipearray = new JSONArray(jsonresponse);
-                    if (recipearray.length() == perpage){
-                        needanotherpage = true;
-                    }
-                    mainActivity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                getData();
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                    if (jsonresponse != null){
+                        recipearray = new JSONArray(jsonresponse);
+                        if (recipearray.length() == perpage){
+                            needanotherpage = true;
                         }
-                    });
+                        mainActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    getData();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                    }
+                    else {
+                        Toast.makeText(mainActivity, "Check your Internet connection", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         );
@@ -213,20 +219,25 @@ public class BrowseFragment extends Fragment {
             new SuccessListener() {
                 @Override
                 public void onSuccess(String jsonresponse) throws JSONException {
-                    recipearray = new JSONArray(jsonresponse);
-                    if (recipearray.length() >= perpage){
-                        needanotherpage = true;
-                    }
-                    mainActivity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                getData();
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                    if (jsonresponse != null) {
+                        recipearray = new JSONArray(jsonresponse);
+                        if (recipearray.length() >= perpage) {
+                            needanotherpage = true;
                         }
-                    });
+                        mainActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    getData();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                    }
+                    else {
+                        Toast.makeText(mainActivity, "Check your Internet connection", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         );

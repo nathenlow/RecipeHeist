@@ -27,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 
 public class UpdateService extends Service {
@@ -156,9 +157,11 @@ public class UpdateService extends Service {
     }
 
     public String getTodayDate(){
-        Date c = Calendar.getInstance().getTime();
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        String formattedDate = df.format(c);
+        Date date = new Date(System.currentTimeMillis());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        String formattedDate = simpleDateFormat.format(date);
+
         return formattedDate;
     }
 
