@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.CountDownTimer;
 import android.view.LayoutInflater;
@@ -39,15 +40,15 @@ public class BrowseFragment extends Fragment {
     boolean needanotherpage;
     private int perpage = 10;
     private ArrayList<RecipePreview> recipelist;
+    private String query = "";
     private RecyclerView RView;
     private BrowseAdapter browseAdapter;
     private ProgressBar PBLoading;
     private NestedScrollView nestedSV;
     private JSONArray recipearray;
     private View rootView;
-    private String query = "";
     private ConstraintLayout loadingview;
-
+    private SwipeRefreshLayout swipeRefreshLayout;
     MainActivity mainActivity;
 
     public BrowseFragment() {
@@ -83,6 +84,7 @@ public class BrowseFragment extends Fragment {
         PBLoading = rootView.findViewById(R.id.PBLoading);
         nestedSV = rootView.findViewById(R.id.nestedSV);
         loadingview = rootView.findViewById(R.id.loadinglayout);
+        swipeRefreshLayout = rootView.findViewById(R.id.swipeRefreshLayout);
 
         startRecipieGet();
 
@@ -104,6 +106,14 @@ public class BrowseFragment extends Fragment {
                         startRecipieGet();
                     }
                 }
+            }
+        });
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(false);
+                Init();
             }
         });
 
@@ -135,6 +145,12 @@ public class BrowseFragment extends Fragment {
             }
         });
 
+    }
+
+    public void Init(){
+        pagecount = 0;
+        recipelist = new ArrayList<>();
+        startRecipieGet();
     }
 
     //combine all the fuctions for get from restdb

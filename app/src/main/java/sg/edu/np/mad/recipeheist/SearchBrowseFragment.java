@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.CountDownTimer;
 import android.view.LayoutInflater;
@@ -39,13 +40,14 @@ public class SearchBrowseFragment extends Fragment {
     boolean needanotherpage;
     private int perpage = 10;
     private ArrayList<RecipePreview> recipelist;
+    private String query;
     private RecyclerView RView;
     private BrowseAdapter browseAdapter;
     private ProgressBar PBLoading;
     private NestedScrollView nestedSV;
     private JSONArray recipearray;
     private View rootView;
-    private String query = "";
+    private SwipeRefreshLayout swipeRefreshLayout;
     private ConstraintLayout loadingview;
 
     MainActivity mainActivity;
@@ -65,6 +67,16 @@ public class SearchBrowseFragment extends Fragment {
         mainActivity = (MainActivity) getActivity();
         mainActivity.showbottomnav(true);
         setHasOptionsMenu(true);
+
+        //get data from search
+        getParentFragmentManager().setFragmentResultListener("search", this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                onStart();
+                query = result.getString("query");
+                startSearch();
+            }
+        });
     }
 
     @SuppressLint("WrongConstant")
@@ -83,17 +95,7 @@ public class SearchBrowseFragment extends Fragment {
         PBLoading = rootView.findViewById(R.id.PBLoading);
         nestedSV = rootView.findViewById(R.id.nestedSV);
         loadingview = rootView.findViewById(R.id.loadinglayout);
-
-
-        //get data from search
-        getParentFragmentManager().setFragmentResultListener("search", this, new FragmentResultListener() {
-            @Override
-            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                onStart();
-                query = result.getString("query");
-                startSearch();
-            }
-        });
+        swipeRefreshLayout = rootView.findViewById(R.id.swipeRefreshLayout);
 
 
         // grid layout splitting display into two columns
@@ -114,6 +116,14 @@ public class SearchBrowseFragment extends Fragment {
                         startSearch();
                     }
                 }
+            }
+        });
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(false);
+                Init();
             }
         });
 
@@ -145,6 +155,12 @@ public class SearchBrowseFragment extends Fragment {
             }
         });
 
+    }
+
+    public void Init(){
+        pagecount = 0;
+        recipelist = new ArrayList<>();
+        startSearch();
     }
 
     //combine all the fuctions to the search results from restdb
