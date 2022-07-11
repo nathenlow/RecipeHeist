@@ -9,6 +9,7 @@ import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.CountDownTimer;
 import android.view.LayoutInflater;
@@ -38,6 +39,8 @@ public class UpdatesFragment extends Fragment {
     int lastpage = 0;
     private int perpage = 16;
     private ArrayList<RecipePreview> showlist;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    DataBaseHandler dataBaseHandler;
 
 
     public UpdatesFragment() {
@@ -70,8 +73,9 @@ public class UpdatesFragment extends Fragment {
         PBLoading = rootView.findViewById(R.id.PBLoading);
         nestedSV = rootView.findViewById(R.id.nestedSV);
         loadingview = rootView.findViewById(R.id.loadinglayout);
-        DataBaseHandler dataBaseHandler = new DataBaseHandler(mainActivity);
+        dataBaseHandler = new DataBaseHandler(mainActivity);
         showlist = getData(dataBaseHandler.chefUpdates());
+        swipeRefreshLayout = rootView.findViewById(R.id.swipeRefreshLayout);
 
         // grid layout splitting display into two columns
         int columns = 2;
@@ -110,6 +114,14 @@ public class UpdatesFragment extends Fragment {
         });
         RView.setAdapter(browseAdapter);
 
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(false);
+                Init();
+            }
+        });
+
         return rootView;
     }
 
@@ -134,6 +146,17 @@ public class UpdatesFragment extends Fragment {
             }
         });
 
+    }
+
+    public void Init(){
+        showlist = getData(dataBaseHandler.chefUpdates());
+        browseAdapter = new BrowseAdapter(mainActivity, showlist, new RecipeLoadListener() {
+            @Override
+            public void onLoad(String recipeID) {
+                goToRecipe(recipeID);
+            }
+        });
+        RView.setAdapter(browseAdapter);
     }
 
     public ArrayList<RecipePreview> getData(ArrayList<RecipePreview> updatelist){

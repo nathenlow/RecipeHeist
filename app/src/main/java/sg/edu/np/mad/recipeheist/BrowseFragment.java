@@ -40,7 +40,6 @@ public class BrowseFragment extends Fragment {
     boolean needanotherpage;
     private int perpage = 10;
     private ArrayList<RecipePreview> recipelist;
-    private String query = "";
     private RecyclerView RView;
     private BrowseAdapter browseAdapter;
     private ProgressBar PBLoading;
