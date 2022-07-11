@@ -118,6 +118,7 @@ public class UpdatesFragment extends Fragment {
             @Override
             public void onRefresh() {
                 swipeRefreshLayout.setRefreshing(false);
+                Toast.makeText(mainActivity, "Reloading page", Toast.LENGTH_SHORT).show();
                 Init();
             }
         });

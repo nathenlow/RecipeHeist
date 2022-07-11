@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import sg.edu.np.mad.recipeheist.adapter.BrowseAdapter;
 
 
-public class SearchBrowseFragment extends Fragment {
+public class SearchFoodBrowseFragment extends Fragment {
 
     private int pagecount = 0;
     boolean needanotherpage;
@@ -52,12 +52,12 @@ public class SearchBrowseFragment extends Fragment {
 
     MainActivity mainActivity;
 
-    public SearchBrowseFragment() {
+    public SearchFoodBrowseFragment() {
         // Required empty public constructor
     }
 
-    public static SearchBrowseFragment newInstance() {
-        SearchBrowseFragment fragment = new SearchBrowseFragment();
+    public static SearchFoodBrowseFragment newInstance() {
+        SearchFoodBrowseFragment fragment = new SearchFoodBrowseFragment();
         return fragment;
     }
 
@@ -123,6 +123,7 @@ public class SearchBrowseFragment extends Fragment {
             @Override
             public void onRefresh() {
                 swipeRefreshLayout.setRefreshing(false);
+                Toast.makeText(mainActivity, "Reloading page", Toast.LENGTH_SHORT).show();
                 Init();
             }
         });
