@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import sg.edu.np.mad.recipeheist.adapter.BrowseAdapter;
 
 
-public class BrowseFragment extends Fragment {
+public class SearchBrowseFragment extends Fragment {
 
     private int pagecount = 0;
     boolean needanotherpage;
@@ -50,12 +50,12 @@ public class BrowseFragment extends Fragment {
 
     MainActivity mainActivity;
 
-    public BrowseFragment() {
+    public SearchBrowseFragment() {
         // Required empty public constructor
     }
 
-    public static BrowseFragment newInstance() {
-        BrowseFragment fragment = new BrowseFragment();
+    public static SearchBrowseFragment newInstance() {
+        SearchBrowseFragment fragment = new SearchBrowseFragment();
         return fragment;
     }
 
@@ -84,7 +84,17 @@ public class BrowseFragment extends Fragment {
         nestedSV = rootView.findViewById(R.id.nestedSV);
         loadingview = rootView.findViewById(R.id.loadinglayout);
 
-        startRecipieGet();
+
+        //get data from search
+        getParentFragmentManager().setFragmentResultListener("search", this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                onStart();
+                query = result.getString("query");
+                startSearch();
+            }
+        });
+
 
         // grid layout splitting display into two columns
         int columns = 2;
@@ -101,7 +111,7 @@ public class BrowseFragment extends Fragment {
                 if (needanotherpage){
                     // if diff is zero, then the bottom has been reached
                     if (diff == 0) {
-                        startRecipieGet();
+                        startSearch();
                     }
                 }
             }
@@ -137,12 +147,12 @@ public class BrowseFragment extends Fragment {
 
     }
 
-    //combine all the fuctions for get from restdb
-    public  void startRecipieGet(){
+    //combine all the fuctions to the search results from restdb
+    public  void startSearch(){
         needanotherpage = false;
         PBLoading.setVisibility(View.VISIBLE);
         try {
-            defaultRecipe(pagecount);
+            searchRecipes(query,pagecount);
             pagecount += 1;
         } catch (IOException e) {
             e.printStackTrace();
@@ -151,37 +161,38 @@ public class BrowseFragment extends Fragment {
         }
     }
 
-    //to get default browse recipe data from rest db
-    public void defaultRecipe(int page) throws IOException, JSONException {
+    // to get query data from rest db
+    public void searchRecipes(String query, int page) throws IOException, JSONException {
         int skip = perpage * page;
         RestDB restDB = new RestDB();
-        restDB.asyncGet("https://recipeheist-567c.restdb.io/rest/recipe?h={\"$fields\":{\"_id\":1,\"title\":1,\"duration\":1,\"imagePath\":1},\"$max\":" + perpage + ",\"$skip\":" + skip + ",\"$orderby\":{\"_created\":-1}}",
-            new SuccessListener() {
-                @Override
-                public void onSuccess(String jsonresponse) throws JSONException {
-                    if (jsonresponse != null) {
-                        recipearray = new JSONArray(jsonresponse);
-                        if (recipearray.length() >= perpage) {
-                            needanotherpage = true;
-                        }
-                        mainActivity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    getData();
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
+        restDB.asyncGet("https://recipeheist-567c.restdb.io/rest/recipe?q={\"title\": {\"$regex\" :\"" + query + "\"}}&h={\"$fields\":{\"_id\":1,\"title\":1,\"duration\":1,\"imagePath\":1},\"$max\":"+perpage+",\"$skip\":"+skip+",\"$orderby\":{\"_created\":-1}}",
+                new SuccessListener() {
+                    @Override
+                    public void onSuccess(String jsonresponse) throws JSONException {
+                        if (jsonresponse != null){
+                            recipearray = new JSONArray(jsonresponse);
+                            if (recipearray.length() == perpage){
+                                needanotherpage = true;
                             }
-                        });
-                    }
-                    else {
-                        Toast.makeText(mainActivity, "Check your Internet connection", Toast.LENGTH_SHORT).show();
+                            mainActivity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        getData();
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+                        }
+                        else {
+                            Toast.makeText(mainActivity, "Check your Internet connection", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
-            }
         );
     }
+
 
     //to convert json object into RecipePreview object to pass to recycler view
     public void getData() throws JSONException {

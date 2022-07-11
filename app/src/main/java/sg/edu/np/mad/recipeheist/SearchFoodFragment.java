@@ -151,7 +151,7 @@ public class SearchFoodFragment extends Fragment {
         getParentFragmentManager().setFragmentResult("search", result);
         savedata(query);
         mrecycler();
-        mainActivity.stack(new BrowseFragment());
+        mainActivity.replaceFragment(new SearchBrowseFragment(), R.id.frameLayout);
     }
 
     public void fillSearch(String query){
