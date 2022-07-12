@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class DataBaseHandler extends SQLiteOpenHelper {
     public static String DATABASE_NAME = "RecipeDB";
@@ -70,6 +71,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 updatelist.add(recipePreview);
             }while (cursor.moveToNext());
         }
+        Collections.reverse(updatelist);
         return updatelist;
     }
 
