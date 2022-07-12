@@ -64,6 +64,9 @@ public class ProfileFragment extends Fragment {
             query = "\"" + user.getUserID() + "\"";
 
         }
+
+        // to use methods from MainActivity
+        mainActivity = (MainActivity) getActivity();
     }
 
     @Override
@@ -80,8 +83,6 @@ public class ProfileFragment extends Fragment {
         noOfRecipes = rootView.findViewById(R.id.noOfRecipes);
         progressBar = rootView.findViewById(R.id.progressBarProfile);
 
-        // to use methods from MainActivity
-        mainActivity = (MainActivity) getActivity();
 
         mainActivity.setActionBarTitle("Profile");
         // update profile page
@@ -132,6 +133,7 @@ public class ProfileFragment extends Fragment {
         }
     }
 
+    // ------------------------------- Start of functions -------------------------------
 
     public void getData(){
 
@@ -157,7 +159,7 @@ public class ProfileFragment extends Fragment {
                     recipe.setFoodcategory(jsonObject.getString("foodcategory"));
                     recipe.setIngridient(convertJArrayToArrayList(jsonObject.getJSONArray("ingredient")));
                     recipe.setInstructions(convertJArrayToArrayList(jsonObject.getJSONArray("instructions")));
-                    recipe.setLike(convertJArrayToArrayList(jsonObject.getJSONArray("like")));
+                    //recipe.setLike(convertJArrayToArrayList(jsonObject.getJSONArray("like")));
 
                     System.out.println(recipe.getTitle());
                     // add recipe to recipe list
@@ -181,7 +183,6 @@ public class ProfileFragment extends Fragment {
             // remove progressbar
             progressBar.setVisibility(View.GONE);
             // replace fragment
-            assert mainActivity != null;
             mainActivity.replaceFragment(myRecipeFragment, rootView.findViewById(R.id.profileFrameLayout).getId());
         }
     }

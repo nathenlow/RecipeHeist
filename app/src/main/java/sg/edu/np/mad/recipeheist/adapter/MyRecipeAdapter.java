@@ -72,7 +72,7 @@ public class MyRecipeAdapter extends RecyclerView.Adapter<MyRecipeVH> {
         // set name
         holder.foodTitle.setText(recipe.getTitle());
         // set noOfLikes
-        holder.noOfLikes.setText(String.valueOf(recipe.getLike().size()));
+        //holder.noOfLikes.setText(String.valueOf(recipe.getLike().size()));
 
         // set on click for the card view
         holder.myRecipeCard.setOnClickListener(new View.OnClickListener() {
