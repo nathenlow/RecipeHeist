@@ -39,10 +39,10 @@ import sg.edu.np.mad.recipeheist.databinding.ActivityMainBinding;
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
     private FirebaseAuth mAuth;
-    private Fragment browseFragment;
-    private Fragment updatesFragment;
-    private Fragment historyFragment;
-    private Fragment profileFragment;
+    public Fragment browseFragment;
+    public Fragment updatesFragment;
+    public Fragment historyFragment;
+    public Fragment profileFragment;
 
     @Override
     public void onBackPressed() {
