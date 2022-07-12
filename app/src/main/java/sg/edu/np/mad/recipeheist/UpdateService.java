@@ -104,7 +104,7 @@ public class UpdateService extends Service {
                                         .setContentTitle(followeduser);
                                 notificationManager.notify(1, notification.build());
                                 //get followed user recipes
-                                String reciperesponse = restDB.get("https://recipeheist-567c.restdb.io/rest/recipe?q={\"userID\":\"" + followeduser + "\"}&h={\"_changed\":{\"$gte\":{\"$date\":\"" + getLastUpdateDate(followeduser) + "\"}}}");
+                                String reciperesponse = restDB.get("https://recipeheist-567c.restdb.io/rest/recipe?q={\"userID\":\"" + followeduser + "\",\"_changed\":{\"$gte\":{\"$date\":\"" + getLastUpdateDate(followeduser) + "\"}}}");
 
                                 if (reciperesponse != null) {
                                     saveDate(followeduser);
