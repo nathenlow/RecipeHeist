@@ -17,23 +17,28 @@
         android:theme="@style/Theme.RecipeHeist">
         <activity
             android:name=".BookmarkActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".RecipeItem"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".AddRecipeActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".SignIn"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".SignUp"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:usesCleartextTraffic="true" />
         <activity
             android:name=".MainActivity"
-            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
