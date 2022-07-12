@@ -125,10 +125,6 @@ public class SearchFoodFragment extends Fragment {
             }
         });
 
-
-
-
-        
         return rootview;
     }
 

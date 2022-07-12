@@ -39,6 +39,10 @@ import sg.edu.np.mad.recipeheist.databinding.ActivityMainBinding;
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
     private FirebaseAuth mAuth;
+    private Fragment browseFragment;
+    private Fragment updatesFragment;
+    private Fragment historyFragment;
+    private Fragment profileFragment;
 
     @Override
     public void onBackPressed() {
@@ -47,21 +51,24 @@ public class MainActivity extends AppCompatActivity {
             moveTaskToBack(true);
         }else {
             binding.bottomNavigationView.setSelectedItemId(R.id.browse);
-            replaceFragment(new BrowseFragment(), R.id.frameLayout);
+            replaceFragment(browseFragment, R.id.frameLayout);
         }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        replaceFragment(new BrowseFragment(), R.id.frameLayout);
+        browseFragment = new BrowseFragment();
+        updatesFragment = new UpdatesFragment();
+        historyFragment = new HistoryFragment();
+        profileFragment = new ProfileFragment();
+
+        replaceFragment(browseFragment, R.id.frameLayout);
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -71,13 +78,13 @@ public class MainActivity extends AppCompatActivity {
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             switch (item.getItemId()){
                 case R.id.browse:
-                    replaceFragment(new BrowseFragment(), R.id.frameLayout);
+                    replaceFragment(browseFragment, R.id.frameLayout);
                     break;
                 case R.id.updates:
-                    replaceFragment(new UpdatesFragment(), R.id.frameLayout);
+                    replaceFragment(updatesFragment, R.id.frameLayout);
                     break;
                 case R.id.download:
-                    replaceFragment(new HistoryFragment(), R.id.frameLayout);
+                    replaceFragment(historyFragment, R.id.frameLayout);
                     break;
                 case R.id.profile:
 
@@ -132,7 +139,6 @@ public class MainActivity extends AppCompatActivity {
                 Bundle user_data = new Bundle();
                 user_data.putParcelable("userData", user);
                 //set argument to ProfileFragment
-                ProfileFragment profileFragment = new ProfileFragment();
                 profileFragment.setArguments(user_data);
                 // Replace fragment
                 replaceFragment(profileFragment, R.id.frameLayout);

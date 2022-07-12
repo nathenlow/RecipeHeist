@@ -74,6 +74,7 @@ public class SearchFoodBrowseFragment extends Fragment {
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                 onStart();
                 query = result.getString("query");
+                mainActivity.getSupportActionBar().setTitle(query);
                 startSearch();
             }
         });
@@ -89,7 +90,6 @@ public class SearchFoodBrowseFragment extends Fragment {
 
         //change action bar back to default
         mainActivity.getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
-        mainActivity.getSupportActionBar().setTitle("Browse");
         recipelist = new ArrayList<>();
         RView = rootView.findViewById(R.id.RView);
         PBLoading = rootView.findViewById(R.id.PBLoading);
@@ -188,19 +188,30 @@ public class SearchFoodBrowseFragment extends Fragment {
                     public void onSuccess(String jsonresponse) throws JSONException {
                         if (jsonresponse != null){
                             recipearray = new JSONArray(jsonresponse);
-                            if (recipearray.length() == perpage){
-                                needanotherpage = true;
-                            }
-                            mainActivity.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        getData();
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
+                            if (recipearray.length() == 0){
+                                needanotherpage = false;
+                                mainActivity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        PBLoading.setVisibility(View.GONE);
                                     }
+                                });
+                            }
+                            else{
+                                if (recipearray.length() == perpage){
+                                    needanotherpage = true;
                                 }
-                            });
+                                mainActivity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            getData();
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                            }
                         }
                         else {
                             Toast.makeText(mainActivity, "Check your Internet connection", Toast.LENGTH_SHORT).show();
