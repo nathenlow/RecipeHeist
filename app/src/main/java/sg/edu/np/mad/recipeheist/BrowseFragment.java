@@ -39,7 +39,7 @@ public class BrowseFragment extends Fragment {
     private int pagecount = 0;
     boolean needanotherpage;
     private int perpage = 10;
-    private ArrayList<RecipePreview> recipelist;
+    private ArrayList<RecipePreview> recipelist = new ArrayList<>();
     private RecyclerView RView;
     private BrowseAdapter browseAdapter;
     private ProgressBar PBLoading;
@@ -78,7 +78,6 @@ public class BrowseFragment extends Fragment {
         //change action bar back to default
         mainActivity.getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
         mainActivity.getSupportActionBar().setTitle("Browse");
-        recipelist = new ArrayList<>();
         RView = rootView.findViewById(R.id.RView);
         PBLoading = rootView.findViewById(R.id.PBLoading);
         nestedSV = rootView.findViewById(R.id.nestedSV);
@@ -120,6 +119,19 @@ public class BrowseFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        browseAdapter = new BrowseAdapter(mainActivity, recipelist, new RecipeLoadListener() {
+            @Override
+            public void onLoad(String recipeID) {
+                goToRecipe(recipeID);
+            }
+        });
+        RView.setAdapter(browseAdapter);
+        if (!needanotherpage){PBLoading.setVisibility(View.GONE);}
+    }
 
     //menu bar
     @Override
