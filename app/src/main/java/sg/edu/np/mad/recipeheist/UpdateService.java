@@ -159,7 +159,7 @@ public class UpdateService extends Service {
     public String getTodayDate(){
         Date date = new Date(System.currentTimeMillis());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         String formattedDate = simpleDateFormat.format(date);
 
         return formattedDate;
