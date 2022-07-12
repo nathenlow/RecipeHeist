@@ -20,7 +20,8 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="247dp"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:layout_marginBottom="10dp">
 
                 <ImageButton
                     android:id="@+id/editFoodImage"
@@ -55,6 +56,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
                 android:orientation="vertical">
 
                 <TextView
@@ -62,21 +64,26 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Name of recipe:"
-                    android:textSize="20sp" />
+                    android:text="Name of recipe"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
                 <EditText
                     android:id="@+id/editRecipeName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="10dp"
+                    android:padding="10dp"
                     android:layout_weight="1"
                     android:ems="10"
+                    android:background="@drawable/custom_input"
                     android:hint="e.g. Chicken rice, Egg Fried Rice, etc..."
                     android:inputType="textPersonName"
                     android:textColorLink="@color/red_1"
-                    android:textSize="20sp" />
+                    android:textSize="18sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -92,21 +99,25 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Recipe description:"
-                    android:textSize="20sp" />
+                    android:text="Recipe description"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
                 <EditText
                     android:id="@+id/editRecipeDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="10dp"
+                    android:padding="10dp"
                     android:layout_weight="1"
                     android:ems="10"
-                    android:gravity="start|top"
+                    android:background="@drawable/custom_input"
                     android:hint="Describe the recipe"
                     android:inputType="textMultiLine"
-                    android:textSize="20sp" />
+                    android:textSize="18sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -122,17 +133,22 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Duration to make recipe:"
-                    android:textSize="20sp" />
+                    android:text="Duration to make recipe"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
                 <EditText
                     android:id="@+id/editDuration"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="10dp"
+                    android:padding="10dp"
                     android:layout_weight="1"
                     android:ems="10"
+                    android:background="@drawable/custom_input"
                     android:hint="e.g. 2hr 10min"
                     android:inputType="textPersonName"
                     android:textSize="20sp" />
@@ -140,7 +156,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
@@ -152,17 +168,22 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Serving size:"
-                    android:textSize="20sp" />
+                    android:text="Serving size"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
                 <EditText
                     android:id="@+id/editServing"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="10dp"
+                    android:padding="10dp"
                     android:layout_weight="1"
                     android:ems="10"
+                    android:background="@drawable/custom_input"
                     android:hint="e.g 5"
                     android:inputType="number"
                     android:textSize="20sp" />
@@ -182,17 +203,22 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Food category:"
-                    android:textSize="20sp" />
+                    android:text="Food category"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
                 <EditText
                     android:id="@+id/editCategory"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="10dp"
+                    android:padding="10dp"
                     android:layout_weight="1"
                     android:ems="10"
+                    android:background="@drawable/custom_input"
                     android:hint="e.g. Chicken, Pasta, etc..."
                     android:inputType="textPersonName"
                     android:textSize="20sp" />
@@ -212,44 +238,42 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Ingredients:"
-                    android:textSize="20sp" />
+                    android:text="Ingredients"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/ingredientDisplayR"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
                     android:layout_weight="1" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp">
 
                     <EditText
                         android:id="@+id/editIngredient"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="8dp"
-                        android:layout_weight="2"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="10dp"
+                        android:padding="10dp"
                         android:ems="10"
+                        android:background="@drawable/custom_input"
                         android:gravity="start|top"
                         android:hint="e.g. 5 boneless chicken"
                         android:inputType="text"
                         android:textSize="20sp" />
 
-                    <Button
-                        android:id="@+id/addIngreBtn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="3dp"
-                        android:layout_weight="1"
-                        android:text="Add"
-                        android:textAllCaps="false"
-                        android:textSize="12sp" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -266,44 +290,42 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Instructions:"
-                    android:textSize="20sp" />
+                    android:text="Instructions"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/instructionDisplayR"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
                     android:layout_weight="1" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp">
 
                     <EditText
                         android:id="@+id/editInstruction"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="8dp"
-                        android:layout_weight="2"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="10dp"
+                        android:padding="10dp"
                         android:ems="10"
+                        android:background="@drawable/custom_input"
                         android:gravity="start|top"
                         android:hint="e.g. fry the garlic at low-heat..."
                         android:inputType="text"
                         android:textSize="20sp" />
 
-                    <Button
-                        android:id="@+id/addInstrBtn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="3dp"
-                        android:layout_weight="1"
-                        android:text="Add"
-                        android:textAllCaps="false"
-                        android:textSize="12sp" />
                 </LinearLayout>
             </LinearLayout>
 
