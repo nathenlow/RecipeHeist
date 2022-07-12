@@ -27,22 +27,16 @@ import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ProfileFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ProfileFragment extends Fragment {
 
     private User user;
     private TextView noOfRecipes;
-    private Bundle user_data;
+    private Bundle user_data = new Bundle();
     private JSONArray recipeJArray;
     private View rootView;
     private ProgressBar progressBar;
     private ArrayList<Recipe> recipeList;
     private MainActivity mainActivity;
-    private String query;
 
 
     public ProfileFragment() {
@@ -57,13 +51,7 @@ public class ProfileFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null) {
-            user_data = getArguments();
-            user = user_data.getParcelable("userData");
 
-            query = "\"" + user.getUserID() + "\"";
-
-        }
 
         // to use methods from MainActivity
         mainActivity = (MainActivity) getActivity();
@@ -86,9 +74,50 @@ public class ProfileFragment extends Fragment {
 
         mainActivity.setActionBarTitle("Profile");
         // update profile page
-        profileImage.setImageResource(R.drawable.default_profile_1);
-        username.setText(user.getUsername());
-        description.setText(user.getDescription());
+
+        User user = new User();
+
+        String uid = FirebaseAuth.getInstance().getUid();
+        // function to get users from restDB
+        RestDB restDB = new RestDB();
+        try {
+            restDB.asyncGet("https://recipeheist-567c.restdb.io/rest/users?q={\"userID\":\"" + uid + "\"}", new SuccessListener() {
+                @Override
+                public void onSuccess(String jsonresponse) throws JSONException {
+                    System.out.println(jsonresponse);
+                    String dataBaseUsers = jsonresponse;
+                    dataBaseUsers = dataBaseUsers.substring(1, dataBaseUsers.length()-1);
+
+                    JSONObject jsonObject = new JSONObject(dataBaseUsers);
+
+                    user.setUserID(jsonObject.getString("userID"));
+                    user.setEmail(jsonObject.getString("email"));
+                    user.setUsername(jsonObject.getString("username"));
+                    user.setDescription(jsonObject.getString("description"));
+                    user.setFollowing(convertJArrayToArrayList(jsonObject.getJSONArray("following")));
+                    user.setBookmark(convertJArrayToArrayList(jsonObject.getJSONArray("bookmark")));
+
+                    user_data.putParcelable("userData", user);
+                    // Remove loading page
+                    mainActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            profileImage.setImageResource(R.drawable.default_profile_1);
+                            username.setText(user.getUsername());
+                            description.setText(user.getDescription());
+                            try {
+                                getUserRecipes(user.getUserID());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
         // when user clicks on "edit profile" button
         editProfileBtn.setOnClickListener(new View.OnClickListener() {
@@ -119,19 +148,6 @@ public class ProfileFragment extends Fragment {
         return rootView;
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        // to use methods from MainActivity
-        MainActivity mainActivity = (MainActivity) getActivity();
-
-        try {
-            getUserRecipes(query);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     // ------------------------------- Start of functions -------------------------------
 
@@ -190,7 +206,7 @@ public class ProfileFragment extends Fragment {
     // function to get users from restDB
     public void getUserRecipes(String uid) throws IOException {
         RestDB restDB = new RestDB();
-        restDB.asyncGet("https://recipeheist-567c.restdb.io/rest/recipe?q={\"userID\": " + uid + "}", new SuccessListener() {
+        restDB.asyncGet("https://recipeheist-567c.restdb.io/rest/recipe?q={\"userID\":\"" + uid + "\"}", new SuccessListener() {
             @Override
             public void onSuccess(String jsonresponse) throws JSONException {
                 String dbResults = "{ \"recipe\": " + jsonresponse + "}";

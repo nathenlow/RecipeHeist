@@ -89,11 +89,7 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.profile:
 
                     if (currentUser != null){
-                        try {
-                            getUserProfile();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                        replaceFragment(profileFragment, R.id.frameLayout);
                     }
                     else {
                         Intent intent = new Intent(this, SignIn.class);
@@ -104,54 +100,6 @@ public class MainActivity extends AppCompatActivity {
             }
 
             return true;
-        });
-    }
-
-    public void getUserProfile() throws IOException {
-        showloading(true);
-        showbottomnav(false);
-        getSupportActionBar().setTitle("Profile");
-        String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        String uid = "\"" + currentUserID + "\"";
-
-        User user = new User();
-
-        // function to get users from restDB
-        RestDB restDB = new RestDB();
-        restDB.asyncGet("https://recipeheist-567c.restdb.io/rest/users?q={\"userID\": " + uid + "}", new SuccessListener() {
-            @Override
-            public void onSuccess(String jsonresponse) throws JSONException {
-                String dataBaseUsers = jsonresponse;
-                dataBaseUsers = dataBaseUsers.substring(1, dataBaseUsers.length()-1);
-                System.out.println(dataBaseUsers);
-
-                JSONObject jsonObject = new JSONObject(dataBaseUsers);
-                System.out.println(jsonObject);
-
-                user.setUserID(jsonObject.getString("userID"));
-                user.setEmail(jsonObject.getString("email"));
-                user.setUsername(jsonObject.getString("username"));
-                user.setDescription(jsonObject.getString("description"));
-                user.setFollowing(convertJArrayToArrayList(jsonObject.getJSONArray("following")));
-                user.setBookmark(convertJArrayToArrayList(jsonObject.getJSONArray("bookmark")));
-
-                // Create bundle to pass user data to fragment
-                Bundle user_data = new Bundle();
-                user_data.putParcelable("userData", user);
-                //set argument to ProfileFragment
-                profileFragment.setArguments(user_data);
-                // Replace fragment
-                replaceFragment(profileFragment, R.id.frameLayout);
-                // Remove loading page
-                // Remove loading page
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        showloading(false);
-                        showbottomnav(true);
-                    }
-                });
-            }
         });
     }
 
