@@ -1,6 +1,8 @@
 package sg.edu.np.mad.recipeheist;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -32,12 +34,15 @@ import java.lang.ref.WeakReference;
 
 public class RecipeItem extends AppCompatActivity {
 
+    private static final String SHARED_PREFS = "history";
+    private static final String HISTORY = "history";
     private ImageView foodimage, profileicon;
     private ImageButton like;
     private TextView username, noOfLikes, description, servings, duration, foodcategory, ingredientitems, instructionitems;
     private CollapsingToolbarLayout collapsing_toolbar;
     private FloatingActionButton bookmarkbtn;
     String recipeID;
+    JSONArray historylist;
 
     boolean bookmarkcheck;
     boolean likecheck;
@@ -72,8 +77,24 @@ public class RecipeItem extends AppCompatActivity {
         bookmarkcheck = false;
         likecheck = false;
 
+        //recieve intent
         Intent recievefrombrowse = getIntent();
         recipeID = recievefrombrowse.getStringExtra("recipeID");
+
+        //save history
+        try {
+            loaddata();
+            for (int i = 0; i < historylist.length(); i++) {
+                if (historylist.get(i).equals(recipeID)){
+                    deletedata(i);
+                }
+            }
+            savedata(recipeID);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        //get from restDB
         String response = getRecipe(recipeID);
         JSONObject recipeobj = null;
         //display recipe data
@@ -335,11 +356,6 @@ public class RecipeItem extends AppCompatActivity {
     }
 
 
-
-
-
-
-
     //like Async
     private static class LikeAsync extends AsyncTask<Void,Void,Void>{
         private WeakReference<RecipeItem> activityWeakReference;
@@ -390,6 +406,31 @@ public class RecipeItem extends AppCompatActivity {
             activity.noOfLikes.setText(String.valueOf(activity.numlikes));
         }
     }
+
+    //sharedprefrences methods
+    public void savedata(String newRecipeID) {
+        SharedPreferences sharedPreferences = this.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        historylist.put(newRecipeID.trim());
+        editor.putString(HISTORY, historylist.toString());
+        editor.apply();
+        System.out.println(historylist);
+    }
+
+    public void loaddata() throws JSONException {
+        SharedPreferences sharedPreferences = this.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
+        String historyString = sharedPreferences.getString(HISTORY, "[]");
+        historylist = new JSONArray(historyString);
+    }
+
+    public void deletedata(int position){
+        SharedPreferences sharedPreferences = this.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        historylist.remove(position);
+        editor.putString(HISTORY, historylist.toString());
+        editor.apply();
+    }
+
 
 
 }
