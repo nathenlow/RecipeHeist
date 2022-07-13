@@ -2,6 +2,7 @@ package sg.edu.np.mad.recipeheist;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -19,6 +20,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -56,18 +59,64 @@ public class SettingsActivity extends AppCompatActivity {
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
 
+        private Preference clearupdates;
         private Preference editDefaultUpdateDate;
+        private Preference clearhistory;
+        private Preference logout;
         private DatePickerDialog.OnDateSetListener editDefaultUpdateDateListner;
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
 
+            clearupdates = findPreference("clearupdates");
             editDefaultUpdateDate = findPreference("defaultupdatedate");
+            clearhistory = findPreference("clearhistory");
+            logout = findPreference("logout");
 
             //get data from shared preferences
-            SharedPreferences sharedPreferences = getActivity().getSharedPreferences("Settings", Context.MODE_PRIVATE);
+            SharedPreferences datesharedPreferences = getActivity().getSharedPreferences("Settings", Context.MODE_PRIVATE);
             //display date data from shared preferences in summary
-            editDefaultUpdateDate.setSummary(sharedPreferences.getString("defaultupdatedate", "2000-01-01"));
+            editDefaultUpdateDate.setSummary(datesharedPreferences.getString("defaultupdatedate", "2000-01-01"));
+
+            // on clearupdates button click
+            clearupdates.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    getActivity().deleteDatabase(DataBaseHandler.DATABASE_NAME);
+                    Toast.makeText(getActivity(), "Updates cleared", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            });
+
+            // on logout button click
+            clearhistory.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    SharedPreferences historySharedPreferences = getActivity().getSharedPreferences("history", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor historyeditor = historySharedPreferences.edit();
+                    historyeditor.clear();
+                    historyeditor.apply();
+
+                    Toast.makeText(getActivity(), "History cleared", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            });
+
+            // on logout button click
+            logout.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    // logout user
+                    FirebaseAuth.getInstance().signOut();
+                    getActivity().deleteDatabase(DataBaseHandler.DATABASE_NAME);
+
+                    Toast.makeText(getActivity(), "You are logout", Toast.LENGTH_SHORT).show();
+                    // redirect back to main activity
+                    Intent intent = new Intent(getActivity(), MainActivity.class);
+                    startActivity(intent);
+                    return false;
+                }
+            });
 
             //display DatePicker Dialog
             editDefaultUpdateDate.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -100,13 +149,14 @@ public class SettingsActivity extends AppCompatActivity {
                     String sday = d2.format(dayOfMonth);
                     String sdate = syear + "-" + smonth + "-" + sday;
                     //put data in shared prefs
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    SharedPreferences.Editor editor = datesharedPreferences.edit();
                     editor.putString("defaultupdatedate", sdate);
                     editor.apply();
                     //update summary
-                    editDefaultUpdateDate.setSummary(sharedPreferences.getString("defaultupdatedate", "2000-01-01"));
+                    editDefaultUpdateDate.setSummary(datesharedPreferences.getString("defaultupdatedate", "2000-01-01"));
                 }
             };
+
         }
     }
 }

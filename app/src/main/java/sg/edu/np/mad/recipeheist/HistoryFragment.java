@@ -161,14 +161,16 @@ public class HistoryFragment extends Fragment {
 
     //combine all the fuctions for get from restdb
     public  void startRecipieGet(){
-        needanotherpage = false;
-        PBLoading.setVisibility(View.VISIBLE);
-        try {
-            recentlyViewedRecipe();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (historylist.length() != 0) {
+            needanotherpage = false;
+            PBLoading.setVisibility(View.VISIBLE);
+            try {
+                recentlyViewedRecipe();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 
