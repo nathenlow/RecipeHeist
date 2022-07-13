@@ -35,7 +35,6 @@ public class UpdatesFragment extends Fragment {
     private ProgressBar PBLoading;
     private NestedScrollView nestedSV;
     private View rootView;
-    private ConstraintLayout loadingview;
     int lastpage = 0;
     private int perpage = 16;
     private ArrayList<RecipePreview> showlist;
@@ -72,7 +71,6 @@ public class UpdatesFragment extends Fragment {
         RView = rootView.findViewById(R.id.RView);
         PBLoading = rootView.findViewById(R.id.PBLoading);
         nestedSV = rootView.findViewById(R.id.nestedSV);
-        loadingview = rootView.findViewById(R.id.loadinglayout);
         dataBaseHandler = new DataBaseHandler(mainActivity);
         showlist = getData(dataBaseHandler.chefUpdates());
         swipeRefreshLayout = rootView.findViewById(R.id.swipeRefreshLayout);
@@ -176,15 +174,6 @@ public class UpdatesFragment extends Fragment {
     // go to recipe page
     public void goToRecipe(String recipeID)
     {
-        loadingview.setVisibility(View.VISIBLE);
-        // because sometimes the query from the fragment takes some time to get back
-        new CountDownTimer(1000, 1000) {
-            public void onTick(long millisUntilFinished) {
-            }
-            public void onFinish() {
-                loadingview.setVisibility(View.GONE);
-            }
-        }.start();
         Intent intent = new Intent(mainActivity, RecipeItem.class);
         intent.putExtra("recipeID", recipeID);
         mainActivity.startActivity(intent);

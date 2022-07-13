@@ -46,7 +46,6 @@ public class BrowseFragment extends Fragment {
     private NestedScrollView nestedSV;
     private JSONArray recipearray;
     private View rootView;
-    private ConstraintLayout loadingview;
     private SwipeRefreshLayout swipeRefreshLayout;
     MainActivity mainActivity;
 
@@ -81,7 +80,6 @@ public class BrowseFragment extends Fragment {
         RView = rootView.findViewById(R.id.RView);
         PBLoading = rootView.findViewById(R.id.PBLoading);
         nestedSV = rootView.findViewById(R.id.nestedSV);
-        loadingview = rootView.findViewById(R.id.loadinglayout);
         swipeRefreshLayout = rootView.findViewById(R.id.swipeRefreshLayout);
 
         startRecipieGet();
@@ -238,15 +236,6 @@ public class BrowseFragment extends Fragment {
     // go to recipe page
     public void goToRecipe(String recipeID)
     {
-        loadingview.setVisibility(View.VISIBLE);
-        // because sometimes the query from the fragment takes some time to get back
-        new CountDownTimer(1000, 1000) {
-            public void onTick(long millisUntilFinished) {
-            }
-            public void onFinish() {
-                loadingview.setVisibility(View.GONE);
-            }
-        }.start();
         Intent intent = new Intent(mainActivity, RecipeItem.class);
         intent.putExtra("recipeID", recipeID);
         mainActivity.startActivity(intent);

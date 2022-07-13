@@ -17,6 +17,7 @@ import com.google.firebase.storage.StorageReference;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.CountDownTimer;
 import android.os.StrictMode;
 import android.view.View;
 import android.widget.ImageButton;
@@ -94,6 +95,22 @@ public class RecipeItem extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        //create loading page
+        new CountDownTimer(1000,1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+            }
+
+            @Override
+            public void onFinish() {
+                findViewById(R.id.loadinglayout).setVisibility(View.GONE);
+                findViewById(R.id.fab).setVisibility(View.VISIBLE);
+                Init();
+            }
+        }.start();
+    }
+
+    public void Init(){
         //get from restDB
         String response = getRecipe(recipeID);
         JSONObject recipeobj = null;
@@ -215,10 +232,7 @@ public class RecipeItem extends AppCompatActivity {
                 }
             }
         });
-
     }
-
-
 
     public String getRecipe(String id){
         RestDB example = new RestDB();
