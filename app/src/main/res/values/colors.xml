@@ -10,4 +10,6 @@
 
     <color name="text_input_default_box_stroke_color" tools:override="true">#F68080</color>
     <color name="text_input_border_unfocused">#A7A7A7</color>
+    <color name="text_input_bg_transparent">#00000000</color>
+    <color name="cardview_bg_add_recipe_default">#666DAA</color>
 </resources>

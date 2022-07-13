@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
@@ -12,7 +14,7 @@
         android:layout_marginEnd="5dp"
         android:layout_marginBottom="5dp"
         android:outlineSpotShadowColor="@color/white"
-        app:cardBackgroundColor="@color/ic_launcher_background"
+        app:cardBackgroundColor="@color/cardview_bg_add_recipe_default"
         app:cardCornerRadius="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -32,19 +34,22 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="5dp"
                 android:text="TextView"
+                android:textColor="@color/white"
                 android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@color/white"/>
+                android:textStyle="bold" />
 
-            <TextView
+            <EditText
                 android:id="@+id/itemContent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 android:layout_weight="1"
+                android:background="@color/text_input_bg_transparent"
+                android:inputType="text"
                 android:text="TextView"
+                android:textColor="@color/white"
                 android:textSize="20sp"
-                android:textColor="@color/white"/>
+                tools:ignore="TouchTargetSizeCheck" />
 
             <ImageView
                 android:id="@+id/cancelBtn"
@@ -52,6 +57,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="5dp"
+                android:visibility="gone"
                 app:srcCompat="@drawable/ic_baseline_cancel_24"
                 app:tint="@color/white" />
         </LinearLayout>
