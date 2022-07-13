@@ -59,6 +59,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
 
+        private Preference updatefrequency;
         private Preference clearupdates;
         private Preference editDefaultUpdateDate;
         private Preference clearhistory;
@@ -68,10 +69,18 @@ public class SettingsActivity extends AppCompatActivity {
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
 
+            updatefrequency = findPreference("updatefrequency");
             clearupdates = findPreference("clearupdates");
             editDefaultUpdateDate = findPreference("defaultupdatedate");
             clearhistory = findPreference("clearhistory");
             logout = findPreference("logout");
+
+            if (FirebaseAuth.getInstance().getCurrentUser() == null){
+                updatefrequency.setEnabled(false);
+                clearupdates.setEnabled(false);
+                editDefaultUpdateDate.setEnabled(false);
+                logout.setEnabled(false);
+            }
 
             //get data from shared preferences
             SharedPreferences datesharedPreferences = getActivity().getSharedPreferences("Settings", Context.MODE_PRIVATE);
