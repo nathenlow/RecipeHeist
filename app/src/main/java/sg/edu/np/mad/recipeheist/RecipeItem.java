@@ -428,7 +428,6 @@ public class RecipeItem extends AppCompatActivity {
         historylist.put(newRecipeID.trim());
         editor.putString(HISTORY, historylist.toString());
         editor.apply();
-        System.out.println(historylist);
     }
 
     public void loaddata() throws JSONException {

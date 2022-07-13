@@ -212,7 +212,12 @@ public class SearchFoodBrowseFragment extends Fragment {
                             }
                         }
                         else {
-                            Toast.makeText(mainActivity, "Check your Internet connection", Toast.LENGTH_SHORT).show();
+                            mainActivity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(mainActivity, "Check your Internet connection", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         }
                     }
                 }
