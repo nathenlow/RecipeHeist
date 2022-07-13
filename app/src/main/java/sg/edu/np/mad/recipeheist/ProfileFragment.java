@@ -38,7 +38,6 @@ public class ProfileFragment extends Fragment {
     private ArrayList<Recipe> recipeList;
     private MainActivity mainActivity;
     private Boolean loadbefore = false;
-    private Boolean loadbeforerecipies = false;
     CircleImageView profileImage;
     private Button editProfileBtn;
     private FloatingActionButton addRecipeBtn;
@@ -170,16 +169,7 @@ public class ProfileFragment extends Fragment {
             profileImage.setImageResource(R.drawable.default_profile_1);
             username.setText(user.getUsername());
             description.setText(user.getDescription());
-            if (!loadbeforerecipies){
-                try {
-                    getUserRecipes(user.getUserID());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            else {
-                getData();
-            }
+            getData();
         }
     }
 
@@ -238,7 +228,9 @@ public class ProfileFragment extends Fragment {
             // remove progressbar
             progressBar.setVisibility(View.GONE);
             // replace fragment
-            mainActivity.replaceFragment(myRecipeFragment, rootView.findViewById(R.id.profileFrameLayout).getId());
+            if (mainActivity.findViewById(R.id.profileFrameLayout) != null) {
+                mainActivity.replaceFragment(myRecipeFragment, rootView.findViewById(R.id.profileFrameLayout).getId());
+            }
         }
     }
 
@@ -248,7 +240,6 @@ public class ProfileFragment extends Fragment {
         restDB.asyncGet("https://recipeheist-567c.restdb.io/rest/recipe?q={\"userID\":\"" + uid + "\"}", new SuccessListener() {
             @Override
             public void onSuccess(String jsonresponse) throws JSONException {
-                loadbeforerecipies = true;
                 String dbResults = "{ \"recipe\": " + jsonresponse + "}";
                 JSONObject jsonObject = new JSONObject(dbResults);
                 recipeJArray = jsonObject.getJSONArray("recipe");
