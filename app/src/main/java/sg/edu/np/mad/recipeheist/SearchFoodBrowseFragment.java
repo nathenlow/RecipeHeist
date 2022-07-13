@@ -67,7 +67,7 @@ public class SearchFoodBrowseFragment extends Fragment {
         mainActivity.showbottomnav(true);
         setHasOptionsMenu(true);
 
-        //get data from search
+        //get data from SearchFoodFragment
         getParentFragmentManager().setFragmentResultListener("search", this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
@@ -101,6 +101,8 @@ public class SearchFoodBrowseFragment extends Fragment {
         GridLayoutManager manager = new GridLayoutManager(mainActivity, columns);
         RView.addItemDecoration(new GridSpacingItemDecoration(columns, 12, false));
         RView.setLayoutManager(manager);
+
+        //to check if user reached the bottom
         nestedSV.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
             public void onScrollChange(NestedScrollView scrollView, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
@@ -108,15 +110,18 @@ public class SearchFoodBrowseFragment extends Fragment {
                 View view = (View) scrollView.getChildAt(scrollView.getChildCount() - 1);
                 int diff = (view.getBottom() - (scrollView.getHeight() + scrollView.getScrollY()));
 
+                //check if more recipes are needed
                 if (needanotherpage){
                     // if diff is zero, then the bottom has been reached
                     if (diff == 0) {
+                        //load next page
                         startSearch();
                     }
                 }
             }
         });
 
+        //refresh page by using Init()
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -162,7 +167,7 @@ public class SearchFoodBrowseFragment extends Fragment {
         startSearch();
     }
 
-    //combine all the fuctions to the search results from restdb
+    //combine all the functions to get the search results from restDB
     public  void startSearch(){
         needanotherpage = false;
         PBLoading.setVisibility(View.VISIBLE);
@@ -178,14 +183,17 @@ public class SearchFoodBrowseFragment extends Fragment {
 
     // to get query data from rest db
     public void searchRecipes(String query, int page) throws IOException, JSONException {
+        //skip is the number of recipes that will be skipped when getting data from restdb
         int skip = perpage * page;
         RestDB restDB = new RestDB();
         restDB.asyncGet("https://recipeheist-567c.restdb.io/rest/recipe?q={\"title\": {\"$regex\" :\"" + query + "\"}}&h={\"$fields\":{\"_id\":1,\"title\":1,\"duration\":1,\"imagePath\":1},\"$max\":"+perpage+",\"$skip\":"+skip+",\"$orderby\":{\"_created\":-1}}",
                 new SuccessListener() {
                     @Override
                     public void onSuccess(String jsonresponse) throws JSONException {
+                        //if response is successful
                         if (jsonresponse != null){
                             recipearray = new JSONArray(jsonresponse);
+                            //if search result is empty
                             if (recipearray.length() == 0){
                                 needanotherpage = false;
                                 mainActivity.runOnUiThread(new Runnable() {
@@ -196,7 +204,7 @@ public class SearchFoodBrowseFragment extends Fragment {
                                 });
                             }
                             else{
-                                if (recipearray.length() == perpage){
+                                if (recipearray.length() >= perpage){
                                     needanotherpage = true;
                                 }
                                 mainActivity.runOnUiThread(new Runnable() {
@@ -211,6 +219,7 @@ public class SearchFoodBrowseFragment extends Fragment {
                                 });
                             }
                         }
+                        //if response is unsuccessful
                         else {
                             mainActivity.runOnUiThread(new Runnable() {
                                 @Override
@@ -224,9 +233,9 @@ public class SearchFoodBrowseFragment extends Fragment {
         );
     }
 
-
-    //to convert json object into RecipePreview object to pass to recycler view
+    //to display recipes from restdb jsonarray
     public void getData() throws JSONException {
+        //to convert json object into RecipePreview object to pass to recycler view
         for (int i = 0; i < recipearray.length(); i++) {
             JSONObject recipeobj = (JSONObject) recipearray.get(i);
             String id = recipeobj.getString("_id");
@@ -234,17 +243,16 @@ public class SearchFoodBrowseFragment extends Fragment {
             String imagePath = recipeobj.getString("imagePath");
             String duration = recipeobj.getString("duration");
             RecipePreview recipePreview = new RecipePreview(id, title, imagePath, duration);
-            //In case a new recipe comes out, resulting a Recipe that is already displayed to move to the next page. Causing a duplicate display.
-            if (!recipelist.contains(recipePreview)){
-                recipelist.add(new RecipePreview(id, title, imagePath, duration));
-                browseAdapter = new BrowseAdapter(mainActivity, recipelist, new RecipeLoadListener() {
-                    @Override
-                    public void onLoad(String recipeID) {
-                        goToRecipe(recipeID);
-                    }
-                });
-                RView.setAdapter(browseAdapter);
-            }
+            //load recipelist into recyclerview
+            recipelist.add(recipePreview);
+            browseAdapter = new BrowseAdapter(mainActivity, recipelist, new RecipeLoadListener() {
+                @Override
+                public void onLoad(String recipeID) {
+                    goToRecipe(recipeID);
+                }
+            });
+            RView.setAdapter(browseAdapter);
+            //remove loading bar if user have already loaded all the recipes
             if (!needanotherpage){PBLoading.setVisibility(View.GONE);}
         }
     }

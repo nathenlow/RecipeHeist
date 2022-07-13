@@ -127,10 +127,12 @@ public class SearchFoodFragment extends Fragment {
         return rootview;
     }
 
-
+    //send query string to SearchFoodBrowseFragment()
     public void performSearch(){
         String query = editTextsearch.getText().toString().trim();
+        //remove keyboard
         editTextsearch.clearFocus();
+        //add query to bundle to pass the data
         Bundle result = new Bundle();
         result.putString("query", query);
         getParentFragmentManager().setFragmentResult("search", result);
@@ -139,11 +141,13 @@ public class SearchFoodFragment extends Fragment {
         mainActivity.replaceFragment(new SearchFoodBrowseFragment(), R.id.frameLayout);
     }
 
+    //auto fill search bar
     public void fillSearch(String query){
         editTextsearch.setText(query);
         showSoftKeyboard(editTextsearch);
     }
 
+    //show keyboard
     public void showSoftKeyboard(View view) {
         if(view.requestFocus()){
             InputMethodManager imm =(InputMethodManager)
@@ -153,7 +157,7 @@ public class SearchFoodFragment extends Fragment {
     }
 
 
-
+    //-----SharedPreferences methods
     public void savedata(String query) {
         SharedPreferences sharedPreferences = mainActivity.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -193,12 +197,14 @@ public class SearchFoodFragment extends Fragment {
         }
         RecyclerView recyclerView;
         recyclerView = rootview.findViewById(R.id.recentitems);
+        //if recent search list is not empty
         if (!recentlist.equals(new JSONArray())){
             recyclerView.setVisibility(View.VISIBLE);
             RecentSearchAdapter adapter = new RecentSearchAdapter(this.mainActivity, recentlist,
                 new DeleteListener() {
                     @Override
                     public void onDelete(int position) {
+                        //delete the specific search from shared prefs when clicked
                         deletedata(position);
                         mrecycler();
                     }
@@ -206,6 +212,7 @@ public class SearchFoodFragment extends Fragment {
                 new RecentListener() {
                     @Override
                     public void onRecent(String query) {
+                        //fill search with the text when clicked
                         fillSearch(query);
                     }
                 }

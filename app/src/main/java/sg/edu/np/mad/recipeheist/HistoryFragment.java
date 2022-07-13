@@ -68,6 +68,7 @@ public class HistoryFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mainActivity = (MainActivity) getActivity();
 
+        //check whether this Fragment has been loaded before so that the loaddata() will not run again when resume;
         if (!loadbefore) {
             try {
                 loaddata();
@@ -104,13 +105,14 @@ public class HistoryFragment extends Fragment {
         GridLayoutManager manager = new GridLayoutManager(mainActivity, columns);
         RView.addItemDecoration(new GridSpacingItemDecoration(columns, 12, false));
         RView.setLayoutManager(manager);
+        //to check if user reached the bottom
         nestedSV.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
             public void onScrollChange(NestedScrollView scrollView, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
 
                 View view = (View) scrollView.getChildAt(scrollView.getChildCount() - 1);
                 int diff = (view.getBottom() - (scrollView.getHeight() + scrollView.getScrollY()));
-
+                //check if more recipes are needed
                 if (needanotherpage){
                     // if diff is zero, then the bottom has been reached
                     if (diff == 0) {
@@ -120,6 +122,7 @@ public class HistoryFragment extends Fragment {
             }
         });
 
+        //refresh page by using Init()
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -135,17 +138,22 @@ public class HistoryFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
-        browseAdapter = new BrowseAdapter(mainActivity, recipelist, new RecipeLoadListener() {
-            @Override
-            public void onLoad(String recipeID) {
-                goToRecipe(recipeID);
+        //load the recipelist into the recycler view only when fragment have been used before
+        if (loadbefore) {
+            browseAdapter = new BrowseAdapter(mainActivity, recipelist, new RecipeLoadListener() {
+                @Override
+                public void onLoad(String recipeID) {
+                    goToRecipe(recipeID);
+                }
+            });
+            RView.setAdapter(browseAdapter);
+            if (!needanotherpage) {
+                PBLoading.setVisibility(View.GONE);
             }
-        });
-        RView.setAdapter(browseAdapter);
-        if (!needanotherpage){PBLoading.setVisibility(View.GONE);}
+        }
     }
 
+    //initialize page
     public void Init(){
         mainActivity.historyFragment = new HistoryFragment();
         mainActivity.replaceFragment(mainActivity.historyFragment, R.id.frameLayout);
@@ -169,6 +177,7 @@ public class HistoryFragment extends Fragment {
         RestDB restDB = new RestDB();
         int firstpage = lastpage;
         JSONArray querylist = new JSONArray();
+        //if the number of recipes left is smaller then the number of recipes to be loaded
         if (lastpage - perpage <= -1){
             needanotherpage = false;
             lastpage = -1;
@@ -177,6 +186,7 @@ public class HistoryFragment extends Fragment {
             lastpage -= perpage;
             needanotherpage = true;
         }
+        //add the recipes into a json array to be used to get data from restDB (max no of recipes in the json array is = perpage)
         for (int i = firstpage; i > lastpage; i--) {
             querylist.put(historylist.get(i));
         }
@@ -184,6 +194,7 @@ public class HistoryFragment extends Fragment {
                 new SuccessListener() {
                     @Override
                     public void onSuccess(String jsonresponse) throws JSONException {
+                        //if response is successful
                         if (jsonresponse != null) {
                             recipearray = new JSONArray(jsonresponse);
                             mainActivity.runOnUiThread(new Runnable() {
@@ -197,6 +208,7 @@ public class HistoryFragment extends Fragment {
                                 }
                             });
                         }
+                        //if response is unsuccessful
                         else {
                             mainActivity.runOnUiThread(new Runnable() {
                                 @Override
@@ -210,9 +222,9 @@ public class HistoryFragment extends Fragment {
         );
     }
 
-    //to convert json object into RecipePreview object to pass to recycler view
+    //to display recipes from restdb jsonarray
     public void getData(JSONArray querylist) throws JSONException {
-
+        //to convert json object into RecipePreview object to pass to recycler view
         ArrayList<RecipePreview> tempRecipeList = new ArrayList<>();
         for (int i = 0; i < recipearray.length(); i++) {
             JSONObject recipeobj = (JSONObject) recipearray.get(i);
@@ -221,13 +233,13 @@ public class HistoryFragment extends Fragment {
             String imagePath = recipeobj.getString("imagePath");
             String duration = recipeobj.getString("duration");
             RecipePreview recipePreview = new RecipePreview(id, title, imagePath, duration);
-            //In case a new recipe comes out, resulting a Recipe that is already displayed to move to the next page. Causing a duplicate display.
-            if (!recipelist.contains(recipePreview)){
-                tempRecipeList.add(new RecipePreview(id, title, imagePath, duration));
-            }
+            //add to tempRecipeList for sorting
+            tempRecipeList.add(recipePreview);
+            //remove loading bar if user have already loaded all history
             if (!needanotherpage){PBLoading.setVisibility(View.GONE);}
         }
         sort(querylist, tempRecipeList);
+        //load recipelist into recyclerview
         browseAdapter = new BrowseAdapter(mainActivity, recipelist, new RecipeLoadListener() {
             @Override
             public void onLoad(String recipeID) {
@@ -237,10 +249,12 @@ public class HistoryFragment extends Fragment {
         RView.setAdapter(browseAdapter);
     }
 
+    //sort by most recent
     public void sort(JSONArray querylist, ArrayList<RecipePreview> tempRecipeList) throws JSONException {
         for (int j = 0; j < querylist.length() ; j++) {
             for (int i = 0; i < tempRecipeList.size(); i++) {
                 RecipePreview recipeobj = tempRecipeList.get(i);
+                //add the most recent recipeobj to the recipelist first
                 if (recipeobj.getId().equals(querylist.get(j))) {
                     recipelist.add(recipeobj);
                     break;

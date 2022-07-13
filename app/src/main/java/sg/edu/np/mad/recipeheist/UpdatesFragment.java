@@ -81,6 +81,7 @@ public class UpdatesFragment extends Fragment {
         RView.addItemDecoration(new GridSpacingItemDecoration(columns, 12, false));
         RView.setLayoutManager(manager);
 
+        //to check if user reached the bottom
         nestedSV.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
             public void onScrollChange(NestedScrollView scrollView, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
@@ -88,9 +89,11 @@ public class UpdatesFragment extends Fragment {
                 View view = (View) scrollView.getChildAt(scrollView.getChildCount() - 1);
                 int diff = (view.getBottom() - (scrollView.getHeight() + scrollView.getScrollY()));
 
-                // if diff is zero, then the bottom has been reached
+                // check whether if showlist contain the same amount of data as the current database
                 if (showlist.size() != dataBaseHandler.chefUpdates().size()){
+                    // if diff is zero, then the bottom has been reached
                     if (diff == 0) {
+                        //load next page
                         showlist = getData(dataBaseHandler.chefUpdates());
                         browseAdapter = new BrowseAdapter(mainActivity, showlist, new RecipeLoadListener() {
                             @Override
@@ -104,6 +107,7 @@ public class UpdatesFragment extends Fragment {
             }
         });
 
+        //load showlist into recycler view
         browseAdapter = new BrowseAdapter(mainActivity, showlist, new RecipeLoadListener() {
             @Override
             public void onLoad(String recipeID) {
@@ -112,6 +116,7 @@ public class UpdatesFragment extends Fragment {
         });
         RView.setAdapter(browseAdapter);
 
+        //refresh page by using Init()
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -147,6 +152,7 @@ public class UpdatesFragment extends Fragment {
 
     }
 
+    //to initialize the page
     public void Init(){
         showlist = getData(dataBaseHandler.chefUpdates());
         browseAdapter = new BrowseAdapter(mainActivity, showlist, new RecipeLoadListener() {
@@ -158,9 +164,12 @@ public class UpdatesFragment extends Fragment {
         RView.setAdapter(browseAdapter);
     }
 
+    //to get data in pages from SQLite
     public ArrayList<RecipePreview> getData(ArrayList<RecipePreview> updatelist){
         ArrayList<RecipePreview> recipePreviews = new ArrayList<>();
         lastpage += perpage;
+
+        //remove loading bar if another page is not needed
         if (lastpage >= updatelist.size()){
             lastpage = updatelist.size();
             PBLoading.setVisibility(View.GONE);
@@ -177,6 +186,5 @@ public class UpdatesFragment extends Fragment {
         Intent intent = new Intent(mainActivity, RecipeItem.class);
         intent.putExtra("recipeID", recipeID);
         mainActivity.startActivity(intent);
-
     }
 }

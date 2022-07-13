@@ -105,6 +105,7 @@ public class RecipeItem extends AppCompatActivity {
             public void onFinish() {
                 findViewById(R.id.loadinglayout).setVisibility(View.GONE);
                 findViewById(R.id.fab).setVisibility(View.VISIBLE);
+                //get data and display
                 Init();
             }
         }.start();
@@ -118,6 +119,7 @@ public class RecipeItem extends AppCompatActivity {
         try {
             recipeobj = new JSONObject(response);
 
+            //display data to view
             collapsing_toolbar.setTitle(recipeobj.getString("title"));
             collapsing_toolbar.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
             noOfLikes.setText(String.valueOf(numlikes));
@@ -172,7 +174,6 @@ public class RecipeItem extends AppCompatActivity {
             try {
                 JSONArray currentuserarray = new JSONArray(currentuserjsonstring);
                 currentuserobj = (JSONObject) currentuserarray.get(0);
-                System.out.println(currentuserobj);
                 JSONArray bookmarklist = currentuserobj.getJSONArray("bookmark");
                 for (int i = 0; i < bookmarklist.length(); i++) {
                     if (bookmarklist.get(i).equals(recipeID)){
@@ -180,20 +181,15 @@ public class RecipeItem extends AppCompatActivity {
                         bookmarkcheck = true;
                         break;
                     }
-
                 }
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
 
-
-
         //get User profile and display
         try {
             String userjsonstring = getUser(recipeobj.getString("userID"));
-
             JSONArray userarray = new JSONArray(userjsonstring);
             JSONObject userobj = (JSONObject) userarray.get(0);
             username.setText(userobj.getString("username"));
@@ -208,6 +204,7 @@ public class RecipeItem extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String currentuser = FirebaseAuth.getInstance().getUid();
+                //check whether user login
                 if (currentuser != null){
                     new LikeAsync(RecipeItem.this).execute();
                 }
@@ -223,6 +220,7 @@ public class RecipeItem extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String currentuser = FirebaseAuth.getInstance().getUid();
+                //check whether user login
                 if (currentuser != null){
                     new BookmarkAsync(RecipeItem.this).execute(finalCurrentuserobj);
                 }
@@ -234,6 +232,7 @@ public class RecipeItem extends AppCompatActivity {
         });
     }
 
+    //get recipe data from restDB
     public String getRecipe(String id){
         RestDB example = new RestDB();
         String response = null;
@@ -245,6 +244,7 @@ public class RecipeItem extends AppCompatActivity {
         return response;
     }
 
+    //get user data from restDB
     public String getUser(String userid){
         RestDB example = new RestDB();
         String response = null;
@@ -256,6 +256,7 @@ public class RecipeItem extends AppCompatActivity {
         return response;
     }
 
+    //get number
     public void getLike(String userid) throws IOException {
         RestDB example = new RestDB();
         String response = null;
@@ -286,10 +287,12 @@ public class RecipeItem extends AppCompatActivity {
     //update like data to restdb
     public void likeRecipe(String recipeID, String currentuser, boolean addorremove) throws IOException {
         RestDB restDB = new RestDB();
+        //if add
         if (addorremove) {
             String json = restDB.likeRecipe(recipeID, currentuser);
             String response = restDB.post("https://recipeheist-567c.restdb.io/rest/like/" + recipeID, json);
         }
+        //if remove
         else {
             String response = restDB.delete("https://recipeheist-567c.restdb.io/rest/like/*?q={\"recipeID\":\"" + recipeID + "\",\"userID\":\"" + currentuser + "\"}");
         }
@@ -301,9 +304,11 @@ public class RecipeItem extends AppCompatActivity {
     public void bookmarkRecipe(String recipeID, JSONObject currentuserobj0, boolean addorremove) throws IOException, JSONException {
         String restdbuserid = currentuserobj0.getString("_id");
         JSONArray bookmark = currentuserobj0.getJSONArray("bookmark");
+        //if add
         if (addorremove){
             bookmark.put(recipeID);
         }
+        //if remove
         else {
             for (int i = 0; i < bookmark.length(); i++) {
                 if(bookmark.get(i).equals(recipeID)){
@@ -314,11 +319,13 @@ public class RecipeItem extends AppCompatActivity {
             }
         }
 
+        //patch data to restDB
         RestDB restDB = new RestDB();
         String json = restDB.bookmarkRecipe(bookmark);
         String response = restDB.patch("https://recipeheist-567c.restdb.io/rest/users/" + restdbuserid, json);
     }
 
+    //add or remove a bookmark running in background
     private static class BookmarkAsync extends AsyncTask<JSONObject,Void,Void>{
         private WeakReference<RecipeItem> activityWeakReference;
 
@@ -330,6 +337,7 @@ public class RecipeItem extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             RecipeItem activity = activityWeakReference.get();
+            //disable btn
             activity.findViewById(R.id.fab).setEnabled(false);
         }
 
@@ -365,12 +373,13 @@ public class RecipeItem extends AppCompatActivity {
             protected void onPostExecute(Void unused) {
             super.onPostExecute(unused);
             RecipeItem activity = activityWeakReference.get();
+            //enable btn
             activity.findViewById(R.id.fab).setEnabled(true);
         }
     }
 
 
-    //like Async
+    //add or remove a like running in background
     private static class LikeAsync extends AsyncTask<Void,Void,Void>{
         private WeakReference<RecipeItem> activityWeakReference;
 
@@ -380,8 +389,8 @@ public class RecipeItem extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-
             RecipeItem activity = activityWeakReference.get();
+            //disable btn
             activity.findViewById(R.id.like).setEnabled(false);
         }
         @Override
@@ -416,12 +425,14 @@ public class RecipeItem extends AppCompatActivity {
         protected void onPostExecute(Void unused) {
             super.onPostExecute(unused);
             RecipeItem activity = activityWeakReference.get();
+            //enable btn
             activity.findViewById(R.id.like).setEnabled(true);
+            //update the number of likes
             activity.noOfLikes.setText(String.valueOf(activity.numlikes));
         }
     }
 
-    //sharedprefrences methods
+    //sharedprefrences methods to save history data
     public void savedata(String newRecipeID) {
         SharedPreferences sharedPreferences = this.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();

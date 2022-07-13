@@ -39,6 +39,7 @@ public class BrowseFragment extends Fragment {
     private int pagecount = 0;
     boolean needanotherpage;
     private int perpage = 10;
+    private boolean loadbefore = false;
     private ArrayList<RecipePreview> recipelist = new ArrayList<>();
     private RecyclerView RView;
     private BrowseAdapter browseAdapter;
@@ -82,13 +83,19 @@ public class BrowseFragment extends Fragment {
         nestedSV = rootView.findViewById(R.id.nestedSV);
         swipeRefreshLayout = rootView.findViewById(R.id.swipeRefreshLayout);
 
-        startRecipieGet();
+        //check whether this Fragment has been loaded before so that the startRecipieGet() will not run again when resume;
+        if (!loadbefore) {
+            loadbefore = true;
+            startRecipieGet();
+        }
 
         // grid layout splitting display into two columns
         int columns = 2;
         GridLayoutManager manager = new GridLayoutManager(mainActivity, columns);
         RView.addItemDecoration(new GridSpacingItemDecoration(columns, 12, false));
         RView.setLayoutManager(manager);
+
+        //to check if user reached the bottom
         nestedSV.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
             public void onScrollChange(NestedScrollView scrollView, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
@@ -96,15 +103,18 @@ public class BrowseFragment extends Fragment {
                 View view = (View) scrollView.getChildAt(scrollView.getChildCount() - 1);
                 int diff = (view.getBottom() - (scrollView.getHeight() + scrollView.getScrollY()));
 
+                //check if more recipes are needed
                 if (needanotherpage){
                     // if diff is zero, then the bottom has been reached
                     if (diff == 0) {
+                        //load next page
                         startRecipieGet();
                     }
                 }
             }
         });
 
+        //refresh page by using Init()
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -120,15 +130,19 @@ public class BrowseFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
-        browseAdapter = new BrowseAdapter(mainActivity, recipelist, new RecipeLoadListener() {
-            @Override
-            public void onLoad(String recipeID) {
-                goToRecipe(recipeID);
+        //load the recipelist into the recycler view only when fragment have been used before
+        if (loadbefore) {
+            browseAdapter = new BrowseAdapter(mainActivity, recipelist, new RecipeLoadListener() {
+                @Override
+                public void onLoad(String recipeID) {
+                    goToRecipe(recipeID);
+                }
+            });
+            RView.setAdapter(browseAdapter);
+            if (!needanotherpage) {
+                PBLoading.setVisibility(View.GONE);
             }
-        });
-        RView.setAdapter(browseAdapter);
-        if (!needanotherpage){PBLoading.setVisibility(View.GONE);}
+        }
     }
 
     //menu bar
@@ -157,13 +171,14 @@ public class BrowseFragment extends Fragment {
 
     }
 
+    //to initialize the page
     public void Init(){
         pagecount = 0;
         recipelist = new ArrayList<>();
         startRecipieGet();
     }
 
-    //combine all the fuctions for get from restdb
+    //combine all the fuctions to get data from restDB
     public  void startRecipieGet(){
         needanotherpage = false;
         PBLoading.setVisibility(View.VISIBLE);
@@ -179,14 +194,17 @@ public class BrowseFragment extends Fragment {
 
     //to get default browse recipe data from rest db
     public void defaultRecipe(int page) throws IOException, JSONException {
+        //skip is the number of recipes that will be skipped when getting data from restdb
         int skip = perpage * page;
         RestDB restDB = new RestDB();
         restDB.asyncGet("https://recipeheist-567c.restdb.io/rest/recipe?h={\"$fields\":{\"_id\":1,\"title\":1,\"duration\":1,\"imagePath\":1},\"$max\":" + perpage + ",\"$skip\":" + skip + ",\"$orderby\":{\"_created\":-1}}",
             new SuccessListener() {
                 @Override
                 public void onSuccess(String jsonresponse) throws JSONException {
+                    //if response is successful
                     if (jsonresponse != null) {
                         recipearray = new JSONArray(jsonresponse);
+                        //check whether if all the recipes had been gotten so that we will not send another api request
                         if (recipearray.length() >= perpage) {
                             needanotherpage = true;
                         }
@@ -201,6 +219,7 @@ public class BrowseFragment extends Fragment {
                             }
                         });
                     }
+                    //if response is unsuccessful
                     else {
                         mainActivity.runOnUiThread(new Runnable() {
                             @Override
@@ -214,26 +233,27 @@ public class BrowseFragment extends Fragment {
         );
     }
 
-    //to convert json object into RecipePreview object to pass to recycler view
+   //to display recipes from restdb jsonarray
     public void getData() throws JSONException {
         for (int i = 0; i < recipearray.length(); i++) {
+            //to convert json object into RecipePreview object to pass to recycler view
             JSONObject recipeobj = (JSONObject) recipearray.get(i);
             String id = recipeobj.getString("_id");
             String title = recipeobj.getString("title");
             String imagePath = recipeobj.getString("imagePath");
             String duration = recipeobj.getString("duration");
             RecipePreview recipePreview = new RecipePreview(id, title, imagePath, duration);
-            //In case a new recipe comes out, resulting a Recipe that is already displayed to move to the next page. Causing a duplicate display.
-            if (!recipelist.contains(recipePreview)){
-                recipelist.add(new RecipePreview(id, title, imagePath, duration));
-                browseAdapter = new BrowseAdapter(mainActivity, recipelist, new RecipeLoadListener() {
-                    @Override
-                    public void onLoad(String recipeID) {
-                        goToRecipe(recipeID);
-                    }
-                });
-                RView.setAdapter(browseAdapter);
-            }
+
+            recipelist.add(recipePreview);
+            //load recipelist into recyclerview
+            browseAdapter = new BrowseAdapter(mainActivity, recipelist, new RecipeLoadListener() {
+                @Override
+                public void onLoad(String recipeID) {
+                    goToRecipe(recipeID);
+                }
+            });
+            RView.setAdapter(browseAdapter);
+            //remove loading bar if user have already loaded all the recipes
             if (!needanotherpage){PBLoading.setVisibility(View.GONE);}
         }
     }
@@ -246,7 +266,4 @@ public class BrowseFragment extends Fragment {
         mainActivity.startActivity(intent);
 
     }
-
-
-
 }
