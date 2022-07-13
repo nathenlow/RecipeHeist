@@ -169,7 +169,12 @@ public class ProfileFragment extends Fragment {
             profileImage.setImageResource(R.drawable.default_profile_1);
             username.setText(user.getUsername());
             description.setText(user.getDescription());
-            getData();
+            if (recipeJArray == null){
+                Init();
+            }
+            else {
+                getData();
+            }
         }
     }
 
