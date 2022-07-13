@@ -3,10 +3,14 @@ package sg.edu.np.mad.recipeheist;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -55,11 +59,9 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-
         // to use methods from MainActivity
         mainActivity = (MainActivity) getActivity();
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -178,6 +180,22 @@ public class ProfileFragment extends Fragment {
         }
     }
 
+    //menu bar
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.top_nav_profile_menu, menu);
+        MenuItem menusettings = menu.findItem(R.id.settingsbtn);
+        //for menusettings
+        menusettings.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent settingsintent = new Intent(mainActivity,SettingsActivity.class);
+                startActivity(settingsintent);
+                return false;
+            }
+        });
+    }
+
     public void Init(){
         mainActivity.profileFragment = new ProfileFragment();
         mainActivity.replaceFragment(mainActivity.profileFragment, R.id.frameLayout);
@@ -233,9 +251,12 @@ public class ProfileFragment extends Fragment {
             // remove progressbar
             progressBar.setVisibility(View.GONE);
             // replace fragment
-            if (mainActivity.findViewById(R.id.profileFrameLayout) != null) {
-                mainActivity.replaceFragment(myRecipeFragment, rootView.findViewById(R.id.profileFrameLayout).getId());
+            try {
+                if (mainActivity.findViewById(R.id.profileFrameLayout) != null) {
+                    mainActivity.replaceFragment(myRecipeFragment, rootView.findViewById(R.id.profileFrameLayout).getId());
+                }
             }
+            catch (Exception e){}
         }
     }
 

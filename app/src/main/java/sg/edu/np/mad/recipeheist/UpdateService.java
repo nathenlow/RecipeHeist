@@ -143,9 +143,16 @@ public class UpdateService extends Service {
         return START_NOT_STICKY;
     }
 
+    public  String getDefaultDate(){
+        //get data from shared preferences
+        SharedPreferences sharedPreferences = this.getSharedPreferences("Settings", Context.MODE_PRIVATE);
+        //display date data from shared preferences in summary
+        return sharedPreferences.getString("defaultupdatedate", "2000-01-01");
+    }
+
     public String getLastUpdateDate(String chefID){
         SharedPreferences sharedPreferences = this.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
-        String lastupdate = sharedPreferences.getString(chefID, "2000-01-01");
+        String lastupdate = sharedPreferences.getString(chefID, getDefaultDate());
         return lastupdate;
     }
 
