@@ -18,6 +18,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.EditTextPreference;
+import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
@@ -59,6 +60,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
 
+        private ListPreference theme;
         private Preference updatefrequency;
         private Preference clearupdates;
         private Preference editDefaultUpdateDate;
@@ -69,6 +71,7 @@ public class SettingsActivity extends AppCompatActivity {
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
 
+            theme = findPreference("theme");
             updatefrequency = findPreference("updatefrequency");
             clearupdates = findPreference("clearupdates");
             editDefaultUpdateDate = findPreference("defaultupdatedate");
@@ -86,6 +89,15 @@ public class SettingsActivity extends AppCompatActivity {
             SharedPreferences datesharedPreferences = getActivity().getSharedPreferences("Settings", Context.MODE_PRIVATE);
             //display date data from shared preferences in summary
             editDefaultUpdateDate.setSummary(datesharedPreferences.getString("defaultupdatedate", "2000-01-01"));
+
+            //on theme change --> display Toast message
+            theme.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    Toast.makeText(getActivity(), "Restart the app to apply changes", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+            });
 
             // on clearupdates button click
             clearupdates.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
