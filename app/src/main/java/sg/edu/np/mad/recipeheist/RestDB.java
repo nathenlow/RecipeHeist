@@ -150,7 +150,8 @@ public class RestDB {
                 + "\"username\":\"" + username + "\","
                 + "\"description\":\"\","
                 + "\"following\":[],"
-                + "\"bookmark\":[]}";
+                + "\"bookmark\":[],"
+                + "\"profileimage\":\"\"}";
     }
 
     String createRecipe(String title, String description, String duration, int servings, String imagePath, String foodcategory, JSONArray ingredient, JSONArray instructions, String userID) {

@@ -213,7 +213,6 @@ public class ProfileFragment extends Fragment {
 
             // extract data and create a recipe object
             for (int i = 0; i < recipeJArray.length(); i++) {
-                System.out.println(recipeJArray);
                 Recipe recipe = new Recipe();
                 try {
                     JSONObject jsonObject = recipeJArray.getJSONObject(i);
