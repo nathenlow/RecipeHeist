@@ -168,8 +168,10 @@ public class BrowseFragment extends Fragment {
                 return false;
             }
         });
-
     }
+
+
+
 
     //to initialize the page
     public void Init(){
@@ -232,6 +234,7 @@ public class BrowseFragment extends Fragment {
             }
         );
     }
+
 
    //to display recipes from restdb jsonarray
     public void getData() throws JSONException {

@@ -1,10 +1,12 @@
 package sg.edu.np.mad.recipeheist;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,8 +41,9 @@ public class SearchFoodFragment extends Fragment {
     private EditText editTextsearch;
     private TextView clearall;
     private ImageView backarrow;
-    private ImageView UserButton;
+    private CardView searchuserbtn;
     MainActivity mainActivity;
+    UserSearch userSearch;
 
 
     // TODO: Rename and change types of parameters
@@ -81,7 +84,7 @@ public class SearchFoodFragment extends Fragment {
         editTextsearch = mainActivity.findViewById(R.id.editTextsearch);
         backarrow = mainActivity.findViewById(R.id.back);
         clearall = rootview.findViewById(R.id.clearall);
-        UserButton = rootview.findViewById(R.id.UserButton);
+        searchuserbtn = rootview.findViewById(R.id.searchuserbtn);
 
 
         mrecycler();
@@ -117,10 +120,11 @@ public class SearchFoodFragment extends Fragment {
         });
 
         //click arrow next to user button
-        UserButton.setOnClickListener(new View.OnClickListener() {
+        searchuserbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                performSearch();
+                Intent userintent = new Intent(getActivity(),UserSearch.class);
+                startActivity(userintent);
             }
         });
 
