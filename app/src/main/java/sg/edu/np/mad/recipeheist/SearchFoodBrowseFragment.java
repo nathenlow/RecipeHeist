@@ -141,6 +141,7 @@ public class SearchFoodBrowseFragment extends Fragment {
         inflater.inflate(R.menu.top_nav_browse_menu, menu);
         MenuItem menusearch = menu.findItem(R.id.app_bar_search);
         MenuItem menubookmark = menu.findItem(R.id.bookmarkbtn);
+
         //for search
         menusearch.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
@@ -158,6 +159,7 @@ public class SearchFoodBrowseFragment extends Fragment {
                 return false;
             }
         });
+
 
     }
 

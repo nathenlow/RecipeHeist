@@ -78,8 +78,6 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        checkIfUidStillExist();
-
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             switch (item.getItemId()){
                 case R.id.browse:
@@ -115,11 +113,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences settingsSharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(this /* Activity context */);
         String theme = settingsSharedPreferences.getString("theme", "0");
-        System.out.println(theme);
         switch (theme){
-            case "0":
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
-                break;
             case "1":
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 break;
@@ -192,27 +186,6 @@ public class MainActivity extends AppCompatActivity {
         }
         else{
             return false;
-        }
-    }
-
-    public void checkIfUidStillExist(){
-        if (isConnected()) {
-            try {
-                mAuth = FirebaseAuth.getInstance();
-                FirebaseUser currentUser = mAuth.getCurrentUser();
-                currentUser.reload().addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        if (e instanceof FirebaseAuthInvalidUserException) {
-                            Toast.makeText(MainActivity.this, "User is deleted or disabled", Toast.LENGTH_SHORT).show();
-                            FirebaseAuth.getInstance().signOut();
-                        }
-                    }
-                });
-            }catch (Exception e){
-
-            }
-
         }
     }
 
