@@ -57,6 +57,13 @@ public class RestDB {
                         e.printStackTrace();
                     }
                 }
+                else {
+                    try {
+                        successListener.onSuccess(null);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         });
     }
@@ -143,7 +150,8 @@ public class RestDB {
                 + "\"username\":\"" + username + "\","
                 + "\"description\":\"\","
                 + "\"following\":[],"
-                + "\"bookmark\":[]}";
+                + "\"bookmark\":[],"
+                + "\"profileimage\":\"\"}";
     }
 
     String createRecipe(String title, String description, String duration, int servings, String imagePath, String foodcategory, JSONArray ingredient, JSONArray instructions, String userID) {
@@ -155,12 +163,12 @@ public class RestDB {
                 + "\"foodcategory\":\"" + foodcategory + "\","
                 + "\"ingredient\":" + ingredient + ","
                 + "\"instructions\":" + instructions + ","
-                + "\"like\":[],"
                 + "\"userID\":\"" + userID + "\"}";
     }
 
-    String likeRecipe(JSONArray like) {
-        return "{\"like\":" + like + "}";
+    String likeRecipe(String recipeID, String userID) {
+        return "{\"recipeID\":\"" + recipeID + "\","
+                + "\"userID\":\"" + userID + "\"}";
     }
 
     String bookmarkRecipe(JSONArray bookmark) {

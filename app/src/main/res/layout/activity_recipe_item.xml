@@ -174,32 +174,20 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:minHeight="48dp"
-                app:layout_constraintBottom_toBottomOf="@+id/download"
+                app:layout_constraintBottom_toBottomOf="@+id/username"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/download"
-                app:srcCompat="@drawable/ic_outline_thumb_up_off_alt_24" />
+                app:layout_constraintTop_toTopOf="@+id/croptocircle"
+                app:srcCompat="@drawable/ic_outline_thumb_up_off_alt_24"/>
 
             <TextView
                 android:id="@+id/noOfLikes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="20K"
-                
+                android:text="0"
                 app:layout_constraintEnd_toEndOf="@+id/like"
                 app:layout_constraintStart_toStartOf="@+id/like"
                 app:layout_constraintTop_toBottomOf="@+id/like" />
-
-            <ImageButton
-                android:id="@+id/download"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:minHeight="48dp"
-                app:layout_constraintBottom_toBottomOf="@+id/username"
-                app:layout_constraintEnd_toStartOf="@+id/like"
-                app:layout_constraintTop_toTopOf="@+id/croptocircle"
-                app:srcCompat="@drawable/ic_baseline_download_24" />
 
             <TextView
                 android:id="@+id/ingredient"
@@ -281,13 +269,32 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
-        android:clickable="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="@dimen/fab_margin"
         android:layout_marginBottom="16dp"
         android:backgroundTint="@color/red_1"
+        android:clickable="true"
+        android:visibility="gone"
         app:srcCompat="@drawable/ic_baseline_bookmarks_24" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/loadinglayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?colorOnPrimary"
+        android:visibility="visible">
+
+        <ProgressBar
+            android:id="@+id/progressBar3"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

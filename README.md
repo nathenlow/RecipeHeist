@@ -28,12 +28,12 @@ RecipeHeist is an app that allows users to get inspirations and ideas for their 
 
 ### Appendices
 #### Browse
-![browse](https://lh3.google.com/u/0/d/1LHqYGk5MicOrnHotfW2p_fDA-UE_8JrB=w1920-h942-iv2)
+<img src="https://lh3.google.com/u/0/d/1LHqYGk5MicOrnHotfW2p_fDA-UE_8JrB=w1920-h942-iv2" alt="Browse"/>
 #### SearchRecipe
-![Search](https://lh3.google.com/u/0/d/13X6SGtBiQnEbY_Vj8AM5kz1QJn3OdRYS=w1920-h942-iv3)
+<img src="https://lh3.google.com/u/0/d/13X6SGtBiQnEbY_Vj8AM5kz1QJn3OdRYS=w1920-h942-iv3" alt="Search"/>
 #### RecipeItem
-![RecipeItem01](https://lh3.google.com/u/0/d/1gAqxn_3fVbwmXhpJj7687PxRXJW_as9y=w1920-h942-iv2)
-![RecipeItem02](https://lh3.google.com/u/0/d/18PEqqi0xQNVyE-_YPF_xEwMkSVSl2GTe=w1227-h942-iv4)
+<img src="https://lh3.google.com/u/0/d/1gAqxn_3fVbwmXhpJj7687PxRXJW_as9y=w1920-h942-iv2" alt="RecipeItem01"/>
+<img src="https://lh3.google.com/u/0/d/18PEqqi0xQNVyE-_YPF_xEwMkSVSl2GTe=w1227-h942-iv4" alt="RecipeItem02"/>
 
 ## Stage 2
 

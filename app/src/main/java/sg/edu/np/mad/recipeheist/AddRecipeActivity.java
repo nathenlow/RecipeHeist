@@ -20,7 +20,9 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -49,7 +51,6 @@ public class AddRecipeActivity extends AppCompatActivity {
     private TextView editRecipeName, editRecipeDescription, editDuration, editCategory, editServing, editIngredients, editInstructions;
     private ImageButton editFoodImage;
     private ProgressBar progressBar;
-    private Button addIngreBtn, addInstrBtn;
     private ArrayList<String> ingredientList = new ArrayList<>(), instructionList = new ArrayList<>();
     private RecyclerView ingredientDisplayR, instructionDisplayR;
 
@@ -83,8 +84,6 @@ public class AddRecipeActivity extends AppCompatActivity {
         editInstructions = findViewById(R.id.editInstruction);
         editFoodImage = findViewById(R.id.editFoodImage);
         Button createRecipeBtn = findViewById(R.id.createRecipeBtn);
-        addIngreBtn = findViewById(R.id.addIngreBtn);
-        addInstrBtn = findViewById(R.id.addInstrBtn);
         progressBar = findViewById(R.id.progressBar2);
         ingredientDisplayR = findViewById(R.id.ingredientDisplayR);
         instructionDisplayR = findViewById(R.id.instructionDisplayR);
@@ -136,58 +135,68 @@ public class AddRecipeActivity extends AppCompatActivity {
             }
         });
 
-        // set onclick listener for add ingredient
-        addIngreBtn.setOnClickListener(new View.OnClickListener() {
+        // set on key listener for when user click enter (ingredient)
+        editIngredients.setOnKeyListener(new View.OnKeyListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
-            public void onClick(View v) {
-                // get input
-                String uInput = editIngredients.getText().toString().trim();
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
+                    // get input
+                    String uInput = editIngredients.getText().toString().trim();
 
-                if (uInput.equals("")){
-                    editIngredients.setError("Can't be blank!");
-                    editIngredients.requestFocus();
+                    if (uInput.equals("")){
+                        editIngredients.setError("Can't be blank!");
+                        editIngredients.requestFocus();
+                    }
+                    else{
+                        // add user input in list
+                        ingredientList.add(uInput);
+                    }
+
+                    // clear text area
+                    editIngredients.setText("");
+
+                    // Recyclerview
+
+                    ingredAdapter.notifyDataSetChanged();
+
+                    // hide keyboard
+                    hideKeyboard(AddRecipeActivity.this, v);
                 }
-                else{
-                    // add user input in list
-                    ingredientList.add(uInput);
-                }
-
-                // clear text area
-                editIngredients.setText("");
-
-                // Recyclerview
-
-                ingredAdapter.notifyDataSetChanged();
-
+                return false;
             }
         });
 
-        // set onclick listener for add instructions
-        addInstrBtn.setOnClickListener(new View.OnClickListener() {
+
+        // set on key listener for when user click enter (instructions)
+        editInstructions.setOnKeyListener(new View.OnKeyListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
-            public void onClick(View v) {
-                // get input
-                String uInput = editInstructions.getText().toString().trim();
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
+                    // get input
+                    String uInput = editInstructions.getText().toString().trim();
 
-                if (uInput.equals("")){
-                    editInstructions.setError("Can't be blank!");
-                    editInstructions.requestFocus();
+                    if (uInput.equals("")){
+                        editInstructions.setError("Can't be blank!");
+                        editInstructions.requestFocus();
+                    }
+                    else{
+                        // add user input in list
+                        instructionList.add(uInput);
+                    }
+
+                    // clear text area
+                    editInstructions.setText("");
+
+                    // Recyclerview
+
+                    instrucAdapter.notifyDataSetChanged();
                 }
-                else{
-                    // add user input in list
-                    instructionList.add(uInput);
-                }
-
-                // clear text area
-                editInstructions.setText("");
-
-                // Recyclerview
-
-                instrucAdapter.notifyDataSetChanged();
+                return false;
             }
         });
+
 
         // set onclick listener for "create button"
         createRecipeBtn.setOnClickListener(new View.OnClickListener() {
@@ -208,6 +217,8 @@ public class AddRecipeActivity extends AppCompatActivity {
         });
 
     }
+
+    // ----------------------------------------- Start of functions -----------------------------------------
 
     // function to add recipe
     public void addRecipe(){
@@ -374,6 +385,11 @@ public class AddRecipeActivity extends AppCompatActivity {
                 Toast.makeText(AddRecipeActivity.this, "Upload is unsuccessful, please try again!", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    // function to hide keyboard
+    public void hideKeyboard(Context context, View view){
+        ((InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
 }

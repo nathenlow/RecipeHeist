@@ -1,0 +1,48 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory app:title="Theme">
+
+        <ListPreference
+            app:defaultValue="0"
+            app:entries="@array/theme_entries"
+            app:entryValues="@array/theme_values"
+            app:key="theme"
+            app:title="Mode"
+            app:useSimpleSummaryProvider="true"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Updates">
+
+        <ListPreference
+            app:defaultValue="0"
+            app:entries="@array/update_frequency_entries"
+            app:entryValues="@array/update_frequency_values"
+            app:key="updatefrequency"
+            app:title="Recipes update frequency"
+            app:useSimpleSummaryProvider="true" />
+
+        <Preference
+            app:key="defaultupdatedate"
+            app:title="Default update date"/>
+
+        <Preference
+            app:key="clearupdates"
+            app:title="Clear updates"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Profile settings">
+
+        <Preference
+            app:key="clearhistory"
+            app:title="Clear history"/>
+
+        <Preference
+            app:key="logout"
+            app:title="Logout"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

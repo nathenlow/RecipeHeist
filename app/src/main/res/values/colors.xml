@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <color name="red_1">#F42434</color>
     <color name="red_2">#AC2525</color>
     <color name="red_3">#7C0000</color>
@@ -7,4 +7,9 @@
     <color name="teal_1">#07B99B</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="text_input_default_box_stroke_color" tools:override="true">#F68080</color>
+    <color name="text_input_border_unfocused">#A7A7A7</color>
+    <color name="text_input_bg_transparent">#00000000</color>
+    <color name="cardview_bg_add_recipe_default">#666DAA</color>
 </resources>

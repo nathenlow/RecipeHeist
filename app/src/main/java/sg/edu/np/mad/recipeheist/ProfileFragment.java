@@ -4,15 +4,19 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -27,22 +31,21 @@ import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ProfileFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ProfileFragment extends Fragment {
 
-    private User user;
-    private TextView noOfRecipes;
-    private Bundle user_data;
+    private User user = new User();
+    private TextView noOfRecipes, description, username;
+    private Bundle user_data = new Bundle();
     private JSONArray recipeJArray;
     private View rootView;
     private ProgressBar progressBar;
     private ArrayList<Recipe> recipeList;
     private MainActivity mainActivity;
-    private String query;
+    private Boolean loadbefore = false;
+    CircleImageView profileImage;
+    private Button editProfileBtn;
+    private FloatingActionButton addRecipeBtn;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
 
     public ProfileFragment() {
@@ -56,14 +59,9 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            user_data = getArguments();
-            user = user_data.getParcelable("userData");
-
-            query = "\"" + user.getUserID() + "\"";
-
-        }
+        // to use methods from MainActivity
+        mainActivity = (MainActivity) getActivity();
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -72,22 +70,63 @@ public class ProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        CircleImageView profileImage = rootView.findViewById(R.id.profileImage);
-        TextView username = rootView.findViewById(R.id.profileName);
-        TextView description = rootView.findViewById(R.id.profileDescription);
-        Button editProfileBtn = rootView.findViewById(R.id.editProfileBtn);
-        FloatingActionButton addRecipeBtn = rootView.findViewById(R.id.addRecipeBtn);
+        profileImage = rootView.findViewById(R.id.profileImage);
+        username = rootView.findViewById(R.id.profileName);
+        description = rootView.findViewById(R.id.profileDescription);
+        editProfileBtn = rootView.findViewById(R.id.editProfileBtn);
+        addRecipeBtn = rootView.findViewById(R.id.addRecipeBtn);
         noOfRecipes = rootView.findViewById(R.id.noOfRecipes);
         progressBar = rootView.findViewById(R.id.progressBarProfile);
-
-        // to use methods from MainActivity
-        mainActivity = (MainActivity) getActivity();
+        swipeRefreshLayout = rootView.findViewById(R.id.swipeRefreshLayout);
 
         mainActivity.setActionBarTitle("Profile");
-        // update profile page
-        profileImage.setImageResource(R.drawable.default_profile_1);
-        username.setText(user.getUsername());
-        description.setText(user.getDescription());
+
+        if (!loadbefore) {
+            addRecipeBtn.setEnabled(false);
+            // update profile page
+            String uid = FirebaseAuth.getInstance().getUid();
+            // function to get users from restDB
+            RestDB restDB = new RestDB();
+            try {
+                restDB.asyncGet("https://recipeheist-567c.restdb.io/rest/users?q={\"userID\":\"" + uid + "\"}", new SuccessListener() {
+                    @Override
+                    public void onSuccess(String jsonresponse) throws JSONException {
+                        System.out.println(jsonresponse);
+                        String dataBaseUsers = jsonresponse;
+                        dataBaseUsers = dataBaseUsers.substring(1, dataBaseUsers.length() - 1);
+
+                        JSONObject jsonObject = new JSONObject(dataBaseUsers);
+
+                        user.setUserID(jsonObject.getString("userID"));
+                        user.setEmail(jsonObject.getString("email"));
+                        user.setUsername(jsonObject.getString("username"));
+                        user.setDescription(jsonObject.getString("description"));
+                        user.setFollowing(convertJArrayToArrayList(jsonObject.getJSONArray("following")));
+                        user.setBookmark(convertJArrayToArrayList(jsonObject.getJSONArray("bookmark")));
+
+                        user_data.putParcelable("userData", user);
+                        // Remove loading page
+                        mainActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                profileImage.setImageResource(R.drawable.default_profile_1);
+                                username.setText(user.getUsername());
+                                description.setText(user.getDescription());
+                                loadbefore = true;
+                                try {
+                                    getUserRecipes(user.getUserID());
+                                    addRecipeBtn.setEnabled(true);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                    }
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         // when user clicks on "edit profile" button
         editProfileBtn.setOnClickListener(new View.OnClickListener() {
@@ -115,23 +154,56 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(false);
+                Toast.makeText(mainActivity, "Reloading page", Toast.LENGTH_SHORT).show();
+                Init();
+            }
+        });
+
         return rootView;
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        // to use methods from MainActivity
-        MainActivity mainActivity = (MainActivity) getActivity();
-
-        try {
-            getUserRecipes(query);
-        } catch (IOException e) {
-            e.printStackTrace();
+    public void onResume() {
+        super.onResume();
+        if (loadbefore){
+            profileImage.setImageResource(R.drawable.default_profile_1);
+            username.setText(user.getUsername());
+            description.setText(user.getDescription());
+            if (recipeJArray == null){
+                Init();
+            }
+            else {
+                getData();
+            }
         }
     }
 
+    //menu bar
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.top_nav_profile_menu, menu);
+        MenuItem menusettings = menu.findItem(R.id.settingsbtn);
+        //for menusettings
+        menusettings.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent settingsintent = new Intent(mainActivity,SettingsActivity.class);
+                startActivity(settingsintent);
+                return false;
+            }
+        });
+    }
+
+    public void Init(){
+        mainActivity.profileFragment = new ProfileFragment();
+        mainActivity.replaceFragment(mainActivity.profileFragment, R.id.frameLayout);
+    }
+
+    // ------------------------------- Start of functions -------------------------------
 
     public void getData(){
 
@@ -141,7 +213,6 @@ public class ProfileFragment extends Fragment {
 
             // extract data and create a recipe object
             for (int i = 0; i < recipeJArray.length(); i++) {
-                System.out.println(recipeJArray);
                 Recipe recipe = new Recipe();
                 try {
                     JSONObject jsonObject = recipeJArray.getJSONObject(i);
@@ -157,7 +228,7 @@ public class ProfileFragment extends Fragment {
                     recipe.setFoodcategory(jsonObject.getString("foodcategory"));
                     recipe.setIngridient(convertJArrayToArrayList(jsonObject.getJSONArray("ingredient")));
                     recipe.setInstructions(convertJArrayToArrayList(jsonObject.getJSONArray("instructions")));
-                    recipe.setLike(convertJArrayToArrayList(jsonObject.getJSONArray("like")));
+                    //recipe.setLike(convertJArrayToArrayList(jsonObject.getJSONArray("like")));
 
                     System.out.println(recipe.getTitle());
                     // add recipe to recipe list
@@ -181,15 +252,19 @@ public class ProfileFragment extends Fragment {
             // remove progressbar
             progressBar.setVisibility(View.GONE);
             // replace fragment
-            assert mainActivity != null;
-            mainActivity.replaceFragment(myRecipeFragment, rootView.findViewById(R.id.profileFrameLayout).getId());
+            try {
+                if (mainActivity.findViewById(R.id.profileFrameLayout) != null) {
+                    mainActivity.replaceFragment(myRecipeFragment, rootView.findViewById(R.id.profileFrameLayout).getId());
+                }
+            }
+            catch (Exception e){}
         }
     }
 
     // function to get users from restDB
     public void getUserRecipes(String uid) throws IOException {
         RestDB restDB = new RestDB();
-        restDB.asyncGet("https://recipeheist-567c.restdb.io/rest/recipe?q={\"userID\": " + uid + "}", new SuccessListener() {
+        restDB.asyncGet("https://recipeheist-567c.restdb.io/rest/recipe?q={\"userID\":\"" + uid + "\"}", new SuccessListener() {
             @Override
             public void onSuccess(String jsonresponse) throws JSONException {
                 String dbResults = "{ \"recipe\": " + jsonresponse + "}";

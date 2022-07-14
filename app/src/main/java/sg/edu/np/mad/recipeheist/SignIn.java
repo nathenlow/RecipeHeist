@@ -2,10 +2,11 @@ package sg.edu.np.mad.recipeheist;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,6 +31,8 @@ public class SignIn extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
         getSupportActionBar().setTitle("Sign In");
+
+
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -77,6 +80,20 @@ public class SignIn extends AppCompatActivity {
 
             }
         });
+    }
+
+    //menu bar
+    @Override
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
+        getMenuInflater().inflate(R.menu.top_nav_profile_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        Intent settingsintent = new Intent(SignIn.this,SettingsActivity.class);
+        startActivity(settingsintent);
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

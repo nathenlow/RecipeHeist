@@ -2,15 +2,23 @@ package sg.edu.np.mad.recipeheist;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.preference.PreferenceManager;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.View;
@@ -26,14 +34,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import sg.edu.np.mad.recipeheist.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
-     ActivityMainBinding binding;
-
+    ActivityMainBinding binding;
     private FirebaseAuth mAuth;
+    public Fragment browseFragment;
+    public Fragment updatesFragment;
+    public Fragment historyFragment;
+    public Fragment profileFragment;
 
     @Override
     public void onBackPressed() {
@@ -42,46 +54,45 @@ public class MainActivity extends AppCompatActivity {
             moveTaskToBack(true);
         }else {
             binding.bottomNavigationView.setSelectedItemId(R.id.browse);
-            replaceFragment(new BrowseFragment(), R.id.frameLayout);
+            replaceFragment(browseFragment, R.id.frameLayout);
         }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme();
         super.onCreate(savedInstanceState);
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        replaceFragment(new BrowseFragment(), R.id.frameLayout);
+        browseFragment = new BrowseFragment();
+        updatesFragment = new UpdatesFragment();
+        historyFragment = new HistoryFragment();
+        profileFragment = new ProfileFragment();
+
+        replaceFragment(browseFragment, R.id.frameLayout);
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        checkIfUidStillExist();
-
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             switch (item.getItemId()){
                 case R.id.browse:
-                    replaceFragment(new BrowseFragment(), R.id.frameLayout);
+                    replaceFragment(browseFragment, R.id.frameLayout);
                     break;
                 case R.id.updates:
-                    replaceFragment(new UpdatesFragment(), R.id.frameLayout);
+                    replaceFragment(updatesFragment, R.id.frameLayout);
                     break;
                 case R.id.download:
-                    replaceFragment(new DownloadFragment(), R.id.frameLayout);
+                    replaceFragment(historyFragment, R.id.frameLayout);
                     break;
                 case R.id.profile:
 
                     if (currentUser != null){
-                        try {
-                            getUserProfile();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                        replaceFragment(profileFragment, R.id.frameLayout);
                     }
                     else {
                         Intent intent = new Intent(this, SignIn.class);
@@ -93,58 +104,27 @@ public class MainActivity extends AppCompatActivity {
 
             return true;
         });
-    }
 
-    public void getUserProfile() throws IOException {
-        showloading(true);
-        showbottomnav(false);
-        getSupportActionBar().setTitle("Profile");
-        String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        String uid = "\"" + currentUserID + "\"";
-
-        User user = new User();
-
-        // function to get users from restDB
-        RestDB restDB = new RestDB();
-        restDB.asyncGet("https://recipeheist-567c.restdb.io/rest/users?q={\"userID\": " + uid + "}", new SuccessListener() {
-            @Override
-            public void onSuccess(String jsonresponse) throws JSONException {
-                String dataBaseUsers = jsonresponse;
-                dataBaseUsers = dataBaseUsers.substring(1, dataBaseUsers.length()-1);
-                System.out.println(dataBaseUsers);
-
-                JSONObject jsonObject = new JSONObject(dataBaseUsers);
-                System.out.println(jsonObject);
-
-                user.setUserID(jsonObject.getString("userID"));
-                user.setEmail(jsonObject.getString("email"));
-                user.setUsername(jsonObject.getString("username"));
-                user.setDescription(jsonObject.getString("description"));
-                user.setFollowing(convertJArrayToArrayList(jsonObject.getJSONArray("following")));
-                user.setBookmark(convertJArrayToArrayList(jsonObject.getJSONArray("bookmark")));
-
-                // Create bundle to pass user data to fragment
-                Bundle user_data = new Bundle();
-                user_data.putParcelable("userData", user);
-                //set argument to ProfileFragment
-                ProfileFragment profileFragment = new ProfileFragment();
-                profileFragment.setArguments(user_data);
-                // Replace fragment
-                replaceFragment(profileFragment, R.id.frameLayout);
-                // Remove loading page
-                // Remove loading page
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        showloading(false);
-                        showbottomnav(true);
-                    }
-                });
-            }
-        });
     }
 
     //methods
+
+    public void setTheme(){
+        SharedPreferences settingsSharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(this /* Activity context */);
+        String theme = settingsSharedPreferences.getString("theme", "0");
+        switch (theme){
+            case "1":
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                break;
+            case "2":
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                break;
+            default:
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+                break;
+        }
+    }
 
     public void showbottomnav(Boolean show){
         if(show){
@@ -209,27 +189,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void checkIfUidStillExist(){
-        if (isConnected()) {
-            try {
-                mAuth = FirebaseAuth.getInstance();
-                FirebaseUser currentUser = mAuth.getCurrentUser();
-                currentUser.reload().addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        if (e instanceof FirebaseAuthInvalidUserException) {
-                            Toast.makeText(MainActivity.this, "User is deleted or disabled", Toast.LENGTH_SHORT).show();
-                            FirebaseAuth.getInstance().signOut();
-                        }
-                    }
-                });
-            }catch (Exception e){
-
-            }
-
-        }
-    }
-
     // function to convert jsonArray to ArrayList
     public ArrayList<String> convertJArrayToArrayList(JSONArray jsonArray) throws JSONException {
         ArrayList<String> arrayList = new ArrayList<>();
@@ -244,5 +203,4 @@ public class MainActivity extends AppCompatActivity {
             return arrayList;
         }
     }
-
 }

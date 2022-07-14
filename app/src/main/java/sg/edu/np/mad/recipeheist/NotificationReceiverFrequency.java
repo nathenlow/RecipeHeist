@@ -1,0 +1,12 @@
+package sg.edu.np.mad.recipeheist;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+
+public class NotificationReceiverFrequency extends BroadcastReceiver {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        //context.startService(new Intent(context, UpdateService.class).setAction("STOP_ACTION"));
+    }
+}
