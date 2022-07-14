@@ -92,6 +92,10 @@ public class SettingsActivity extends AppCompatActivity {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     getActivity().deleteDatabase(DataBaseHandler.DATABASE_NAME);
+                    SharedPreferences chefsharedPreferences = getActivity().getSharedPreferences("chefUpdates", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor chefeditor = chefsharedPreferences.edit();
+                    chefeditor.clear();
+                    chefeditor.apply();
                     Toast.makeText(getActivity(), "Updates cleared", Toast.LENGTH_SHORT).show();
                     return false;
                 }

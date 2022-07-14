@@ -82,6 +82,7 @@ public class ProfileFragment extends Fragment {
         mainActivity.setActionBarTitle("Profile");
 
         if (!loadbefore) {
+            addRecipeBtn.setEnabled(false);
             // update profile page
             String uid = FirebaseAuth.getInstance().getUid();
             // function to get users from restDB
@@ -114,6 +115,7 @@ public class ProfileFragment extends Fragment {
                                 loadbefore = true;
                                 try {
                                     getUserRecipes(user.getUserID());
+                                    addRecipeBtn.setEnabled(true);
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
