@@ -82,7 +82,8 @@
                     android:background="@drawable/custom_input"
                     android:hint="e.g. Chicken rice, Egg Fried Rice, etc..."
                     android:inputType="textPersonName"
-                    android:textColorLink="@color/red_1"
+                    android:textColorHint="@color/hint_text_color"
+                    android:textColor="?attr/colorOnSecondary"
                     android:textSize="18sp" />
             </LinearLayout>
 
@@ -117,6 +118,8 @@
                     android:background="@drawable/custom_input"
                     android:hint="Describe the recipe"
                     android:inputType="textMultiLine"
+                    android:textColorHint="@color/hint_text_color"
+                    android:textColor="?attr/colorOnSecondary"
                     android:textSize="18sp" />
             </LinearLayout>
 
@@ -151,6 +154,8 @@
                     android:background="@drawable/custom_input"
                     android:hint="e.g. 2hr 10min"
                     android:inputType="textPersonName"
+                    android:textColorHint="@color/hint_text_color"
+                    android:textColor="?attr/colorOnSecondary"
                     android:textSize="20sp" />
             </LinearLayout>
 
@@ -186,6 +191,8 @@
                     android:background="@drawable/custom_input"
                     android:hint="e.g 5"
                     android:inputType="number"
+                    android:textColorHint="@color/hint_text_color"
+                    android:textColor="?attr/colorOnSecondary"
                     android:textSize="20sp" />
 
             </LinearLayout>
@@ -221,6 +228,8 @@
                     android:background="@drawable/custom_input"
                     android:hint="e.g. Chicken, Pasta, etc..."
                     android:inputType="textPersonName"
+                    android:textColorHint="@color/hint_text_color"
+                    android:textColor="?attr/colorOnSecondary"
                     android:textSize="20sp" />
 
             </LinearLayout>
@@ -272,6 +281,8 @@
                         android:gravity="start|top"
                         android:hint="e.g. 5 boneless chicken"
                         android:inputType="text"
+                        android:textColorHint="@color/hint_text_color"
+                        android:textColor="?attr/colorOnSecondary"
                         android:textSize="20sp" />
 
                 </LinearLayout>
@@ -324,6 +335,8 @@
                         android:gravity="start|top"
                         android:hint="e.g. fry the garlic at low-heat..."
                         android:inputType="text"
+                        android:textColorHint="@color/hint_text_color"
+                        android:textColor="?attr/colorOnSecondary"
                         android:textSize="20sp" />
 
                 </LinearLayout>
