@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="sg.edu.np.mad.recipeheist">
 
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
@@ -61,10 +63,9 @@
 
         <receiver android:name=".NotificationReceiverDelete" />
         <receiver
-            android:name=".NotificationReceiverFrequency"
+            android:name=".AlarmBootReceiver"
             android:exported="false">
             <intent-filter>
-                NotificationReceiverDelete
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>

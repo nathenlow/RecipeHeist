@@ -1,23 +1,18 @@
 package sg.edu.np.mad.recipeheist;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.icu.number.FormattedNumber;
-import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.DatePicker;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -25,11 +20,7 @@ import androidx.preference.PreferenceFragmentCompat;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -47,9 +38,6 @@ public class SettingsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-
-
-
     }
 
     @Override
@@ -61,7 +49,7 @@ public class SettingsActivity extends AppCompatActivity {
     public static class SettingsFragment extends PreferenceFragmentCompat {
 
         private ListPreference theme;
-        private Preference updatefrequency;
+        private ListPreference updatefrequency;
         private Preference clearupdates;
         private Preference editDefaultUpdateDate;
         private Preference clearhistory;
@@ -95,6 +83,14 @@ public class SettingsActivity extends AppCompatActivity {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     Toast.makeText(getActivity(), "Restart the app to apply changes", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+            });
+
+            updatefrequency.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    Toast.makeText(getActivity(), "Reboot device to apply changes", Toast.LENGTH_SHORT).show();
                     return true;
                 }
             });
@@ -182,6 +178,24 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             };
 
+        }
+
+        public void setAlarm(int numhours) {
+            System.out.println("hi");
+            Calendar calendar = Calendar.getInstance();
+            Intent intent0 = new Intent(getActivity(), UpdateService.class);
+            PendingIntent pintent = PendingIntent.getService(getActivity(), 0, intent0, 0);
+            AlarmManager alarm = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+            alarm.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 1000, pintent);
+        }
+
+        public void removeAlarm(){
+            Intent intent0 = new Intent(getActivity(), UpdateService.class);
+            PendingIntent sender = PendingIntent.getService(getActivity(), 0, intent0, 0);
+            AlarmManager alarm = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+            if (alarm != null) {
+                alarm.cancel(sender);
+            }
         }
     }
 }
