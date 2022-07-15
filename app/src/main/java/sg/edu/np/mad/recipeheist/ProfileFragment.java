@@ -133,14 +133,11 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                // pass data to next fragment
-                EditProfileFragment editProfileFragment = new EditProfileFragment();
-                editProfileFragment.setArguments(user_data);
+                // pass user data to new activity
+                Intent editProfileActivity = new Intent(getActivity(), EditProfileActivity.class);
+                editProfileActivity.putExtras(user_data);
 
-                // pass data from this fragment to MainActivity
-                assert mainActivity != null;
-                mainActivity.replaceFragment(editProfileFragment , mainActivity.findViewById(R.id.frameLayout).getId());
-                Objects.requireNonNull(mainActivity.getSupportActionBar()).setTitle("Profile Settings");
+                startActivity(editProfileActivity);
             }
         });
 

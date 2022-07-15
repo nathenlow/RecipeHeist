@@ -16,10 +16,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RecipeHeist">
         <activity
+            android:name=".EditProfileActivity"
+            android:exported="false" />
+        <activity
             android:name=".SettingsActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_settings" />
+            android:label="@string/title_activity_settings"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".BookmarkActivity"
             android:exported="false"
@@ -57,10 +60,11 @@
             android:stopWithTask="false" />
 
         <receiver android:name=".NotificationReceiverDelete" />
-
-        <receiver android:name=".NotificationReceiverFrequency"
+        <receiver
+            android:name=".NotificationReceiverFrequency"
             android:exported="false">
-            <intent-filter>NotificationReceiverDelete
+            <intent-filter>
+                NotificationReceiverDelete
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
