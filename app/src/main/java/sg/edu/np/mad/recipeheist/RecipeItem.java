@@ -165,11 +165,7 @@ public class RecipeItem extends AppCompatActivity {
         new Thread() {
             public void run() {
                 //check whether user like this recipe
-                try {
-                    getLike(currentuser);
-                } catch (IOException | JSONException e) {
-                    e.printStackTrace();
-                }
+                new getLike(RecipeItem.this).execute(currentuser);
             }
         }.start();
 
@@ -190,19 +186,19 @@ public class RecipeItem extends AppCompatActivity {
                                 break;
                             }
                         }
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (bookmarkcheck) {
-                                    bookmarkbtn.setImageDrawable(getDrawable(R.drawable.ic_baseline_bookmark_added_24));
-                                }
-                                bookmarkbtn.setEnabled(true);
-                            }
-                        });
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (bookmarkcheck) {
+                            bookmarkbtn.setImageDrawable(getDrawable(R.drawable.ic_baseline_bookmark_added_24));
+                        }
+                        bookmarkbtn.setEnabled(true);
+                    }
+                });
             }
         }.start();
 
@@ -251,22 +247,16 @@ public class RecipeItem extends AppCompatActivity {
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (currentuserobj[0] != null){
-                    String currentuser = FirebaseAuth.getInstance().getUid();
-                    //check whether user login
-                    if (currentuser != null) {
-                        new BookmarkAsync(RecipeItem.this).execute(currentuserobj[0]);
-                    } else {
-                        Snackbar.make(view, "Login is required", Snackbar.LENGTH_SHORT)
-                                .setAction("Action", null).show();
-                    }
-                }
-                else {
-                    Toast.makeText(RecipeItem.this, "not working", Toast.LENGTH_SHORT).show();
+                String currentuser = FirebaseAuth.getInstance().getUid();
+                //check whether user login
+                if (currentuser != null) {
+                    new BookmarkAsync(RecipeItem.this).execute(currentuserobj[0]);
+                } else {
+                    Snackbar.make(view, "Login is required", Snackbar.LENGTH_SHORT)
+                            .setAction("Action", null).show();
                 }
             }
         });
-
     }
 
     //get recipe data from restDB
@@ -294,33 +284,48 @@ public class RecipeItem extends AppCompatActivity {
         return response;
     }
 
-    //get number
-    public void getLike(String userid) throws IOException, JSONException {
-        RestDB example = new RestDB();
-        //check whether user liked the recipe
-        String jsonresponse0 = example.get("https://recipeheist-567c.restdb.io/rest/like?q={\"userID\":\"" + userid + "\", \"recipeID\": \"" + recipeID + "\"}&totals=true&count=true");
-        JSONObject likejsonobj0 = new JSONObject(jsonresponse0);
-        JSONObject totaljsonobj0 = likejsonobj0.getJSONObject("totals");
-        if (totaljsonobj0.getInt("count") != 0) {
-            likecheck = true;
+    private static class getLike extends AsyncTask<String,Void,Void>{
+        private WeakReference<RecipeItem> activityWeakReference;
+
+        getLike(RecipeItem activity) {
+            activityWeakReference = new WeakReference<RecipeItem>(activity);
         }
 
-        //get the numeber of likes in this recipe
-        String jsonresponse1 = example.get("https://recipeheist-567c.restdb.io/rest/like?q={\"recipeID\": \"" + recipeID + "\"}&totals=true&count=true");
-        JSONObject likejsonobj1 = new JSONObject(jsonresponse1);
-        JSONObject totaljsonobj1 = likejsonobj1.getJSONObject("totals");
-        numlikes = totaljsonobj1.getInt("count");
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (likecheck){
-                    like.setImageDrawable(getDrawable(R.drawable.ic_baseline_thumb_up_24));
+        @Override
+        protected Void doInBackground(String... userid) {
+            RecipeItem activity = activityWeakReference.get();
+            RestDB example = new RestDB();
+            //check whether user liked the recipe
+            try {
+                String jsonresponse0 = example.get("https://recipeheist-567c.restdb.io/rest/like?q={\"userID\":\"" + userid + "\", \"recipeID\": \"" + activity.recipeID + "\"}&totals=true&count=true");
+                JSONObject likejsonobj0 = new JSONObject(jsonresponse0);
+                JSONObject totaljsonobj0 = likejsonobj0.getJSONObject("totals");
+                if (totaljsonobj0.getInt("count") != 0) {
+                    activity.likecheck = true;
                 }
-                noOfLikes.setText(String.valueOf(numlikes));
-                like.setEnabled(true);
+                //get the numeber of likes in this recipe
+                String jsonresponse1 = example.get("https://recipeheist-567c.restdb.io/rest/like?q={\"recipeID\": \"" + activity.recipeID + "\"}&totals=true&count=true");
+                JSONObject likejsonobj1 = new JSONObject(jsonresponse1);
+                JSONObject totaljsonobj1 = likejsonobj1.getJSONObject("totals");
+                activity.numlikes = totaljsonobj1.getInt("count");
             }
-        });
+            catch (JSONException | IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+
+        @Override
+        protected void onPostExecute(Void unused) {
+            super.onPostExecute(unused);
+            RecipeItem activity = activityWeakReference.get();
+            if (activity.likecheck){
+                activity.like.setImageDrawable(activity.getDrawable(R.drawable.ic_baseline_thumb_up_24));
+            }
+            activity.noOfLikes.setText(String.valueOf(activity.numlikes));
+            activity.like.setEnabled(true);
+        }
     }
 
     //update like data to restdb
