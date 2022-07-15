@@ -189,16 +189,16 @@ public class RecipeItem extends AppCompatActivity {
                                 bookmarkcheck = true;
                                 break;
                             }
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (bookmarkcheck) {
-                                        bookmarkbtn.setImageDrawable(getDrawable(R.drawable.ic_baseline_bookmark_added_24));
-                                    }
-                                    bookmarkbtn.setEnabled(true);
-                                }
-                            });
                         }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (bookmarkcheck) {
+                                    bookmarkbtn.setImageDrawable(getDrawable(R.drawable.ic_baseline_bookmark_added_24));
+                                }
+                                bookmarkbtn.setEnabled(true);
+                            }
+                        });
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
