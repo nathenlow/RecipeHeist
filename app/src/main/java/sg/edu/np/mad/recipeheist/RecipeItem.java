@@ -167,7 +167,7 @@ public class RecipeItem extends AppCompatActivity {
                 //check whether user like this recipe
                 try {
                     getLike(currentuser);
-                } catch (IOException e) {
+                } catch (IOException | JSONException e) {
                     e.printStackTrace();
                 }
             }
@@ -295,57 +295,30 @@ public class RecipeItem extends AppCompatActivity {
     }
 
     //get number
-    public void getLike(String userid) throws IOException {
-        final Boolean[] canenable = {false};
+    public void getLike(String userid) throws IOException, JSONException {
         RestDB example = new RestDB();
-        String response = null;
         //check whether user liked the recipe
-        example.asyncGet("https://recipeheist-567c.restdb.io/rest/like?q={\"userID\":\"" + userid + "\", \"recipeID\": \"" + recipeID + "\"}&totals=true&count=true", new SuccessListener() {
-            @Override
-            public void onSuccess(String jsonresponse) throws JSONException {
-                JSONObject likejsonobj = new JSONObject(jsonresponse);
-                JSONObject totaljsonobj = likejsonobj.getJSONObject("totals");
-                if (totaljsonobj.getInt("count") != 0) {
-                    likecheck = true;
-                }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (likecheck) {
-                            like.setImageDrawable(getDrawable(R.drawable.ic_baseline_thumb_up_24));
-                        }
-                        if (canenable[0]){
-                            like.setEnabled(true);
-                        }
-                        else {
-                            canenable[0] = true;
-                        }
-                    }
-                });
-            }
-        });
-
+        String jsonresponse0 = example.get("https://recipeheist-567c.restdb.io/rest/like?q={\"userID\":\"" + userid + "\", \"recipeID\": \"" + recipeID + "\"}&totals=true&count=true");
+        JSONObject likejsonobj0 = new JSONObject(jsonresponse0);
+        JSONObject totaljsonobj0 = likejsonobj0.getJSONObject("totals");
+        if (totaljsonobj0.getInt("count") != 0) {
+            likecheck = true;
+        }
 
         //get the numeber of likes in this recipe
-        example.asyncGet("https://recipeheist-567c.restdb.io/rest/like?q={\"recipeID\": \"" + recipeID + "\"}&totals=true&count=true", new SuccessListener() {
-            @Override
-            public void onSuccess(String jsonresponse) throws JSONException {
-                JSONObject likejsonobj = new JSONObject(jsonresponse);
-                JSONObject totaljsonobj = likejsonobj.getJSONObject("totals");
-                numlikes = totaljsonobj.getInt("count");
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        noOfLikes.setText(String.valueOf(numlikes));
-                        if (canenable[0]){
-                            like.setEnabled(true);
-                        }
-                        else {
-                            canenable[0] = true;
-                        }
-                    }
-                });
+        String jsonresponse1 = example.get("https://recipeheist-567c.restdb.io/rest/like?q={\"recipeID\": \"" + recipeID + "\"}&totals=true&count=true");
+        JSONObject likejsonobj1 = new JSONObject(jsonresponse1);
+        JSONObject totaljsonobj1 = likejsonobj1.getJSONObject("totals");
+        numlikes = totaljsonobj1.getInt("count");
 
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (likecheck){
+                    like.setImageDrawable(getDrawable(R.drawable.ic_baseline_thumb_up_24));
+                }
+                noOfLikes.setText(String.valueOf(numlikes));
+                like.setEnabled(true);
             }
         });
     }
