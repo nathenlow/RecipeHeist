@@ -297,7 +297,7 @@ public class RecipeItem extends AppCompatActivity {
             RestDB example = new RestDB();
             //check whether user liked the recipe
             try {
-                String jsonresponse0 = example.get("https://recipeheist-567c.restdb.io/rest/like?q={\"userID\":\"" + userid + "\", \"recipeID\": \"" + activity.recipeID + "\"}&totals=true&count=true");
+                String jsonresponse0 = example.get("https://recipeheist-567c.restdb.io/rest/like?q={\"userID\":\"" + userid[0] + "\", \"recipeID\": \"" + activity.recipeID + "\"}&totals=true&count=true");
                 JSONObject likejsonobj0 = new JSONObject(jsonresponse0);
                 JSONObject totaljsonobj0 = likejsonobj0.getJSONObject("totals");
                 if (totaljsonobj0.getInt("count") != 0) {
@@ -314,7 +314,6 @@ public class RecipeItem extends AppCompatActivity {
             }
             return null;
         }
-
 
         @Override
         protected void onPostExecute(Void unused) {
