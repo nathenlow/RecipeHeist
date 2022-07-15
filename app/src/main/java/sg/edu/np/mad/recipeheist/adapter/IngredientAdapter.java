@@ -22,6 +22,7 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientVH> {
 
     private Context context;
     private ArrayList<String> data;
+    private Boolean itemRemoved = false;
 
     public IngredientAdapter(Context context, ArrayList<String> data){
         this.context = context;
@@ -40,7 +41,7 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientVH> {
     @Override
     public void onBindViewHolder(@NonNull IngredientVH holder, @SuppressLint("RecyclerView") int position) {
         String itemInList = data.get(position);
-        holder.noItem.setText(String.valueOf(position + 1) + ".");
+        holder.noItem.setText(String.valueOf(holder.getAdapterPosition() + 1) + ".");
         holder.itemContent.setText(itemInList);
 
         // when user focus on edit text
@@ -48,18 +49,19 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientVH> {
             @SuppressLint({"NotifyDataSetChanged", "ResourceAsColor"})
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus){
+                if (!hasFocus) {
                     // get current input
                     String newText = holder.itemContent.getText().toString();
 
                     // check if input is empty
-                    if (newText.equals("")){
-                        data.remove(position);
-                        notifyItemRemoved(position);
-                    }
-                    else{
-                        data.set(position, newText);
-                        notifyItemChanged(position);
+                    if (newText.equals("")) {
+                        data.remove(holder.getAdapterPosition());
+                        notifyItemRemoved(holder.getAdapterPosition());
+                    } else if (itemRemoved) {
+                        itemRemoved = false;
+                    } else {
+                        data.set(holder.getAdapterPosition(), newText);
+                        notifyItemChanged(holder.getAdapterPosition());
                     }
 
                     // remove cancel button visibility
@@ -67,8 +69,7 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientVH> {
 
                     // change background color of cardView
                     holder.cardView.setCardBackgroundColor(Color.parseColor("#666DAA"));
-                }
-                else{
+                } else {
                     // change background color of card view
                     holder.cardView.setCardBackgroundColor(Color.parseColor("#FF6161"));
                     holder.cancelBtn.setVisibility(View.VISIBLE);
@@ -81,8 +82,9 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientVH> {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onClick(View v) {
-                data.remove(position);
-                notifyItemRemoved(position);
+                itemRemoved = true;
+                data.remove(holder.getAdapterPosition());
+                notifyItemRemoved(holder.getAdapterPosition());
             }
         });
     }
