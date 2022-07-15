@@ -159,44 +159,78 @@ public class RecipeItem extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        String currentuser = FirebaseAuth.getInstance().getUid();
-        //check whether user like this recipe
-        try {
-            getLike(currentuser);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-        //check whether user bookmark this recipe
-        String currentuserjsonstring = getUser(currentuser);
-        JSONObject currentuserobj = null;
-        if (currentuserjsonstring != null){
-            try {
-                JSONArray currentuserarray = new JSONArray(currentuserjsonstring);
-                currentuserobj = (JSONObject) currentuserarray.get(0);
-                JSONArray bookmarklist = currentuserobj.getJSONArray("bookmark");
-                for (int i = 0; i < bookmarklist.length(); i++) {
-                    if (bookmarklist.get(i).equals(recipeID)){
-                        bookmarkbtn.setImageDrawable(getDrawable(R.drawable.ic_baseline_bookmark_added_24));
-                        bookmarkcheck = true;
-                        break;
+        String currentuser = FirebaseAuth.getInstance().getUid();
+
+        new Thread() {
+            public void run() {
+                //check whether user like this recipe
+                try {
+                    getLike(currentuser);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+
+
+        JSONObject[] currentuserobj = {null};
+        new Thread() {
+            public void run() {
+                //check whether user bookmark this recipe
+                String currentuserjsonstring = getUser(currentuser);
+                if (currentuserjsonstring != null) {
+                    try {
+                        JSONArray currentuserarray = new JSONArray(currentuserjsonstring);
+                        currentuserobj[0] = (JSONObject) currentuserarray.get(0);
+                        JSONArray bookmarklist = currentuserobj[0].getJSONArray("bookmark");
+                        for (int i = 0; i < bookmarklist.length(); i++) {
+                            if (bookmarklist.get(i).equals(recipeID)) {
+                                bookmarkcheck = true;
+                                break;
+                            }
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (bookmarkcheck) {
+                                        bookmarkbtn.setImageDrawable(getDrawable(R.drawable.ic_baseline_bookmark_added_24));
+                                    }
+                                    bookmarkbtn.setEnabled(true);
+                                }
+                            });
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
-        }
+        }.start();
 
-        //get User profile and display
-        try {
-            String userjsonstring = getUser(recipeobj.getString("userID"));
-            JSONArray userarray = new JSONArray(userjsonstring);
-            JSONObject userobj = (JSONObject) userarray.get(0);
-            username.setText(userobj.getString("username"));
+        JSONObject finalRecipeobj = recipeobj;
+        new Thread() {
+            public void run() {
+                //get User profile and display
+                try {
+                    String userjsonstring = getUser(finalRecipeobj.getString("userID"));
+                    JSONArray userarray = new JSONArray(userjsonstring);
+                    JSONObject userobj = (JSONObject) userarray.get(0);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                username.setText(userobj.getString("username"));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
 
         //----On click functions----------------------------------------------------------------------------------------------------------
 
@@ -214,22 +248,25 @@ public class RecipeItem extends AppCompatActivity {
             }
         });
 
-
-        JSONObject finalCurrentuserobj = currentuserobj;
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String currentuser = FirebaseAuth.getInstance().getUid();
-                //check whether user login
-                if (currentuser != null){
-                    new BookmarkAsync(RecipeItem.this).execute(finalCurrentuserobj);
+                if (currentuserobj[0] != null){
+                    String currentuser = FirebaseAuth.getInstance().getUid();
+                    //check whether user login
+                    if (currentuser != null) {
+                        new BookmarkAsync(RecipeItem.this).execute(currentuserobj[0]);
+                    } else {
+                        Snackbar.make(view, "Login is required", Snackbar.LENGTH_SHORT)
+                                .setAction("Action", null).show();
+                    }
                 }
                 else {
-                    Snackbar.make(view, "Login is required", Snackbar.LENGTH_SHORT)
-                            .setAction("Action", null).show();
+                    Toast.makeText(RecipeItem.this, "not working", Toast.LENGTH_SHORT).show();
                 }
             }
         });
+
     }
 
     //get recipe data from restDB
@@ -243,6 +280,7 @@ public class RecipeItem extends AppCompatActivity {
         }
         return response;
     }
+
 
     //get user data from restDB
     public String getUser(String userid){
@@ -258,6 +296,7 @@ public class RecipeItem extends AppCompatActivity {
 
     //get number
     public void getLike(String userid) throws IOException {
+        final Boolean[] canenable = {false};
         RestDB example = new RestDB();
         String response = null;
         //check whether user liked the recipe
@@ -267,11 +306,26 @@ public class RecipeItem extends AppCompatActivity {
                 JSONObject likejsonobj = new JSONObject(jsonresponse);
                 JSONObject totaljsonobj = likejsonobj.getJSONObject("totals");
                 if (totaljsonobj.getInt("count") != 0) {
-                    like.setImageDrawable(getDrawable(R.drawable.ic_baseline_thumb_up_24));
                     likecheck = true;
                 }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (likecheck) {
+                            like.setImageDrawable(getDrawable(R.drawable.ic_baseline_thumb_up_24));
+                        }
+                        if (canenable[0]){
+                            like.setEnabled(true);
+                        }
+                        else {
+                            canenable[0] = true;
+                        }
+                    }
+                });
             }
         });
+
+
         //get the numeber of likes in this recipe
         example.asyncGet("https://recipeheist-567c.restdb.io/rest/like?q={\"recipeID\": \"" + recipeID + "\"}&totals=true&count=true", new SuccessListener() {
             @Override
@@ -279,7 +333,19 @@ public class RecipeItem extends AppCompatActivity {
                 JSONObject likejsonobj = new JSONObject(jsonresponse);
                 JSONObject totaljsonobj = likejsonobj.getJSONObject("totals");
                 numlikes = totaljsonobj.getInt("count");
-                noOfLikes.setText(String.valueOf(numlikes));
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        noOfLikes.setText(String.valueOf(numlikes));
+                        if (canenable[0]){
+                            like.setEnabled(true);
+                        }
+                        else {
+                            canenable[0] = true;
+                        }
+                    }
+                });
+
             }
         });
     }

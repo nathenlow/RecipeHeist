@@ -127,13 +127,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showbottomnav(Boolean show){
-        if(show){
+        if (show) {
             binding.bottomNavigationView.setVisibility(View.VISIBLE);
-        }
-        else {
+        } else {
             binding.bottomNavigationView.setVisibility(View.GONE);
         }
-
     }
 
 

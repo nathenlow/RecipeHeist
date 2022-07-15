@@ -267,6 +267,5 @@ public class BrowseFragment extends Fragment {
         Intent intent = new Intent(mainActivity, RecipeItem.class);
         intent.putExtra("recipeID", recipeID);
         mainActivity.startActivity(intent);
-
     }
 }
