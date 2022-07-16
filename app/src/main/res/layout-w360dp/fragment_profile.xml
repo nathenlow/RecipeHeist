@@ -24,13 +24,14 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/constraint"
                     android:layout_width="match_parent"
-                    android:layout_height="233dp"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
                     android:background="@drawable/bottom_border">
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/profileImage"
-                        android:layout_width="95dp"
-                        android:layout_height="96dp"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
                         android:layout_marginStart="20dp"
                         android:layout_marginTop="16dp"
                         app:layout_constraintStart_toStartOf="parent"
@@ -52,15 +53,26 @@
                         app:layout_constraintTop_toBottomOf="@+id/profileImage" />
 
                     <TextView
+                        android:id="@+id/profileEmail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toEndOf="@+id/profileImage"
+                        app:layout_constraintStart_toStartOf="@+id/profileImage"
+                        app:layout_constraintTop_toBottomOf="@+id/profileName" />
+
+                    <TextView
                         android:id="@+id/profileDescription"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="10dp"
+                        android:inputType="textMultiLine"
                         android:text=""
                         android:textSize="14sp"
                         app:layout_constraintEnd_toEndOf="@+id/profileImage"
                         app:layout_constraintStart_toStartOf="@+id/profileImage"
-                        app:layout_constraintTop_toBottomOf="@+id/profileName" />
+                        app:layout_constraintTop_toBottomOf="@+id/profileEmail" />
 
                     <TextView
                         android:id="@+id/noOfRecipes"
@@ -112,12 +124,11 @@
                         android:id="@+id/editProfileBtn"
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
-                        android:layout_marginStart="28dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="28dp"
+                        android:layout_marginTop="12dp"
                         android:layout_marginBottom="8dp"
                         android:text="Edit Profile"
                         android:textAlignment="center"
+                        android:textColor="@color/white"
                         android:textSize="12sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
