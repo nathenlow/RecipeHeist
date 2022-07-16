@@ -82,7 +82,7 @@ public class SettingsActivity extends AppCompatActivity {
             theme.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    Toast.makeText(getActivity(), "Restart the app to apply changes", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Restart app to apply changes", Toast.LENGTH_SHORT).show();
                     return true;
                 }
             });
@@ -90,7 +90,7 @@ public class SettingsActivity extends AppCompatActivity {
             updatefrequency.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    Toast.makeText(getActivity(), "Reboot device to apply changes", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Restart device to apply changes", Toast.LENGTH_SHORT).show();
                     return true;
                 }
             });
@@ -181,7 +181,6 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         public void setAlarm(int numhours) {
-            System.out.println("hi");
             Calendar calendar = Calendar.getInstance();
             Intent intent0 = new Intent(getActivity(), UpdateService.class);
             PendingIntent pintent = PendingIntent.getService(getActivity(), 0, intent0, 0);

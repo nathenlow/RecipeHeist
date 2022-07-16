@@ -1,6 +1,7 @@
 package sg.edu.np.mad.recipeheist;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -144,7 +145,11 @@ public class UpdatesFragment extends Fragment {
                 else {
                     //update recipes
                     Intent intent = new Intent(mainActivity, UpdateService.class);
-                    mainActivity.startService(intent);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        mainActivity.startForegroundService(intent);
+                    } else {
+                        mainActivity.startService(intent);
+                    }
                 }
                 return false;
             }
