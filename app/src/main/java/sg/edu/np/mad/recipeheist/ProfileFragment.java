@@ -34,7 +34,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ProfileFragment extends Fragment {
 
     private User user = new User();
-    private TextView noOfRecipes, description, username;
+    private TextView noOfRecipes, description, username, email;
     private Bundle user_data = new Bundle();
     private JSONArray recipeJArray;
     private View rootView;
@@ -72,6 +72,7 @@ public class ProfileFragment extends Fragment {
 
         profileImage = rootView.findViewById(R.id.profileImage);
         username = rootView.findViewById(R.id.profileName);
+        email = rootView.findViewById(R.id.profileEmail);
         description = rootView.findViewById(R.id.profileDescription);
         editProfileBtn = rootView.findViewById(R.id.editProfileBtn);
         addRecipeBtn = rootView.findViewById(R.id.addRecipeBtn);
@@ -111,6 +112,7 @@ public class ProfileFragment extends Fragment {
                             public void run() {
                                 profileImage.setImageResource(R.drawable.default_profile_1);
                                 username.setText(user.getUsername());
+                                email.setText(user.getEmail());
                                 description.setText(user.getDescription());
                                 loadbefore = true;
                                 try {
@@ -169,6 +171,7 @@ public class ProfileFragment extends Fragment {
         if (loadbefore){
             profileImage.setImageResource(R.drawable.default_profile_1);
             username.setText(user.getUsername());
+            email.setText(user.getEmail());
             description.setText(user.getDescription());
             if (recipeJArray == null){
                 Init();
