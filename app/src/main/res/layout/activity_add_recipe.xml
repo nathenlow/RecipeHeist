@@ -36,7 +36,8 @@
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@android:drawable/ic_menu_gallery" />
+                    android:src="@drawable/ic_baseline_add_photo_alternate_24"
+                    app:tint="@color/white" />
 
                 <TextView
                     android:id="@+id/textView13"
