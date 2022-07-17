@@ -24,6 +24,8 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -154,8 +156,12 @@ public class SearchFoodBrowseFragment extends Fragment {
         menubookmark.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Intent bookmarkIntent = new Intent(getActivity(), BookmarkActivity.class);
-                startActivity(bookmarkIntent);
+                if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                    Intent bookmarkIntent = new Intent(getActivity(), BookmarkActivity.class);
+                    startActivity(bookmarkIntent);
+                }else {
+                    Toast.makeText(mainActivity, "Login is required", Toast.LENGTH_SHORT).show();
+                }
                 return false;
             }
         });
