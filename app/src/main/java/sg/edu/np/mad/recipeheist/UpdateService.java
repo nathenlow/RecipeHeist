@@ -24,6 +24,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -33,6 +34,8 @@ import java.util.TimeZone;
 
 public class UpdateService extends Service {
     private static final String SHARED_PREFS = "chefUpdates";
+
+    private static final String LAST_AUTO_UPDATE = "lastSaveDate";
     NotificationCompat.Builder notification;
     NotificationManagerCompat notificationManager;
     private Thread t;
@@ -49,6 +52,9 @@ public class UpdateService extends Service {
             onDestroy();
         }
         else {
+             if (intent.getAction() != null && intent.getAction().equals("AUTO_UPDATE")){
+                savedata();
+             }
             DataBaseHandler dataBaseHandler = new DataBaseHandler(this);
 
             ////to view updates by clicking notification
@@ -60,7 +66,6 @@ public class UpdateService extends Service {
             Intent broadcastIntent = new Intent(this, NotificationReceiverDelete.class);
             PendingIntent actionIntent = PendingIntent.getBroadcast(this,
                     0, broadcastIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
 
             notification = new NotificationCompat.Builder(this, CHANNEL_1_ID)
                     .setSmallIcon(R.drawable.ic_baseline_refresh_24)
@@ -158,10 +163,23 @@ public class UpdateService extends Service {
         return lastupdate;
     }
 
+    //save last chef update
     public void saveDate(String chefID) {
         SharedPreferences sharedPreferences = this.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(chefID, getTodayDate());
+        editor.apply();
+    }
+
+    //save last auto update
+    public void savedata() {
+        Calendar calendar = Calendar.getInstance();
+        Date date = calendar.getTime();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String strDate = dateFormat.format(date);
+        SharedPreferences sharedPreferences = this.getSharedPreferences("settings", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(LAST_AUTO_UPDATE, strDate);
         editor.apply();
     }
 
