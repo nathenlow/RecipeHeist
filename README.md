@@ -12,12 +12,16 @@ RecipeHeist is an app that allows users to get inspirations and ideas for their 
 
 ### Roles and contributions
 - Nathen Low 
-    - created the foundation of the app consisting of bottom navigation view which navigates User to different pages and the 4 main fragments (Browse,Updates,Download,Profile)
+    - created MainActivity
+    - created the foundation of the app consisting of bottom navigation view which navigates User to different pages and the 4 main fragments (Browse,Updates,History,Profile)
     - created the sign up and sign in page
     - tried many different HTTP clients and decided on the most optimal HTTP client (OkHttp) for our online database (reastdb.io) and created a class (RestDB) that is filled with get, post, put, patch methods for my team to use.
     - created the RecipeItem activity which displays the recipe infomation (refer to appendix RecipeItem) and handles actions such as like and bookmark.
     - created the search function to search for recipes. It saves recent searches too. (refer to appendix SearchRecipe)
-    - created the browse page. it has contains features to emhance one's browsing experience such as pagination. (refer to appendix Browse)
+    - created the browse fragment. It contains features that enhance one's browsing experience such as pagination. (refer to appendix Browse)
+    - created the updates fragment. 
+    - created the history fragment
+    - created the settings activity. 
     
 - Joseph Wong
     - created the layout for profile page, displays the user details and recipe.
@@ -38,5 +42,16 @@ RecipeHeist is an app that allows users to get inspirations and ideas for their 
 ## Stage 2
 
 ### Roles and contributions
+- Nathen Low 
+    - Improve app performance by removing the refresh of fragment when navigated to (i.e. use back old data). 
+    - created SwipeRefreshLayout for browse, updates, history and profile (i.e. initialize page)
+    - Improve the performance of RecipeItem activity by using multithreading and AsyncTask for downloading and uploading of data to restDB.
+    - created the updates fragment. It displays recent updates. It also have an refresh button in the action bar which calls the UpdateService
+    - created the UpdateService (a foreground service). It gets the recipies of all the users(chefs) that the User followed and saves it in a SQL Lite Database. It also display a progress notification.   
+    - created the history fragment. Display history. It contains features that enhance one's browsing experience such as pagination.
+    - created the settings activity. It allows User to change theme, set update frequency, set default update date, clear updates, clear history and logout  
+    
+- Joseph Wong
+
 
 ### Appendices

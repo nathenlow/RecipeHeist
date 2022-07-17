@@ -13,6 +13,7 @@ public class User implements Parcelable
     private String username;
     private String description;
     private ArrayList<String> following;
+    private String profileImage;
 
     public ArrayList<String> getBookmark() {
         return bookmark;
@@ -25,12 +26,13 @@ public class User implements Parcelable
     private ArrayList<String> bookmark;
 
     public User(){}
-    public User(String userID, String email, String username, String description, ArrayList<String> following, ArrayList<String> bookmark) {
+    public User(String userID, String email, String username, String description, ArrayList<String> following, String profileImage, ArrayList<String> bookmark) {
         this.userID = userID;
         this.email = email;
         this.username = username;
         this.description = description;
         this.following = following;
+        this.profileImage = profileImage;
         this.bookmark = bookmark;
     }
 
@@ -40,6 +42,7 @@ public class User implements Parcelable
         username = in.readString();
         description = in.readString();
         following = in.createStringArrayList();
+        profileImage = in.readString();
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {
@@ -106,5 +109,14 @@ public class User implements Parcelable
         dest.writeString(username);
         dest.writeString(description);
         dest.writeStringList(following);
+        dest.writeString(profileImage);
+    }
+
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
     }
 }

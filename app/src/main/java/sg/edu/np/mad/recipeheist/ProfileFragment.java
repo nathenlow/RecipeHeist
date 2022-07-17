@@ -1,6 +1,8 @@
 package sg.edu.np.mad.recipeheist;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -18,13 +20,18 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -42,10 +49,11 @@ public class ProfileFragment extends Fragment {
     private ArrayList<Recipe> recipeList;
     private MainActivity mainActivity;
     private Boolean loadbefore = false;
-    CircleImageView profileImage;
+    private CircleImageView profileImage;
     private Button editProfileBtn;
     private FloatingActionButton addRecipeBtn;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private StorageReference storageReference;
 
 
     public ProfileFragment() {
@@ -104,13 +112,20 @@ public class ProfileFragment extends Fragment {
                         user.setDescription(jsonObject.getString("description"));
                         user.setFollowing(convertJArrayToArrayList(jsonObject.getJSONArray("following")));
                         user.setBookmark(convertJArrayToArrayList(jsonObject.getJSONArray("bookmark")));
+                        user.setProfileImage(jsonObject.getString("profileimage"));
 
                         user_data.putParcelable("userData", user);
                         // Remove loading page
                         mainActivity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                profileImage.setImageResource(R.drawable.default_profile_1);
+                                // load profile image
+                                if (!user.getProfileImage().equals("") && user.getProfileImage() != null){
+                                    updateUserProfile();
+                                }
+                                else{
+                                    profileImage.setImageResource(R.drawable.default_profile_1);
+                                }
                                 username.setText(user.getUsername());
                                 email.setText(user.getEmail());
                                 description.setText(user.getDescription());
@@ -169,10 +184,16 @@ public class ProfileFragment extends Fragment {
     public void onResume() {
         super.onResume();
         if (loadbefore){
-            profileImage.setImageResource(R.drawable.default_profile_1);
             username.setText(user.getUsername());
             email.setText(user.getEmail());
             description.setText(user.getDescription());
+            // load profile image
+            if (!user.getProfileImage().equals("") && user.getProfileImage() != null){
+                updateUserProfile();
+            }
+            else{
+                profileImage.setImageResource(R.drawable.default_profile_1);
+            }
             if (recipeJArray == null){
                 Init();
             }
@@ -302,6 +323,24 @@ public class ProfileFragment extends Fragment {
         }
         else{
             return arrayList;
+        }
+    }
+
+    // function to set image
+    public void updateUserProfile(){
+        storageReference = FirebaseStorage.getInstance().getReference().child("Profile_image/"+user.getProfileImage());
+        try {
+            File localFile = File.createTempFile("tempfile", "jpeg");
+            storageReference.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                    Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
+                    Bitmap resizedBM = Bitmap.createScaledBitmap(bitmap, 100, 100, false);
+                    profileImage.setImageBitmap(resizedBM);
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
