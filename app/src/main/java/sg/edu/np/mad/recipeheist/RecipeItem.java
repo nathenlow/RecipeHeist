@@ -144,7 +144,9 @@ public class RecipeItem extends AppCompatActivity {
             for (int i = 0; i <instruction.length(); i++) {
                 instructionlist += (i+1) + ".\t\t";
                 instructionlist += instruction.get(i).toString();
-                instructionlist += "\n\n\n";
+                instructionlist += "\n\n";
+                instructionlist += "-------------------------------------------------------------------";
+                instructionlist += "\n\n";
             }
             instructionitems.setText(instructionlist);
 
