@@ -42,5 +42,16 @@ RecipeHeist is an app that allows users to get inspirations and ideas for their 
 ## Stage 2
 
 ### Roles and contributions
+- Nathen Low 
+    - Improve app performance by removing the refresh of fragment when navigated to (i.e. use back old data). 
+    - created SwipeRefreshLayout for browse, updates, history and profile (i.e. initialize page)
+    - Improve the performance of RecipeItem activity by using multithreading and AsyncTask for downloading and uploading of data to restDB.
+    - created the updates fragment. It displays recent updates. It also have an refresh button in the action bar which calls the UpdateService
+    - created the UpdateService (a foreground service). It gets the recipies of all the users(chefs) that the User followed and saves it in a SQL Lite Database. It also display a progress notification.   
+    - created the history fragment. Display history. It contains features that enhance one's browsing experience such as pagination.
+    - created the settings activity. It allows User to change theme, set update frequency, set default update date, clear updates, clear history and logout  
+    
+- Joseph Wong
+
 
 ### Appendices
