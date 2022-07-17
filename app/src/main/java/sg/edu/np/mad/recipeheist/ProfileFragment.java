@@ -254,7 +254,17 @@ public class ProfileFragment extends Fragment {
             // replace fragment
             try {
                 if (mainActivity.findViewById(R.id.profileFrameLayout) != null) {
-                    mainActivity.replaceFragment(myRecipeFragment, rootView.findViewById(R.id.profileFrameLayout).getId());
+                    mainActivity.replaceFragment(myRecipeFragment, R.id.profileFrameLayout);
+                }
+            }
+            catch (Exception e){}
+        }
+        else {
+            progressBar.setVisibility(View.GONE);
+            // replace fragment
+            try {
+               if (mainActivity.findViewById(R.id.profileFrameLayout) != null) {
+                    mainActivity.replaceFragment(new NoMyRecipeFragment(), R.id.profileFrameLayout);
                 }
             }
             catch (Exception e){}

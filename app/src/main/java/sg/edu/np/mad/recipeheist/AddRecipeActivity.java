@@ -305,9 +305,8 @@ public class AddRecipeActivity extends AppCompatActivity {
                 // message to notify users of post
                 Toast.makeText(AddRecipeActivity.this, "Recipe created successfully!", Toast.LENGTH_SHORT).show();
 
-                // sent user back to user page
-                Intent intent = new Intent(AddRecipeActivity.this, MainActivity.class);
-                startActivity(intent);
+                // sent user back to recipe page
+                onBackPressed();
 
             } catch (IOException e) {
                 progressBar.setVisibility(View.GONE);
