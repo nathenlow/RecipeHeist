@@ -3,6 +3,7 @@ package sg.edu.np.mad.recipeheist;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -16,7 +17,16 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -29,6 +39,8 @@ public class EditProfileActivity extends AppCompatActivity {
     private Button saveBtn;
     private Bundle bundle;
 
+    private String dbID;
+    private StorageReference storageReference;
     private ActivityResultLauncher<String> getImageFromGallery;
 
     @Override
@@ -38,6 +50,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
         bundle = getIntent().getExtras();
         user = bundle.getParcelable("userData");
+        dbID = getIntent().getStringExtra("database_id");
 
         getSupportActionBar().setTitle("Edit Profile");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -87,7 +100,7 @@ public class EditProfileActivity extends AppCompatActivity {
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                updateProfilePage();
             }
         });
 
@@ -101,17 +114,65 @@ public class EditProfileActivity extends AppCompatActivity {
 
     // --------------------------------------- Start of functions ---------------------------------------
 
-    // function to update page based on current data
+    // function to update page based on current data (contains other functions)
     public void updateDetails(){
 
         // set profile image into view
-
+        if (!user.getProfileImage().equals("")){
+            // call function to update image
+            updateUserProfileImage();
+        }
+        else{
+            userImage.setImageResource(R.drawable.default_profile_1);
+        }
 
         // set username into editUsername
         editUsername.setText(user.getUsername());
 
         // set Bio into editBio
         editBio.setText(user.getDescription());
+    }
+
+    // function to update user profile page
+    public void updateProfilePage(){
+
+        // get current input for change in username
+        String username = editUsername.getText().toString().trim();
+        // get current input for change in bio
+        String bio = editBio.getText().toString().trim();
+
+        // update user bio
+        user.setDescription(bio);
+
+        // validate current input for username
+        if (!username.isEmpty()){
+            // update username if its not empty
+            user.setUsername(username);
+        }
+
+        // check if user profile image is null
+        if (!user.getProfileImage().equals("")){
+            // upload image to firebase
+            uploadImage(user, Uri.parse(user.getProfileImage()));
+            user.setProfileImage(user.getUserID());
+        }
+
+        // update user data in database
+        try {
+            updateUserInRestDB(user);
+
+            // message to notify users of update
+            Toast.makeText(EditProfileActivity.this, "Profile updated!", Toast.LENGTH_SHORT).show();
+
+            // sent user back to profile page
+            onBackPressed();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(EditProfileActivity.this, "Profile update unsuccessful!", Toast.LENGTH_SHORT).show();
+        }
+
+
     }
 
     // function to resize image
@@ -136,6 +197,52 @@ public class EditProfileActivity extends AppCompatActivity {
         BitmapFactory.Options option2 = new BitmapFactory.Options();
         option2.inSampleSize = scale;
         return BitmapFactory.decodeStream(context.getContentResolver().openInputStream(uri), null, option2);
+    }
+
+    // function to get and set user image from firebase
+    public void updateUserProfileImage(){
+        storageReference = FirebaseStorage.getInstance().getReference().child("Profile_image/"+user.getProfileImage());
+        try {
+            File localFile = File.createTempFile("tempfile", "jpeg");
+            storageReference.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                    Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
+                    Bitmap resizedBM = Bitmap.createScaledBitmap(bitmap, 100, 100, false);
+                    userImage.setImageBitmap(resizedBM);
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // function to upload image to firebase storage
+    private void uploadImage(User user, Uri uri){
+        // create a name of file
+        String fileName = user.getUserID();
+        storageReference = FirebaseStorage.getInstance().getReference("Profile_image/"+fileName);
+
+        storageReference.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(EditProfileActivity.this, "Upload is unsuccessful, please try again!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // function to update user details in restDB
+    public void updateUserInRestDB(User user) throws IOException {
+        RestDB restDB = new RestDB();
+        String json = restDB.updateUserDetails(user.getEmail(),user.getUserID(),user.getUsername(), user.getDescription(), user.getProfileImage());
+        System.out.println(json);
+        String response = restDB.put("https://recipeheist-567c.restdb.io/rest/users/" + dbID , json);
+        System.out.println(response);
     }
 
 }

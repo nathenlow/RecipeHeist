@@ -176,7 +176,14 @@ public class RestDB {
     }
 
 
-
+    String updateUserDetails(String email, String userId, String username, String description, String profileimage){
+        return "{\"email\":\"" + email + "\","
+                + "\"active\":true,"
+                + "\"userID\":\"" + userId + "\","
+                + "\"username\":\"" + username + "\","
+                + "\"description\":\"" + description + "\","
+                + "\"profileimage\":\"" + profileimage + "\"}";
+    }
 
 
 

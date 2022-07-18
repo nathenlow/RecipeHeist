@@ -374,7 +374,7 @@ public class AddRecipeActivity extends AppCompatActivity {
     // function to convert bitmap to jpeg
 
 
-    // function to upload image
+    // function to upload image to firebase storage
     private void uploadImage(Recipe recipe, Uri uri){
         // create a name of file
         String fileName = recipe.getUserID() + "_" + recipe.getTitle();

@@ -54,6 +54,7 @@ public class ProfileFragment extends Fragment {
     private FloatingActionButton addRecipeBtn;
     private SwipeRefreshLayout swipeRefreshLayout;
     private StorageReference storageReference;
+    private String dbID;
 
 
     public ProfileFragment() {
@@ -106,6 +107,7 @@ public class ProfileFragment extends Fragment {
 
                         JSONObject jsonObject = new JSONObject(dataBaseUsers);
 
+                        dbID = (jsonObject.getString("_id"));
                         user.setUserID(jsonObject.getString("userID"));
                         user.setEmail(jsonObject.getString("email"));
                         user.setUsername(jsonObject.getString("username"));
@@ -121,7 +123,7 @@ public class ProfileFragment extends Fragment {
                             public void run() {
                                 // load profile image
                                 if (!user.getProfileImage().equals("") && user.getProfileImage() != null){
-                                    updateUserProfile();
+                                    updateUserProfileImage();
                                 }
                                 else{
                                     profileImage.setImageResource(R.drawable.default_profile_1);
@@ -153,6 +155,7 @@ public class ProfileFragment extends Fragment {
                 // pass user data to new activity
                 Intent editProfileActivity = new Intent(getActivity(), EditProfileActivity.class);
                 editProfileActivity.putExtras(user_data);
+                editProfileActivity.putExtra("database_id", dbID);
 
                 startActivity(editProfileActivity);
             }
@@ -189,7 +192,7 @@ public class ProfileFragment extends Fragment {
             description.setText(user.getDescription());
             // load profile image
             if (!user.getProfileImage().equals("") && user.getProfileImage() != null){
-                updateUserProfile();
+                updateUserProfileImage();
             }
             else{
                 profileImage.setImageResource(R.drawable.default_profile_1);
@@ -326,8 +329,8 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    // function to set image
-    public void updateUserProfile(){
+    // function to get and set user image from firebase
+    public void updateUserProfileImage(){
         storageReference = FirebaseStorage.getInstance().getReference().child("Profile_image/"+user.getProfileImage());
         try {
             File localFile = File.createTempFile("tempfile", "jpeg");
