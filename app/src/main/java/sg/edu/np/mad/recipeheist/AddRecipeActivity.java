@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -135,12 +136,13 @@ public class AddRecipeActivity extends AppCompatActivity {
             }
         });
 
+
         // set on key listener for when user click enter (ingredient)
-        editIngredients.setOnKeyListener(new View.OnKeyListener() {
+        editIngredients.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE){
                     // get input
                     String uInput = editIngredients.getText().toString().trim();
 
@@ -162,6 +164,8 @@ public class AddRecipeActivity extends AppCompatActivity {
 
                     // hide keyboard
                     hideKeyboard(AddRecipeActivity.this, v);
+
+                    return true;
                 }
                 return false;
             }
@@ -192,6 +196,8 @@ public class AddRecipeActivity extends AppCompatActivity {
                     // Recyclerview
 
                     instrucAdapter.notifyDataSetChanged();
+
+                    return true;
                 }
                 return false;
             }
@@ -217,6 +223,7 @@ public class AddRecipeActivity extends AppCompatActivity {
         });
 
     }
+
 
     // ----------------------------------------- Start of functions -----------------------------------------
 
