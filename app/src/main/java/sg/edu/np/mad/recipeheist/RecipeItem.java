@@ -1,5 +1,6 @@
 package sg.edu.np.mad.recipeheist;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,6 +17,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.CountDownTimer;
 import android.os.StrictMode;
@@ -33,13 +36,17 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 
+import sg.edu.np.mad.recipeheist.adapter.BrowseAdapter;
+import sg.edu.np.mad.recipeheist.adapter.InstructionViewAdapter;
+
 public class RecipeItem extends AppCompatActivity {
 
     private static final String SHARED_PREFS = "history";
     private static final String HISTORY = "history";
     private ImageView foodimage, profileicon;
     private ImageButton like;
-    private TextView username, noOfLikes, description, servings, duration, foodcategory, ingredientitems, instructionitems;
+    private TextView username, noOfLikes, description, servings, duration, foodcategory, ingredientitems;
+    private RecyclerView instructionitems;
     private CollapsingToolbarLayout collapsing_toolbar;
     private FloatingActionButton bookmarkbtn;
     String recipeID;
@@ -49,6 +56,7 @@ public class RecipeItem extends AppCompatActivity {
     boolean likecheck;
     int numlikes;
 
+    @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -131,24 +139,21 @@ public class RecipeItem extends AppCompatActivity {
             //Display ingredients
             JSONArray ingredient = recipeobj.getJSONArray("ingredient");
             String ingredientlist = "";
-            for (int i = 0; i <ingredient.length(); i++) {
+            for (int i = 0; i < ingredient.length(); i++) {
                 ingredientlist += "\u2022\t\t";
                 ingredientlist += ingredient.get(i).toString();
                 ingredientlist += "\n\n";
             }
             ingredientitems.setText(ingredientlist);
 
+
             //Display instructions
-            JSONArray instruction = recipeobj.getJSONArray("instructions");
-            String instructionlist = "";
-            for (int i = 0; i <instruction.length(); i++) {
-                instructionlist += (i+1) + ".\t\t";
-                instructionlist += instruction.get(i).toString();
-                instructionlist += "\n\n";
-                instructionlist += "-------------------------------------------------------------------";
-                instructionlist += "\n\n";
-            }
-            instructionitems.setText(instructionlist);
+            JSONArray instructionlist = recipeobj.getJSONArray("instructions");
+            InstructionViewAdapter instructionViewAdapter = new InstructionViewAdapter(this, instructionlist);
+            instructionitems.setAdapter(instructionViewAdapter);
+            instructionitems.setNestedScrollingEnabled(false);
+            instructionitems.setLayoutManager(new LinearLayoutManager(this));
+
 
             //Display image
             String imagefilename = recipeobj.getString("imagePath");
@@ -166,7 +171,7 @@ public class RecipeItem extends AppCompatActivity {
 
         new Thread() {
             public void run() {
-                //check whether user like this recipe
+                //check whether current user like this recipe
                 new getLike(RecipeItem.this).execute(currentuser);
             }
         }.start();
@@ -175,7 +180,7 @@ public class RecipeItem extends AppCompatActivity {
         JSONObject[] currentuserobj = {null};
         new Thread() {
             public void run() {
-                //check whether user bookmark this recipe
+                //check whether current user bookmark this recipe
                 String currentuserjsonstring = getUser(currentuser);
                 if (currentuserjsonstring != null) {
                     try {
@@ -207,16 +212,26 @@ public class RecipeItem extends AppCompatActivity {
         JSONObject finalRecipeobj = recipeobj;
         new Thread() {
             public void run() {
-                //get User profile and display
+                //get User (chef) profile and display
                 try {
                     String userjsonstring = getUser(finalRecipeobj.getString("userID"));
                     JSONArray userarray = new JSONArray(userjsonstring);
                     JSONObject userobj = (JSONObject) userarray.get(0);
+
+                    String profileImagePath = userobj.getString("profileimage");
+                    System.out.println(profileImagePath);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             try {
                                 username.setText(userobj.getString("username"));
+                                StorageReference storageReference = FirebaseStorage.getInstance().getReference("Profile_image/"+profileImagePath);
+                                if (!profileImagePath.equals("")) {
+                                    Glide.with(RecipeItem.this)
+                                            .load(storageReference)
+                                            .into(profileicon);
+                                }
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
