@@ -7,6 +7,25 @@
     android:orientation="vertical"
     tools:context=".EditProfileActivity">
 
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/progressBarCover"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/progressBar4"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -27,8 +46,11 @@
                     android:layout_width="90dp"
                     android:layout_height="90dp"
                     android:layout_centerInParent="true"
-                    android:layout_margin="10dp"
-                    android:src="@drawable/default_profile_1" />
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:src="@drawable/ic_outline_account_circle_24" />
 
                 <ImageView
                     android:id="@+id/userImageBtn"
@@ -93,6 +115,7 @@
                 android:hint="write something about yourself..."
                 android:inputType="textMultiLine"
                 android:lines="5"
+                android:imeOptions="actionDone"
                 android:minHeight="48dp"
                 android:padding="8dp"
                 android:textColor="?attr/colorOnSecondary"
