@@ -66,7 +66,6 @@ public class SearchFoodBrowseFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mainActivity = (MainActivity) getActivity();
-        mainActivity.showbottomnav(true);
         setHasOptionsMenu(true);
 
         //get data from SearchFoodFragment
@@ -87,7 +86,7 @@ public class SearchFoodBrowseFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_browse, container, false);
-
+        mainActivity.showbottomnav(true);
 
         //change action bar back to default
         mainActivity.getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);

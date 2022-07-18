@@ -57,7 +57,6 @@ public class UpdatesFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mainActivity = (MainActivity) getActivity();
-        mainActivity.showbottomnav(true);
         setHasOptionsMenu(true);
 
         mainActivity.setActionBarTitle("Updates");
