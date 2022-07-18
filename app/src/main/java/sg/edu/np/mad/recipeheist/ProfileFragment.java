@@ -131,7 +131,7 @@ public class ProfileFragment extends Fragment {
                                 }
                                 username.setText(user.getUsername());
                                 email.setText(user.getEmail());
-                                description.setText(user.getDescription());
+                                description.setText(convertComaToNextLine(user.getDescription()));
                                 loadbefore = true;
                                 try {
                                     getUserRecipes(user.getUserID());
@@ -191,7 +191,7 @@ public class ProfileFragment extends Fragment {
         if (loadbefore){
             username.setText(user.getUsername());
             email.setText(user.getEmail());
-            description.setText(user.getDescription());
+            description.setText(convertComaToNextLine(user.getDescription()));
             // load profile image
             if (!user.getProfileImage().equals("") && user.getProfileImage() != null){
                 updateUserProfileImage();
@@ -347,6 +347,11 @@ public class ProfileFragment extends Fragment {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    // function to replace "," to \n
+    public String convertComaToNextLine(String string){
+        return string.replaceAll(",", "\n");
     }
 
 }

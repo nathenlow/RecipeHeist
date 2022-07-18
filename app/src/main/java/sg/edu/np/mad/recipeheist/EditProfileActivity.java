@@ -5,6 +5,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -100,6 +101,7 @@ public class EditProfileActivity extends AppCompatActivity {
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                findViewById(R.id.progressBarCover).setVisibility(View.VISIBLE);
                 updateProfilePage();
             }
         });
@@ -130,7 +132,7 @@ public class EditProfileActivity extends AppCompatActivity {
         editUsername.setText(user.getUsername());
 
         // set Bio into editBio
-        editBio.setText(user.getDescription());
+        editBio.setText(convertComaToNextLine(user.getDescription()));
     }
 
     // function to update user profile page
@@ -142,7 +144,7 @@ public class EditProfileActivity extends AppCompatActivity {
         String bio = editBio.getText().toString().trim();
 
         // update user bio
-        user.setDescription(bio);
+        user.setDescription(convertNextLineToComa(bio));
 
         // validate current input for username
         if (!username.isEmpty()){
@@ -162,13 +164,17 @@ public class EditProfileActivity extends AppCompatActivity {
             updateUserInRestDB(user);
 
             // message to notify users of update
-            Toast.makeText(EditProfileActivity.this, "Profile updated!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(EditProfileActivity.this, "Profile updated. Refresh page to see changes!", Toast.LENGTH_SHORT).show();
+
+            // remove progress bar
+            findViewById(R.id.progressBarCover).setVisibility(View.GONE);
 
             // sent user back to profile page
             onBackPressed();
 
         } catch (IOException e) {
             e.printStackTrace();
+            findViewById(R.id.progressBarCover).setVisibility(View.GONE);
             Toast.makeText(EditProfileActivity.this, "Profile update unsuccessful!", Toast.LENGTH_SHORT).show();
         }
 
@@ -243,6 +249,16 @@ public class EditProfileActivity extends AppCompatActivity {
         System.out.println(json);
         String response = restDB.put("https://recipeheist-567c.restdb.io/rest/users/" + dbID , json);
         System.out.println(response);
+    }
+
+    // function to replace \n to ","
+    public String convertNextLineToComa(String string){
+        return string.replaceAll("\n", ",");
+    }
+
+    // function to replace "," to \n
+    public String convertComaToNextLine(String string){
+        return string.replaceAll(",", "\n");
     }
 
 }
