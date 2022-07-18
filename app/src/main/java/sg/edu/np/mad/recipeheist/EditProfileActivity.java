@@ -151,7 +151,7 @@ public class EditProfileActivity extends AppCompatActivity {
         }
 
         // check if user profile image is null
-        if (!user.getProfileImage().equals("")){
+        if (!user.getProfileImage().equals("") && !user.getProfileImage().equals(user.getUserID())){
             // upload image to firebase
             uploadImage(user, Uri.parse(user.getProfileImage()));
             user.setProfileImage(user.getUserID());
