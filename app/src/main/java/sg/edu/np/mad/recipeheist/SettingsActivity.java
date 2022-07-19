@@ -74,7 +74,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
 
             //get data from shared preferences
-            SharedPreferences datesharedPreferences = getActivity().getSharedPreferences("Settings", Context.MODE_PRIVATE);
+            SharedPreferences datesharedPreferences = getActivity().getSharedPreferences("settings", Context.MODE_PRIVATE);
             //display date data from shared preferences in summary
             editDefaultUpdateDate.setSummary(datesharedPreferences.getString("defaultupdatedate", "2000-01-01"));
 
@@ -130,6 +130,9 @@ public class SettingsActivity extends AppCompatActivity {
                     // logout user
                     FirebaseAuth.getInstance().signOut();
                     getActivity().deleteDatabase(DataBaseHandler.DATABASE_NAME);
+                    SharedPreferences.Editor editor = datesharedPreferences.edit();
+                    editor.clear();
+                    editor.apply();
 
                     Toast.makeText(getActivity(), "You are logout", Toast.LENGTH_SHORT).show();
                     // redirect back to main activity
@@ -178,23 +181,6 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             };
 
-        }
-
-        public void setAlarm(int numhours) {
-            Calendar calendar = Calendar.getInstance();
-            Intent intent0 = new Intent(getActivity(), UpdateService.class);
-            PendingIntent pintent = PendingIntent.getService(getActivity(), 0, intent0, 0);
-            AlarmManager alarm = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
-            alarm.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 1000, pintent);
-        }
-
-        public void removeAlarm(){
-            Intent intent0 = new Intent(getActivity(), UpdateService.class);
-            PendingIntent sender = PendingIntent.getService(getActivity(), 0, intent0, 0);
-            AlarmManager alarm = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
-            if (alarm != null) {
-                alarm.cancel(sender);
-            }
         }
     }
 }
