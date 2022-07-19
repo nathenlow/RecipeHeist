@@ -355,14 +355,18 @@ public class AddRecipeActivity extends AppCompatActivity {
 
             // push info to database
             try {
-                pushRecipeToDB(title, description, duration, serving, imagePath, category, ingredients, instructions, recipe.getUserID());
+                String response = pushRecipeToDB(title, description, duration, serving, imagePath, category, ingredients, instructions, recipe.getUserID());
+                if (response.contains("Error")) {
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(this, "Recipe creation is unsuccessful, please try again!", Toast.LENGTH_SHORT).show();
+                } else{
+                    progressBar.setVisibility(View.GONE);
+                    // message to notify users of post
+                    Toast.makeText(AddRecipeActivity.this, "Recipe created successfully!", Toast.LENGTH_SHORT).show();
 
-                progressBar.setVisibility(View.GONE);
-                // message to notify users of post
-                Toast.makeText(AddRecipeActivity.this, "Recipe created successfully!", Toast.LENGTH_SHORT).show();
-
-                // sent user back to recipe page
-                onBackPressed();
+                    // sent user back to recipe page
+                    onBackPressed();
+                }
 
             } catch (IOException e) {
                 progressBar.setVisibility(View.GONE);
@@ -409,15 +413,11 @@ public class AddRecipeActivity extends AppCompatActivity {
     }
 
     // function to update recipe to database
-    public void pushRecipeToDB (String title, String description, String duration, int serving, String imagePath, String foodCategory, JSONArray ingredient, JSONArray instruction, String userID) throws IOException {
+    public String pushRecipeToDB (String title, String description, String duration, int serving, String imagePath, String foodCategory, JSONArray ingredient, JSONArray instruction, String userID) throws IOException {
         RestDB restDB = new RestDB();
-        System.out.println("still working");
         String json = restDB.createRecipe(title, description, duration, serving, imagePath, foodCategory, ingredient, instruction, userID);
-        System.out.println(restDB.client);
-        System.out.println(json);
         String response = restDB.post("https://recipeheist-567c.restdb.io/rest/recipe", json);
-        System.out.println(restDB.JSON);
-        System.out.println(response);
+        return response;
     }
 
     // function to convert bitmap to jpeg
