@@ -154,8 +154,20 @@ public class AddRecipeActivity extends AppCompatActivity {
                         editIngredients.requestFocus();
                     }
                     else{
-                        // add user input in list
-                        ingredientList.add(uInput);
+                        // increase efficiency if user copy recipe from web by auto separating the ingredients (only can be used if separated by lines)
+                        if (uInput.contains("\n")){
+                            String[] arrOfStr = uInput.split("\n");
+                            for (String a : arrOfStr){
+                                a = a.trim();
+                                if (!a.equals("")) {
+                                    ingredientList.add(a);
+                                }
+                            }
+                        }
+                        else {
+                            // add user input in list
+                            ingredientList.add(uInput);
+                        }
                     }
 
                     // clear text area
