@@ -207,7 +207,7 @@ public class AddRecipeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // get input
-                String uInput = replaceNextLineToSpace(editInstructions.getText().toString().trim());
+                String uInput = editInstructions.getText().toString().trim();
 
                 if (uInput.equals("")){
                     editInstructions.setError("Can't be blank!");
