@@ -50,7 +50,7 @@ public class AddRecipeActivity extends AppCompatActivity {
     private User user = new User();
     private Recipe recipe = new Recipe();
     private TextView editRecipeName, editRecipeDescription, editDuration, editCategory, editServing, editIngredients, editInstructions;
-    private ImageButton editFoodImage;
+    private ImageButton editFoodImage, addInstructionBtn;
     private ProgressBar progressBar;
     private ArrayList<String> ingredientList = new ArrayList<>(), instructionList = new ArrayList<>();
     private RecyclerView ingredientDisplayR, instructionDisplayR;
@@ -88,6 +88,7 @@ public class AddRecipeActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar2);
         ingredientDisplayR = findViewById(R.id.ingredientDisplayR);
         instructionDisplayR = findViewById(R.id.instructionDisplayR);
+        addInstructionBtn = findViewById(R.id.addInstructionBtn);
 
         // set up recyclerViews:
 
@@ -172,34 +173,46 @@ public class AddRecipeActivity extends AppCompatActivity {
         });
 
 
-        // set on key listener for when user click enter (instructions)
-        editInstructions.setOnKeyListener(new View.OnKeyListener() {
+        // set of focus listener for editInstructions
+        editInstructions.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus){
+                    addInstructionBtn.setVisibility(View.VISIBLE);
+                }
+                else{
+                    addInstructionBtn.setVisibility(View.GONE);
+                }
+            }
+        });
+
+
+        // set onclick listener for addInstructionBtn
+        addInstructionBtn.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
-                    // get input
-                    String uInput = editInstructions.getText().toString().trim();
+            public void onClick(View v) {
+                // get input
+                String uInput = replaceNextLineToSpace(editInstructions.getText().toString().trim());
 
-                    if (uInput.equals("")){
-                        editInstructions.setError("Can't be blank!");
-                        editInstructions.requestFocus();
-                    }
-                    else{
-                        // add user input in list
-                        instructionList.add(uInput);
-                    }
-
-                    // clear text area
-                    editInstructions.setText("");
-
-                    // Recyclerview
-
-                    instrucAdapter.notifyDataSetChanged();
-
-                    return true;
+                if (uInput.equals("")){
+                    editInstructions.setError("Can't be blank!");
+                    editInstructions.requestFocus();
                 }
-                return false;
+                else{
+                    // add user input in list
+                    instructionList.add(uInput);
+                }
+
+                // clear text area
+                editInstructions.setText("");
+
+                // Recyclerview
+
+                instrucAdapter.notifyDataSetChanged();
+
+                // hide keyboard
+                hideKeyboard(AddRecipeActivity.this, v);
             }
         });
 
@@ -213,9 +226,17 @@ public class AddRecipeActivity extends AppCompatActivity {
                     addRecipe();
                 }
                 catch (Exception e){
-                    progressBar.setVisibility(View.GONE);
-                    editServing.setError("Required!");
-                    editServing.requestFocus();
+
+                    if (editServing.getText().toString().isEmpty()){
+                        progressBar.setVisibility(View.GONE);
+                        editServing.setError("Required!");
+                        editServing.requestFocus();
+                    }
+                    else{
+                        progressBar.setVisibility(View.GONE);
+                        editServing.setError("Recipe image required!");
+                    }
+
                 }
 
 
@@ -232,7 +253,7 @@ public class AddRecipeActivity extends AppCompatActivity {
         // set title of recipe
         String title = editRecipeName.getText().toString().trim();
         // set description of recipe
-        String description = editRecipeDescription.getText().toString().trim();
+        String description = replaceNextLineToSpace(editRecipeDescription.getText().toString().trim());
         // set duration of recipe
         String duration = editDuration.getText().toString().trim();
         // set serving size of recipe
@@ -254,6 +275,13 @@ public class AddRecipeActivity extends AppCompatActivity {
             progressBar.setVisibility(View.GONE);
             editRecipeName.setError("Number of characters exceeds the limit of 100!");
             editRecipeName.requestFocus();
+        }
+
+        // validate description:
+        else if (description.length() > 400){
+            progressBar.setVisibility(View.GONE);
+            editRecipeDescription.setError("Number of characters exceeds the limit of 400!");
+            editRecipeDescription.requestFocus();
         }
 
         // validate the duration
@@ -396,6 +424,11 @@ public class AddRecipeActivity extends AppCompatActivity {
     // function to hide keyboard
     public void hideKeyboard(Context context, View view){
         ((InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    // function to replace \n to " "
+    public String replaceNextLineToSpace(String string){
+        return string.replaceAll("\n", " ");
     }
 
 }

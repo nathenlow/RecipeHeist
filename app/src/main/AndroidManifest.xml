@@ -20,6 +20,7 @@
         android:theme="@style/Theme.RecipeHeist">
         <activity
             android:name=".EditProfileActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".SettingsActivity"
@@ -36,6 +37,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".AddRecipeActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
