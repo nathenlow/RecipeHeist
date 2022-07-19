@@ -44,6 +44,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import sg.edu.np.mad.recipeheist.adapter.IngredientAdapter;
+import sg.edu.np.mad.recipeheist.adapter.InstructionAdapter;
 
 public class AddRecipeActivity extends AppCompatActivity {
 
@@ -69,6 +70,7 @@ public class AddRecipeActivity extends AppCompatActivity {
 
         // update page header
         getSupportActionBar().setTitle("Create recipe");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // retrieve data passed
         user = getIntent().getParcelableExtra("userData");
@@ -99,7 +101,7 @@ public class AddRecipeActivity extends AppCompatActivity {
         ingredientDisplayR.setItemAnimator(new DefaultItemAnimator());
         ingredientDisplayR.setAdapter(ingredAdapter);
         // for instructions
-        IngredientAdapter instrucAdapter = new IngredientAdapter(this, instructionList);
+        InstructionAdapter instrucAdapter = new InstructionAdapter(this, instructionList);
         LinearLayoutManager instrLM = new LinearLayoutManager(this);
         instructionDisplayR.setLayoutManager(instrLM);
         instructionDisplayR.setItemAnimator(new DefaultItemAnimator());
@@ -243,6 +245,13 @@ public class AddRecipeActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
 
