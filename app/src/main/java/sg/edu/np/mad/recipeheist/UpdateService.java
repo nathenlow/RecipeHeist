@@ -152,7 +152,7 @@ public class UpdateService extends Service {
 
     public  String getDefaultDate(){
         //get data from shared preferences
-        SharedPreferences sharedPreferences = this.getSharedPreferences("Settings", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = this.getSharedPreferences("settings", Context.MODE_PRIVATE);
         //display date data from shared preferences in summary
         return sharedPreferences.getString("defaultupdatedate", "2000-01-01");
     }
