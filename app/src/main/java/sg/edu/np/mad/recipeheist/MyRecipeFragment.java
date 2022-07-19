@@ -58,6 +58,7 @@ public class MyRecipeFragment extends Fragment {
         int columns = 2;
         GridLayoutManager manager = new GridLayoutManager(mainActivity, columns);
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(columns, 12, false));
+        recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setLayoutManager(manager);
 
         // convert recipeList to recipePreview list
