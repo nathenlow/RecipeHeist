@@ -131,7 +131,7 @@ public class ProfileFragment extends Fragment {
                                 }
                                 username.setText(user.getUsername());
                                 email.setText(user.getEmail());
-                                description.setText(convertComaToNextLine(user.getDescription()));
+                                description.setText(convertSeparatorToNewLine(user.getDescription()));
                                 loadbefore = true;
                                 try {
                                     getUserRecipes(user.getUserID());
@@ -191,7 +191,7 @@ public class ProfileFragment extends Fragment {
         if (loadbefore){
             username.setText(user.getUsername());
             email.setText(user.getEmail());
-            description.setText(convertComaToNextLine(user.getDescription()));
+            description.setText(convertSeparatorToNewLine(user.getDescription()));
             // load profile image
             if (!user.getProfileImage().equals("") && user.getProfileImage() != null){
                 updateUserProfileImage();
@@ -349,9 +349,9 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    // function to replace "," to \n
-    public String convertComaToNextLine(String string){
-        return string.replaceAll(",", "\n");
+    // function to replace "1,3&5!" to \n
+    public String convertSeparatorToNewLine(String string){
+        return string.replaceAll("1,3&5!", "\n");
     }
 
 }

@@ -132,7 +132,7 @@ public class EditProfileActivity extends AppCompatActivity {
         editUsername.setText(user.getUsername());
 
         // set Bio into editBio
-        editBio.setText(convertComaToNextLine(user.getDescription()));
+        editBio.setText(convertSeparatorToNewLine(user.getDescription()));
     }
 
     // function to update user profile page
@@ -144,7 +144,7 @@ public class EditProfileActivity extends AppCompatActivity {
         String bio = editBio.getText().toString().trim();
 
         // update user bio
-        user.setDescription(convertNextLineToComa(bio));
+        user.setDescription(convertNewLineToSeparator(bio));
 
         // validate current input for username
         if (!username.isEmpty()){
@@ -251,14 +251,14 @@ public class EditProfileActivity extends AppCompatActivity {
         System.out.println(response);
     }
 
-    // function to replace \n to ","
-    public String convertNextLineToComa(String string){
-        return string.replaceAll("\n", ",");
+    // function to replace \n to "1,3&5!"
+    public String convertNewLineToSeparator(String string){
+        return string.replaceAll("\n", "1,3&5!");
     }
 
-    // function to replace "," to \n
-    public String convertComaToNextLine(String string){
-        return string.replaceAll(",", "\n");
+    // function to replace "1,3&5!" to \n
+    public String convertSeparatorToNewLine(String string){
+        return string.replaceAll("1,3&5!", "\n");
     }
 
 }

@@ -131,7 +131,8 @@ public class RecipeItem extends AppCompatActivity {
             collapsing_toolbar.setTitle(recipeobj.getString("title"));
             collapsing_toolbar.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
             noOfLikes.setText(String.valueOf(numlikes));
-            description.setText(recipeobj.getString("description"));
+            String descriptionstring = convertSeparatorToNewLine(recipeobj.getString("description"));
+            description.setText(descriptionstring);
             servings.setText(recipeobj.getString("servings") + " pax");
             duration.setText(recipeobj.getString("duration"));
             foodcategory.setText("( " + recipeobj.getString("foodcategory") + " )");
@@ -515,6 +516,9 @@ public class RecipeItem extends AppCompatActivity {
         editor.apply();
     }
 
-
+    // function to replace "1,3&5!" to \n
+    public String convertSeparatorToNewLine(String string){
+        return string.replaceAll("1,3&5!", "\n");
+    }
 
 }

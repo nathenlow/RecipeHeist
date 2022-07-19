@@ -274,7 +274,7 @@ public class AddRecipeActivity extends AppCompatActivity {
         // set title of recipe
         String title = editRecipeName.getText().toString().trim();
         // set description of recipe
-        String description = replaceNextLineToSpace(editRecipeDescription.getText().toString().trim());
+        String description = convertNewLineToSeparator(editRecipeDescription.getText().toString().trim());
         // set duration of recipe
         String duration = editDuration.getText().toString().trim();
         // set serving size of recipe
@@ -447,9 +447,8 @@ public class AddRecipeActivity extends AppCompatActivity {
         ((InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    // function to replace \n to " "
-    public String replaceNextLineToSpace(String string){
-        return string.replaceAll("\n", " ");
+    // function to replace \n to "1,3&5!"
+    public String convertNewLineToSeparator(String string){
+        return string.replaceAll("\n", "1,3&5!");
     }
-
 }
