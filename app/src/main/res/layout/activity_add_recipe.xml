@@ -8,7 +8,7 @@
     android:orientation="vertical"
     tools:context=".AddRecipeActivity">
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -21,8 +21,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="247dp"
                 android:layout_marginBottom="10dp"
-                android:padding="5dp"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:padding="5dp">
 
                 <ImageButton
                     android:id="@+id/editFoodImage"
@@ -37,8 +37,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/editFoodImage"
-                    android:layout_alignEnd="@+id/editFoodImage"
                     android:layout_alignStart="@+id/editFoodImage"
+                    android:layout_alignEnd="@+id/editFoodImage"
                     android:text="Add a Image"
                     android:textAlignment="center" />
 
@@ -65,19 +65,19 @@
                     android:id="@+id/editRecipeName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="48dp"
-                    android:layout_marginTop="8dp"
                     android:layout_marginStart="5dp"
+                    android:layout_marginTop="8dp"
                     android:layout_marginEnd="5dp"
                     android:layout_marginBottom="10dp"
-                    android:padding="10dp"
                     android:layout_weight="1"
-                    android:ems="10"
                     android:background="@drawable/custom_input"
+                    android:ems="10"
                     android:hint="e.g. Chicken rice, Egg Fried Rice, etc..."
                     android:inputType="textPersonName"
-                    android:textColorHint="@color/hint_text_color"
+                    android:minHeight="48dp"
+                    android:padding="10dp"
                     android:textColor="?attr/colorOnSecondary"
+                    android:textColorHint="@color/hint_text_color"
                     android:textSize="18sp" />
             </LinearLayout>
 
@@ -102,19 +102,19 @@
                     android:id="@+id/editRecipeDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="48dp"
-                    android:layout_marginTop="8dp"
                     android:layout_marginStart="5dp"
+                    android:layout_marginTop="8dp"
                     android:layout_marginEnd="5dp"
                     android:layout_marginBottom="10dp"
-                    android:padding="10dp"
                     android:layout_weight="1"
-                    android:ems="10"
                     android:background="@drawable/custom_input"
+                    android:ems="10"
                     android:hint="Describe the recipe"
                     android:inputType="textMultiLine"
-                    android:textColorHint="@color/hint_text_color"
+                    android:minHeight="48dp"
+                    android:padding="10dp"
                     android:textColor="?attr/colorOnSecondary"
+                    android:textColorHint="@color/hint_text_color"
                     android:textSize="18sp" />
             </LinearLayout>
 
@@ -139,19 +139,19 @@
                     android:id="@+id/editDuration"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="48dp"
-                    android:layout_marginTop="8dp"
                     android:layout_marginStart="5dp"
+                    android:layout_marginTop="8dp"
                     android:layout_marginEnd="5dp"
                     android:layout_marginBottom="10dp"
-                    android:padding="10dp"
                     android:layout_weight="1"
-                    android:ems="10"
                     android:background="@drawable/custom_input"
+                    android:ems="10"
                     android:hint="e.g. 2hr 10min"
                     android:inputType="textPersonName"
-                    android:textColorHint="@color/hint_text_color"
+                    android:minHeight="48dp"
+                    android:padding="10dp"
                     android:textColor="?attr/colorOnSecondary"
+                    android:textColorHint="@color/hint_text_color"
                     android:textSize="20sp" />
             </LinearLayout>
 
@@ -177,19 +177,19 @@
                     android:id="@+id/editServing"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="48dp"
-                    android:layout_marginTop="8dp"
                     android:layout_marginStart="5dp"
+                    android:layout_marginTop="8dp"
                     android:layout_marginEnd="5dp"
                     android:layout_marginBottom="10dp"
-                    android:padding="10dp"
                     android:layout_weight="1"
-                    android:ems="10"
                     android:background="@drawable/custom_input"
+                    android:ems="10"
                     android:hint="e.g 5"
                     android:inputType="number"
-                    android:textColorHint="@color/hint_text_color"
+                    android:minHeight="48dp"
+                    android:padding="10dp"
                     android:textColor="?attr/colorOnSecondary"
+                    android:textColorHint="@color/hint_text_color"
                     android:textSize="20sp" />
 
             </LinearLayout>
@@ -215,19 +215,19 @@
                     android:id="@+id/editCategory"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="48dp"
-                    android:layout_marginTop="8dp"
                     android:layout_marginStart="5dp"
+                    android:layout_marginTop="8dp"
                     android:layout_marginEnd="5dp"
                     android:layout_marginBottom="10dp"
-                    android:padding="10dp"
                     android:layout_weight="1"
-                    android:ems="10"
                     android:background="@drawable/custom_input"
+                    android:ems="10"
                     android:hint="e.g. Chicken, Pasta, etc..."
                     android:inputType="textPersonName"
-                    android:textColorHint="@color/hint_text_color"
+                    android:minHeight="48dp"
+                    android:padding="10dp"
                     android:textColor="?attr/colorOnSecondary"
+                    android:textColorHint="@color/hint_text_color"
                     android:textSize="20sp" />
 
             </LinearLayout>
@@ -255,35 +255,36 @@
                     android:layout_height="match_parent"
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="5dp"
+                    android:nestedScrollingEnabled="false"
                     android:layout_weight="1" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal"
                     android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp">
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
 
                     <EditText
                         android:id="@+id/editIngredient"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:minHeight="48dp"
-                        android:layout_marginTop="8dp"
                         android:layout_marginStart="5dp"
+                        android:layout_marginTop="8dp"
                         android:layout_marginEnd="5dp"
                         android:layout_marginBottom="10dp"
-                        android:padding="10dp"
-                        android:ems="10"
                         android:background="@drawable/custom_input"
+                        android:ems="10"
                         android:gravity="start|top"
                         android:hint="e.g. 5 boneless chicken"
+                        android:imeOptions="actionDone"
                         android:inputType="text"
-                        android:textColorHint="@color/hint_text_color"
+                        android:minHeight="48dp"
+                        android:padding="10dp"
                         android:textColor="?attr/colorOnSecondary"
-                        android:textSize="20sp"
-                        android:imeOptions="actionDone"/>
+                        android:textColorHint="@color/hint_text_color"
+                        android:textSize="20sp" />
 
                 </LinearLayout>
             </LinearLayout>
@@ -311,33 +312,34 @@
                     android:layout_height="match_parent"
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="5dp"
+                    android:nestedScrollingEnabled="false"
                     android:layout_weight="1" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp">
+                    android:layout_marginBottom="5dp"
+                    android:orientation="horizontal">
 
                     <EditText
                         android:id="@+id/editInstruction"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:scrollbars="vertical"
-                        android:fadeScrollbars="false"
                         android:layout_marginStart="7dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="5dp"
                         android:layout_marginBottom="10dp"
+                        android:layout_weight="3"
                         android:background="@drawable/custom_input"
                         android:ems="10"
+                        android:fadeScrollbars="false"
                         android:gravity="start|top"
                         android:hint="e.g. fry the garlic at low-heat..."
                         android:inputType="textMultiLine"
                         android:minHeight="48dp"
-                        android:layout_weight="3"
                         android:padding="10dp"
+                        android:scrollbars="vertical"
                         android:textColor="?attr/colorOnSecondary"
                         android:textColorHint="@color/hint_text_color"
                         android:textSize="20sp" />
@@ -346,14 +348,14 @@
                         android:id="@+id/addInstructionBtn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="5dp"
-                        android:padding="12dp"
                         android:layout_gravity="center"
+                        android:layout_marginEnd="5dp"
                         android:layout_weight="1"
-                        app:srcCompat="@drawable/ic_baseline_add_24"
                         android:background="@color/text_input_bg_transparent"
-                        app:tint="@color/ic_launcher_background"
-                        android:visibility="gone"/>
+                        android:padding="12dp"
+                        android:visibility="gone"
+                        app:srcCompat="@drawable/ic_baseline_add_24"
+                        app:tint="@color/ic_launcher_background" />
 
 
                 </LinearLayout>
@@ -366,9 +368,9 @@
                 android:layout_margin="10dp"
                 android:layout_weight="1"
                 android:text="Create"
-                android:textColor="@color/white"/>
+                android:textColor="@color/white" />
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
     <ProgressBar
         android:id="@+id/progressBar2"
