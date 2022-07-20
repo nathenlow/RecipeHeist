@@ -259,9 +259,9 @@ public class BrowseFragment extends Fragment {
                 }
             });
             RView.setAdapter(browseAdapter);
-            //remove loading bar if user have already loaded all the recipes
-            if (!needanotherpage){PBLoading.setVisibility(View.GONE);}
         }
+        //remove loading bar if user have already loaded all the recipes
+        if (!needanotherpage){PBLoading.setVisibility(View.GONE);}
     }
 
     // go to recipe page
