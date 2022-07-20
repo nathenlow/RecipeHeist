@@ -28,6 +28,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
+                    android:layout_margin="5dp"
                     android:background="@drawable/bottom_border">
 
                     <de.hdodenhof.circleimageview.CircleImageView
@@ -50,7 +51,9 @@
                         android:textAlignment="center"
                         android:textSize="16sp"
                         android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="@+id/profileImage"
+                        app:layout_constrainedWidth="true"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.03"
                         app:layout_constraintStart_toStartOf="@+id/profileImage"
                         app:layout_constraintTop_toBottomOf="@+id/profileImage" />
 
@@ -60,7 +63,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:textSize="12sp"
-                        app:layout_constraintEnd_toEndOf="@+id/profileImage"
+                        app:layout_constrainedWidth="true"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="@+id/profileImage"
                         app:layout_constraintTop_toBottomOf="@+id/profileName" />
 
@@ -72,6 +77,9 @@
                         android:text=""
                         android:textAlignment="textStart"
                         android:textSize="14sp"
+                        app:layout_constrainedWidth="true"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="@+id/profileEmail"
                         app:layout_constraintTop_toBottomOf="@+id/profileEmail" />
 

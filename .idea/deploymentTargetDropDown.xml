@@ -7,12 +7,12 @@
         <deviceKey>
           <Key>
             <type value="VIRTUAL_DEVICE_PATH" />
-            <value value="C:\Users\Josep\.android\avd\Nexus_5X_API_30.avd" />
+            <value value="C:\Users\Josep\.android\avd\10.1_WXGA_Tablet_API_30.avd" />
           </Key>
         </deviceKey>
       </Target>
     </targetSelectedWithDropDown>
-    <timeTargetWasSelectedWithDropDown value="2022-07-19T05:54:13.678632300Z" />
+    <timeTargetWasSelectedWithDropDown value="2022-07-20T11:00:19.313394600Z" />
     <targetsSelectedWithDialog>
       <Target>
         <type value="QUICK_BOOT_TARGET" />
