@@ -94,7 +94,11 @@ public class SearchFoodFragment extends Fragment {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    performSearch();
+                    try {
+                        performSearch();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     return true;
                 }
                 return false;
@@ -132,14 +136,21 @@ public class SearchFoodFragment extends Fragment {
     }
 
     //send query string to SearchFoodBrowseFragment()
-    public void performSearch(){
+    public void performSearch() throws JSONException {
         String query = editTextsearch.getText().toString().trim();
         //remove keyboard
         editTextsearch.clearFocus();
-        //add query to bundle to pass the data
+        //add query to bundle to pass the data to SearchFoodBrowseFragment
         Bundle result = new Bundle();
         result.putString("query", query);
         getParentFragmentManager().setFragmentResult("search", result);
+        //remove duplicate query
+        for (int i = 0; i < recentlist.length(); i++) {
+            if (recentlist.get(i).equals(query)){
+                deletedata(i);
+            }
+        }
+        //save query
         savedata(query);
         mrecycler();
         mainActivity.replaceFragment(new SearchFoodBrowseFragment(), R.id.frameLayout);
