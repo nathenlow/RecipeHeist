@@ -42,40 +42,8 @@ public class AlarmBootReceiver extends BroadcastReceiver {
             String frequency = settingSharedPreferences.getString("updatefrequency", "0");
 
             if (frequency != "0") {
-                switch (frequency) {
-                    case "1":
-                        setAlarm(1);
-                        break;
-
-                    case "2":
-                        setAlarm(2);
-
-                        break;
-
-                    case "3":
-                        setAlarm(3);
-                        break;
-
-                    case "6":
-                        setAlarm(6);
-                        break;
-
-                    case "12":
-                        setAlarm(12);
-                        break;
-
-                    case "24":
-                        setAlarm(24);
-                        break;
-
-                    case "48":
-                        setAlarm(48);
-                        break;
-
-                    case "168":
-                        setAlarm(168);
-                        break;
-                }
+                int numf = Integer.parseInt(frequency);
+                setAlarm(numf);
             }
         }
     }
