@@ -41,9 +41,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ProfileFragment extends Fragment {
 
     private User user = new User();
-    private TextView noOfRecipes, description, username, email;
+    private TextView following, noOfRecipes, description, username, email;
     private Bundle user_data = new Bundle();
-    private JSONArray recipeJArray;
+    private JSONArray recipeJArray, followingArray;
     private View rootView;
     private ProgressBar progressBar;
     private ArrayList<Recipe> recipeList;
@@ -86,6 +86,7 @@ public class ProfileFragment extends Fragment {
         editProfileBtn = rootView.findViewById(R.id.editProfileBtn);
         addRecipeBtn = rootView.findViewById(R.id.addRecipeBtn);
         noOfRecipes = rootView.findViewById(R.id.noOfRecipes);
+        following = rootView.findViewById(R.id.following);
         progressBar = rootView.findViewById(R.id.progressBarProfile);
         swipeRefreshLayout = rootView.findViewById(R.id.swipeRefreshLayout);
 
@@ -132,6 +133,7 @@ public class ProfileFragment extends Fragment {
                                 username.setText(user.getUsername());
                                 email.setText(user.getEmail());
                                 description.setText(convertSeparatorToNewLine(user.getDescription()));
+                                following.setText(String.valueOf(user.getFollowing().size()));
                                 loadbefore = true;
                                 try {
                                     getUserRecipes(user.getUserID());
@@ -297,7 +299,7 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    // function to get users from restDB
+    // function to get user's recipe from restDB
     public void getUserRecipes(String uid) throws IOException {
         RestDB restDB = new RestDB();
         restDB.asyncGet("https://recipeheist-567c.restdb.io/rest/recipe?q={\"userID\":\"" + uid + "\"}", new SuccessListener() {
