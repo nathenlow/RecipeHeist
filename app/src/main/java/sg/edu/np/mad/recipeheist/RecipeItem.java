@@ -56,6 +56,14 @@ public class RecipeItem extends AppCompatActivity {
     boolean likecheck;
     int numlikes;
 
+
+    @Override
+    public void onBackPressed() {
+        Thread.interrupted();
+        finish();
+        super.onBackPressed();
+    }
+
     @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -159,7 +167,7 @@ public class RecipeItem extends AppCompatActivity {
             //Display image
             String imagefilename = recipeobj.getString("imagePath");
             StorageReference storageReference = FirebaseStorage.getInstance().getReference("Recipe_image/"+imagefilename);
-            Glide.with(this)
+            Glide.with(getApplicationContext())
                     .load(storageReference)
                     .into(foodimage);
 
@@ -228,7 +236,7 @@ public class RecipeItem extends AppCompatActivity {
                                 username.setText(userobj.getString("username"));
                                 StorageReference storageReference = FirebaseStorage.getInstance().getReference("Profile_image/"+profileImagePath);
                                 if (!profileImagePath.equals("")) {
-                                    Glide.with(RecipeItem.this)
+                                    Glide.with(getApplicationContext())
                                             .load(storageReference)
                                             .into(profileicon);
                                 }
