@@ -3,6 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Class/Sem3/MAD/RecipeHeist/app/src/main/res/layout/activity_bookmark.xml" value="0.1" />
+        <entry key="..\:/Class/Sem3/MAD/RecipeHeist/app/src/main/res/layout/activity_calender.xml" value="0.1" />
+        <entry key="..\:/Class/Sem3/MAD/RecipeHeist/app/src/main/res/layout/fragment_browse.xml" value="0.1" />
         <entry key="..\:/Users/Denzel/OneDrive/Desktop/HW_stuff/Year 2/MAD/RecipeHeist/app/src/main/res/layout/activity_user_search.xml" value="0.16893115942028986" />
         <entry key="..\:/Users/Denzel/OneDrive/Desktop/HW_stuff/Year 2/MAD/RecipeHeist/app/src/main/res/layout/fragment_browse.xml" value="0.25" />
         <entry key="..\:/Users/Denzel/OneDrive/Desktop/HW_stuff/Year 2/MAD/RecipeHeist/app/src/main/res/layout/fragment_search_food.xml" value="0.2" />
