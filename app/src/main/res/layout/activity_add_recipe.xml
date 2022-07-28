@@ -366,7 +366,8 @@
                 android:id="@+id/createRecipeBtn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_margin="14dp"
+                android:background="@drawable/custom_button"
                 android:layout_weight="1"
                 android:text="Create"
                 android:textColor="@color/white" />

@@ -2,30 +2,46 @@ package sg.edu.np.mad.recipeheist;
 
 import static java.lang.Integer.parseInt;
 
+import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.provider.MediaStore;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,6 +73,7 @@ public class AddRecipeActivity extends AppCompatActivity {
     private RecyclerView ingredientDisplayR, instructionDisplayR;
 
     private ActivityResultLauncher<String> getImageFromGallery;
+    private ActivityResultLauncher<Intent> getImageFromCamera;
 
     private StorageReference storageReference;
 
@@ -130,12 +147,32 @@ public class AddRecipeActivity extends AppCompatActivity {
             }
         });
 
+        // for getting image from camera
+        getImageFromCamera = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null){
+                    Bundle bundle = result.getData().getExtras();
+                    Bitmap bitmap = (Bitmap) bundle.get("data");
+                    bitmap = Bitmap.createScaledBitmap(bitmap, 480, 480, true);
+
+                    editFoodImage.setImageBitmap(bitmap);
+
+                    // set recipe image path
+                    recipe.setImagePath(convertDotToBlank(bitmap.toString()));
+                }
+                else{
+                    Toast.makeText(AddRecipeActivity.this, "No image selected, please select an image!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
 
         // set onclick listener for food image
         editFoodImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getImageFromGallery.launch("image/*");
+                showDialog();
             }
         });
 
@@ -420,8 +457,69 @@ public class AddRecipeActivity extends AppCompatActivity {
         return response;
     }
 
-    // function to convert bitmap to jpeg
+    // function to check for camera permission
+    private void getCameraPermission(){
+        // permission denied
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA}, 101);
+        }
+        // Permission granted
+        else{
+            openCamera();
+        }
+    }
 
+    // function to check if user allow camera permission or not
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 101) {
+            if (grantResults.length < 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // open camera
+
+            } else {
+                Toast.makeText(this, "Camera permission is required to use camera feature.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    // function to use camera
+    private void openCamera(){
+        getImageFromCamera.launch(new Intent(MediaStore.ACTION_IMAGE_CAPTURE));
+    }
+
+
+    // function to show bottom dialog
+    private void showDialog(){
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.layout_bottom_sheet);
+
+        // get widgets
+        LinearLayout cameraOption = dialog.findViewById(R.id.cameraOption);
+        LinearLayout galleryOption = dialog.findViewById(R.id.galleryOption);
+
+        // set onclick for camera option
+        cameraOption.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getCameraPermission();
+            }
+        });
+
+        // set onclick for gallery
+        galleryOption.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getImageFromGallery.launch("image/*");
+            }
+        });
+
+        dialog.show();
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        dialog.getWindow().setGravity(Gravity.BOTTOM);
+    }
 
     // function to upload image to firebase storage
     private void uploadImage(Recipe recipe, Uri uri){
@@ -450,5 +548,10 @@ public class AddRecipeActivity extends AppCompatActivity {
     // function to replace \n to "1,3&5!"
     public String convertNewLineToSeparator(String string){
         return string.replaceAll("\n", "1,3&5!");
+    }
+
+    // function to replace "." to ""
+    public String convertDotToBlank(String string){
+        return string.replaceAll(".", "");
     }
 }

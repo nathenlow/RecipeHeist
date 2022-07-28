@@ -41,7 +41,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ProfileFragment extends Fragment {
 
     private User user = new User();
-    private TextView following, noOfRecipes, description, username, email;
+    private TextView followText, following, noOfRecipes, description, username, email;
     private Bundle user_data = new Bundle();
     private JSONArray recipeJArray, followingArray;
     private View rootView;
@@ -87,6 +87,7 @@ public class ProfileFragment extends Fragment {
         addRecipeBtn = rootView.findViewById(R.id.addRecipeBtn);
         noOfRecipes = rootView.findViewById(R.id.noOfRecipes);
         following = rootView.findViewById(R.id.following);
+        followText = rootView.findViewById(R.id.followingText);
         progressBar = rootView.findViewById(R.id.progressBarProfile);
         swipeRefreshLayout = rootView.findViewById(R.id.swipeRefreshLayout);
 
@@ -95,6 +96,7 @@ public class ProfileFragment extends Fragment {
         if (!loadbefore) {
             addRecipeBtn.setEnabled(false);
             editProfileBtn.setEnabled(false);
+            followText.setEnabled(false);
             // update profile page
             String uid = FirebaseAuth.getInstance().getUid();
             // function to get users from restDB
@@ -139,6 +141,7 @@ public class ProfileFragment extends Fragment {
                                     getUserRecipes(user.getUserID());
                                     addRecipeBtn.setEnabled(true);
                                     editProfileBtn.setEnabled(true);
+                                    followText.setEnabled(true);
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
@@ -150,6 +153,17 @@ public class ProfileFragment extends Fragment {
                 e.printStackTrace();
             }
         }
+
+        // when user clicks on the following text
+        followText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // pass user data to new activity
+                Intent followingActivity = new Intent(getActivity(), MyFollowingActivity.class);
+                followingActivity.putExtras(user_data);
+                startActivity(followingActivity);
+            }
+        });
 
         // when user clicks on "edit profile" button
         editProfileBtn.setOnClickListener(new View.OnClickListener() {
@@ -194,6 +208,7 @@ public class ProfileFragment extends Fragment {
             username.setText(user.getUsername());
             email.setText(user.getEmail());
             description.setText(convertSeparatorToNewLine(user.getDescription()));
+            following.setText(String.valueOf(user.getFollowing().size()));
             // load profile image
             if (!user.getProfileImage().equals("") && user.getProfileImage() != null){
                 updateUserProfileImage();
