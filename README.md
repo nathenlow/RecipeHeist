@@ -19,9 +19,6 @@ RecipeHeist is an app that allows users to get inspirations and ideas for their 
     - created the RecipeItem activity which displays the recipe infomation (refer to appendix RecipeItem) and handles actions such as like and bookmark.
     - created the search function to search for recipes. It saves recent searches too. (refer to appendix SearchRecipe)
     - created the browse fragment. It contains features that enhance one's browsing experience such as pagination. (refer to appendix Browse)
-    - created the updates fragment. 
-    - created the history fragment
-    - created the settings activity. 
     
 - Joseph Wong
     - created the layout for profile page, displays the user details and recipe.
