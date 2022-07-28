@@ -22,11 +22,11 @@ import sg.edu.np.mad.recipeheist.RecipePreview;
 
 public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHolder> {
 
+    private Context ct;
     private ArrayList<RecipePreview> recipeArrayList;
     private RecipeLoadListener load;
-    private Context ct;
 
-    public BookmarkAdapter(Context ct, ArrayList<RecipePreview> recipeArrayList, RecipeLoadListener load){
+    public BookmarkAdapter(Context ct, ArrayList<RecipePreview> recipeArrayList, RecipeLoadListener load) {
         this.ct = ct;
         this.recipeArrayList = recipeArrayList;
         this.load = load;
@@ -35,19 +35,24 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHo
     @NonNull
     @Override
     public BookmarkAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(ct);
-        View item = inflater.inflate(R.layout.bookmark_cardview, parent, false);
+        View item = LayoutInflater.from(ct).inflate(
+                R.layout.bookmark_cardview,parent,false);
         return new BookmarkAdapter.ViewHolder(item);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull BookmarkAdapter.ViewHolder holder, int position) {
         RecipePreview recipePreview = recipeArrayList.get(position);
-        holder.Title.setText(recipePreview.getTitle());
+        holder.foodtitle.setText(recipePreview.getTitle());
+        holder.duration.setText(recipePreview.getduration());
 
-        String imagefile = recipePreview.getImagePath();
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference("Recipe_image"+imagefile);
-        Glide.with(ct).load(storageReference).into(holder.foodimagepreview);
+
+        //Display image
+        String imagefilename = recipePreview.getImagePath();
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference("Recipe_image/"+imagefilename);
+        Glide.with(ct)
+                .load(storageReference)
+                .into(holder.foodimagepreview);
 
         holder.main.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,6 +60,8 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHo
                 load.onLoad(recipePreview.getId());
             }
         });
+
+
     }
 
     @Override
@@ -63,13 +70,15 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHo
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        TextView Title;
+        TextView duration, foodtitle;
         ImageView foodimagepreview;
         View main;
-        public ViewHolder(View itemView) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            Title = itemView.findViewById(R.id.savedfoodtitle);
-            foodimagepreview = itemView.findViewById(R.id.savedimagepreview);
+            foodtitle = itemView.findViewById(R.id.foodtitle);
+            duration = itemView.findViewById(R.id.aduration);
+            foodimagepreview = itemView.findViewById(R.id.foodimagepreview);
+            main = itemView;
         }
     }
 }
