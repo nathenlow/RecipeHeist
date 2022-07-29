@@ -29,7 +29,7 @@ RecipeHeist is an app that allows users to get inspirations and ideas for their 
 
 ### Appendices
 #### Browse
-<img src="https://lh3.google.com/u/0/d/1LHqYGk5MicOrnHotfW2p_fDA-UE_8JrB=w1920-h942-iv2" alt="Browse"/>
+<img src="https://github.com/punchyface/Images/blob/main/RecipeHeist/Browse1.jpg alt="Browse"/>
 #### SearchRecipe
 <img src="https://lh3.google.com/u/0/d/13X6SGtBiQnEbY_Vj8AM5kz1QJn3OdRYS=w1920-h942-iv3" alt="Search"/>
 #### RecipeItem
