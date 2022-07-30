@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-public class Calender extends AppCompatActivity {
+public class ViewCalender extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -3,8 +3,16 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Class/Sem3/MAD/RecipeHeist/app/src/main/res/drawable/bottom_border.xml" value="0.1" />
+        <entry key="..\:/Class/Sem3/MAD/RecipeHeist/app/src/main/res/drawable/button_bg.xml" value="0.1" />
+        <entry key="..\:/Class/Sem3/MAD/RecipeHeist/app/src/main/res/drawable/custom_button.xml" value="0.1" />
+        <entry key="..\:/Class/Sem3/MAD/RecipeHeist/app/src/main/res/drawable/custom_edit_image_icon.xml" value="0.1" />
+        <entry key="..\:/Class/Sem3/MAD/RecipeHeist/app/src/main/res/drawable/ic_baseline_bookmark_added_24.xml" value="0.1" />
+        <entry key="..\:/Class/Sem3/MAD/RecipeHeist/app/src/main/res/drawable/ic_baseline_bookmarks_24.xml" value="0.1" />
         <entry key="..\:/Class/Sem3/MAD/RecipeHeist/app/src/main/res/layout/activity_bookmark.xml" value="0.1" />
         <entry key="..\:/Class/Sem3/MAD/RecipeHeist/app/src/main/res/layout/activity_calender.xml" value="0.1" />
+        <entry key="..\:/Class/Sem3/MAD/RecipeHeist/app/src/main/res/layout/activity_date_picker.xml" value="0.1" />
+        <entry key="..\:/Class/Sem3/MAD/RecipeHeist/app/src/main/res/layout/activity_recipe_item.xml" value="0.152" />
         <entry key="..\:/Class/Sem3/MAD/RecipeHeist/app/src/main/res/layout/fragment_browse.xml" value="0.1" />
         <entry key="..\:/Users/Denzel/OneDrive/Desktop/HW_stuff/Year 2/MAD/RecipeHeist/app/src/main/res/layout/activity_user_search.xml" value="0.16893115942028986" />
         <entry key="..\:/Users/Denzel/OneDrive/Desktop/HW_stuff/Year 2/MAD/RecipeHeist/app/src/main/res/layout/fragment_browse.xml" value="0.25" />
