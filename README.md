@@ -56,11 +56,11 @@ RecipeHeist is an app that allows users to get inspirations and ideas for their 
     
 - Joseph Wong
     - Improve the user interface for add recipe activity by updating the input box designs.
-    - Improve user experience for add recipe activity by allowing users to edit the ingredients/instructions that they have entered before.
+    - Improve user experience for add recipe activity by allowing users to edit the ingredients/instructions that they have entered before (making use of touch events).
     - Created edit profile activity, allows the user to edit their profile, such as their profile picture, name, and bio.
     - Created feature for users to access their camera when uploading a food image or when uploading an image as their profile picture in the edit profile activity.
     - Created a bottom slide in & out animation for the bottom dialog used for prompting users on whether they want to select an image from the camera or their gallery.
-    - Created a countdown timer activity, as well as a TimerService (foreground service) to display timer in the notification.
+    - Created a countdown timer activity, as well as a TimeService (foreground service) to display timer in the notification.
 
 
 ### Appendices
