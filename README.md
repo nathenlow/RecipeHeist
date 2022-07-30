@@ -29,12 +29,18 @@ RecipeHeist is an app that allows users to get inspirations and ideas for their 
 
 ### Appendices
 #### Browse
-<img src="https://lh3.google.com/u/0/d/1LHqYGk5MicOrnHotfW2p_fDA-UE_8JrB=w1920-h942-iv2" alt="Browse"/>
+<img src="https://raw.githubusercontent.com/punchyface/Images/main/RecipeHeist/Browse1.jpg" width="200" alt="Browse1"/>&emsp;<img src="https://raw.githubusercontent.com/punchyface/Images/main/RecipeHeist/Browse2.jpg" width="200" alt="Browse2"/>
+
 #### SearchRecipe
-<img src="https://lh3.google.com/u/0/d/13X6SGtBiQnEbY_Vj8AM5kz1QJn3OdRYS=w1920-h942-iv3" alt="Search"/>
+<img src="https://raw.githubusercontent.com/punchyface/Images/main/RecipeHeist/Search.jpg" width="200" alt="Search"/>
+
+
 #### RecipeItem
-<img src="https://lh3.google.com/u/0/d/1gAqxn_3fVbwmXhpJj7687PxRXJW_as9y=w1920-h942-iv2" alt="RecipeItem01"/>
-<img src="https://lh3.google.com/u/0/d/18PEqqi0xQNVyE-_YPF_xEwMkSVSl2GTe=w1227-h942-iv4" alt="RecipeItem02"/>
+<img src="https://raw.githubusercontent.com/punchyface/Images/main/RecipeHeist/RecipeItem1.jpg" width="200" alt="RecipeItem1"/>&emsp;<img src="https://raw.githubusercontent.com/punchyface/Images/main/RecipeHeist/RecipeItem2.jpg" width="200" alt="RecipeItem2"/>&emsp;<img src="https://raw.githubusercontent.com/punchyface/Images/main/RecipeHeist/RecipeItem3.jpg" width="200" alt="RecipeItem3"/>
+
+
+#### Sign In & Sign Up
+<img src="https://raw.githubusercontent.com/punchyface/Images/main/RecipeHeist/SignIn.jpg" width="200" alt="Sign In"/>&emsp;<img src="https://raw.githubusercontent.com/punchyface/Images/main/RecipeHeist/SignUp.jpg" width="200" alt="Sign Up"/>
 
 ## Stage 2
 
@@ -52,3 +58,14 @@ RecipeHeist is an app that allows users to get inspirations and ideas for their 
 
 
 ### Appendices
+#### Updates
+<img src="https://raw.githubusercontent.com/punchyface/Images/main/RecipeHeist/Updates.jpg" width="200" alt="Updates"/>
+
+#### Updates Notification
+<img src="https://raw.githubusercontent.com/punchyface/Images/main/RecipeHeist/Update_progress.jpg" width="300" alt="Update Progress"/>&emsp;<img src="https://raw.githubusercontent.com/punchyface/Images/main/RecipeHeist/Update_Completed.jpg" width="300" alt="Update Completed"/>
+  
+#### History
+<img src="https://raw.githubusercontent.com/punchyface/Images/main/RecipeHeist/History.jpg" width="200" alt="History"/>
+
+#### Settings
+<img src="https://raw.githubusercontent.com/punchyface/Images/main/RecipeHeist/Settings_login.jpg" width="200" alt="Settings"/>&emsp;<img src="https://raw.githubusercontent.com/punchyface/Images/main/RecipeHeist/Settings_nologin.jpg" width="200" alt="Settings for User that are not logged in"/>
