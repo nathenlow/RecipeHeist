@@ -9,6 +9,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
@@ -55,9 +56,6 @@ public class CountdownTimerActivity extends AppCompatActivity implements View.On
 
         getSupportActionBar().setTitle("Timer");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        // get user's permission for the service
-        ActivityCompat.requestPermissions(this, new String[]{FOREGROUND_SERVICE}, PackageManager.PERMISSION_GRANTED);
 
         // create intent to the service
         intentService = new Intent(this, TimerService.class);
@@ -156,20 +154,12 @@ public class CountdownTimerActivity extends AppCompatActivity implements View.On
             previousTimeSet = editTextMinute.getText().toString().trim();
             // fetching value from edit text and type cast to integer
             time = Integer.parseInt(editTextMinute.getText().toString().trim());
-            // set time to intentService
-            intentService.putExtra("TimeValue", time);
-            // start the intentService
-            startService(intentService);
             // call to initialize the progress bar values
             setProgressBarValues();
         }
         else if (editTextMinute.getText().toString().trim().equals(previousTimeSet)){
             // get values in current timer
             time = (int) minuteFormatter(textViewTime.getText().toString());
-            // set time to intentService
-            intentService.putExtra("TimeValue", time);
-            // start the intentService
-            startService(intentService);
 
         }
         else {
@@ -191,10 +181,27 @@ public class CountdownTimerActivity extends AppCompatActivity implements View.On
 
                 progressBarCircle.setProgress((int) (millisUntilFinished / 1000));
 
+                // check if user's sdk version compatible
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+                    // set time to intentService
+                    intentService.putExtra("TimeValue", (int) millisUntilFinished/1000);
+                    // start the intentService
+                    startForegroundService(intentService);
+                }
+                else{
+                    // set time to intentService
+                    intentService.putExtra("TimeValue", (int) millisUntilFinished/1000);
+                    // start the intentService
+                    startService(intentService);
+                }
+
             }
 
             @Override
             public void onFinish() {
+
+                // stop the foreground service
+                stopService(intentService);
 
                 textViewTime.setText(hmsTimeFormatter(0));
                 // hiding the reset icon
@@ -213,6 +220,8 @@ public class CountdownTimerActivity extends AppCompatActivity implements View.On
 
     // function to stop count down timer
     private void stopCountDownTimer() {
+        // stop foreground service
+        stopService(intentService);
         countDownTimer.cancel();
     }
 
