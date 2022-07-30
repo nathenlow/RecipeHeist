@@ -16,5 +16,9 @@
     <color name="cardview_bg_add_recipe_default">#666DAA</color>
     <color name="hint_text_color">#9e9e9e</color>
 
+    <color name="black2">#1E2538</color>
+    <color name="blackDark">#0E121B</color>
+    <color name="blackBackground">#151B29</color>
+
 
 </resources>

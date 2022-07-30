@@ -15,8 +15,10 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.r0adkll.slidr.Slidr;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -49,6 +51,7 @@ public class RecipeItem extends AppCompatActivity {
     private RecyclerView instructionitems;
     private CollapsingToolbarLayout collapsing_toolbar;
     private FloatingActionButton bookmarkbtn;
+    private CoordinatorLayout recipeItemMainContent;
     String recipeID;
     JSONArray historylist;
 
@@ -69,6 +72,8 @@ public class RecipeItem extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
+        // to enable swipe back to browse fragment
+        Slidr.attach(this);
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -90,6 +95,7 @@ public class RecipeItem extends AppCompatActivity {
         servings = findViewById(R.id.servings);
         duration = findViewById(R.id.duration);
         foodcategory = findViewById(R.id.foodcategory);
+        recipeItemMainContent = findViewById(R.id.recipeItemMainContent);
 
         bookmarkcheck = false;
         likecheck = false;
@@ -127,6 +133,7 @@ public class RecipeItem extends AppCompatActivity {
         }.start();
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     public void Init(){
         //get from restDB
         String response = getRecipe(recipeID);
@@ -281,6 +288,15 @@ public class RecipeItem extends AppCompatActivity {
                     Snackbar.make(view, "Login is required", Snackbar.LENGTH_SHORT)
                             .setAction("Action", null).show();
                 }
+            }
+        });
+
+        // to allow swipe gesture
+        recipeItemMainContent.setOnTouchListener(new OnSwipeTouchListener(RecipeItem.this){
+            public void onSwipeLeft(){
+                Intent intent = new Intent(RecipeItem.this, CountdownTimerActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
         });
     }
