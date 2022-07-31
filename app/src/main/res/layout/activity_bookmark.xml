@@ -9,15 +9,14 @@
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="57dp">
+        android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <androidx.core.widget.NestedScrollView
-                android:id="@+id/savedSV"
+                android:id="@+id/nestedSV"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:overScrollMode="never"
@@ -35,7 +34,7 @@
                     and we are making nested scroll for our
                     recycler view as false-->
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/SavedRview"
+                        android:id="@+id/RView"
                         android:layout_width="wrap_content"
                         android:layout_height="0dp"
                         android:layout_gravity="center_horizontal"
@@ -45,7 +44,7 @@
                     <!--we are adding progress bar
                     for the purpose of loading-->
                     <ProgressBar
-                        android:id="@+id/savedPB"
+                        android:id="@+id/PBLoading"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
                 </LinearLayout>
@@ -53,6 +52,5 @@
             </androidx.core.widget.NestedScrollView>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
 
 </FrameLayout>
