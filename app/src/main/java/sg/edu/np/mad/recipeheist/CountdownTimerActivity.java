@@ -210,6 +210,8 @@ public class CountdownTimerActivity extends AppCompatActivity implements View.On
                 imageViewStartStop.setImageResource(R.drawable.play_button);
                 // making edit text editable
                 editTextMinute.setEnabled(true);
+                // reset edit text
+                previousTimeSet = "0";
                 // changing the timer status to stopped
                 timerStatus = TimerStatus.STOPPED;
             }
