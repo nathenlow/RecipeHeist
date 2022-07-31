@@ -67,7 +67,7 @@ public class TimerService extends Service {
 
             startForeground(1, notifications[0]);
 
-            NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, "Recipe Heist Timer", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, "Recipe Heist Timer", NotificationManager.IMPORTANCE_LOW);
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(notificationChannel);
         }

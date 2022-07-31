@@ -254,19 +254,19 @@ public class CountdownTimerActivity extends AppCompatActivity implements View.On
 
         String[] fileredhms = hms.split(":");
 
-        // convert hour to minute
+        // convert hour to seconds
         long hour = Integer.parseInt(fileredhms[0]);
         seconds += (hour * 3600);
 
         System.out.println(seconds);
 
-        // add minute
+        // convert minute to second
         long minute = Integer.parseInt(fileredhms[1]);
         seconds += (minute * 60);
 
         System.out.println(minute);
 
-        // convert seconds to minute
+        // add seconds
         seconds += Integer.parseInt(fileredhms[2]);
 
         System.out.println(seconds);
