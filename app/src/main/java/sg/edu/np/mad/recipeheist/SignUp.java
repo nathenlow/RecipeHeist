@@ -33,6 +33,11 @@ public class SignUp extends AppCompatActivity {
     private Button btnSignUp;
     private ProgressBar progressBar;
 
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +47,8 @@ public class SignUp extends AppCompatActivity {
 
         setContentView(R.layout.activity_sign_up);
         getSupportActionBar().setTitle("Sign Up");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         mAuth = FirebaseAuth.getInstance();
 
