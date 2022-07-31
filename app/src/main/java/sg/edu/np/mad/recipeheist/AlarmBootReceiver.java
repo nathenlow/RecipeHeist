@@ -41,7 +41,7 @@ public class AlarmBootReceiver extends BroadcastReceiver {
             SharedPreferences settingSharedPreferences = PreferenceManager.getDefaultSharedPreferences(myContext);
             String frequency = settingSharedPreferences.getString("updatefrequency", "0");
 
-            if (frequency != "0") {
+            if (!frequency.equals("0")) {
                 int numf = Integer.parseInt(frequency);
                 setAlarm(numf);
             }
