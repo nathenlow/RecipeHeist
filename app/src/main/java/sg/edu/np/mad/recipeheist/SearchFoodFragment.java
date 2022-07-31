@@ -20,6 +20,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -127,8 +128,9 @@ public class SearchFoodFragment extends Fragment {
         searchuserbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent userintent = new Intent(getActivity(),UserSearch.class);
-                startActivity(userintent);
+                Toast.makeText(mainActivity, "Coming Soon!", Toast.LENGTH_SHORT).show();
+                /*Intent userintent = new Intent(getActivity(),UserSearch.class);
+                startActivity(userintent);*/
             }
         });
 

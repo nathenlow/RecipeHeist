@@ -28,24 +28,22 @@ import sg.edu.np.mad.recipeheist.adapter.BrowseAdapter;
 
 public class BookmarkActivity extends AppCompatActivity {
 
-    private int pagecount = 0;
-    boolean needanotherpage;
-    private int perpage = 10;
-    private ArrayList<RecipePreview> BookmarkList = new ArrayList<>();
-    private JSONArray BookmarkID;
-    private User user = new User();
-    private JSONArray recipearray;
-    private RecyclerView SavedRView;
-    private String query = "";
-    private boolean loadbefore = false;
-    private NestedScrollView BmScroll;
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private BookmarkAdapter bookmarkAdapter;
-    private ProgressBar BookmarkPB;
-    private NestedScrollView nestedSV;
-
+    
+    private ArrayList<RecipePreview> recipelist = new ArrayList<>();
+    private RecyclerView RView;
     private BrowseAdapter browseAdapter;
+    private ProgressBar PBLoading;
+    private NestedScrollView nestedSV;
+    private JSONArray recipearray;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    String userID;
+    RestDB restDB = new RestDB();
 
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,166 +52,130 @@ public class BookmarkActivity extends AppCompatActivity {
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         getSupportActionBar().setTitle("Bookmark");
-
-        //Assigning values
-        this.getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
-        SavedRView = (RecyclerView) findViewById(R.id.SavedRview);
-        BmScroll = findViewById(R.id.nestedSV);
-        BookmarkPB = findViewById(R.id.savedPB);
-        nestedSV = findViewById(R.id.savedSV);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        RView = findViewById(R.id.RView);
+        PBLoading = findViewById(R.id.PBLoading);
+        nestedSV = findViewById(R.id.nestedSV);
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+        userID = mAuth.getUid();
+        
+        getBookmark();
 
-        String uid = mAuth.getUid();
-
-        JSONObject[] currentuserobj = {null};
-
-        String currentuserjsonstring = getUser(uid);
-        if (currentuserjsonstring != null) {
-            try {
-                JSONArray currentuserarray = new JSONArray(currentuserjsonstring);
-                currentuserobj[0] = (JSONObject) currentuserarray.get(0);
-                BookmarkID = currentuserobj[0].getJSONArray("bookmark");
-                startFunction();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        //if (!loadbefore){
-        //    loadbefore = true;
-        //    startFunction();
-        //}
-
-
-
-        // Grid layout used to have 2 rows for recycler view.
+        // grid layout splitting display into two columns
         int columns = 2;
-        GridLayoutManager manager = new GridLayoutManager(BookmarkActivity.this,columns);
-        SavedRView.addItemDecoration(new GridSpacingItemDecoration(columns, 12, false));
-        SavedRView.setLayoutManager(manager);
-        /*
-        nestedSV.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
-            @Override
-            public void onScrollChange(NestedScrollView scrollView, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-
-                View view = (View) scrollView.getChildAt(scrollView.getChildCount() - 1);
-                int diff = (view.getBottom() - (scrollView.getHeight() + scrollView.getScrollY()));
-
-                // if diff is zero, then the bottom has been reached
-                if (diff == 0) {
-                    startFunction();
-                }
-            }
-        });*/
+        GridLayoutManager manager = new GridLayoutManager(this, columns);
+        RView.addItemDecoration(new GridSpacingItemDecoration(columns, 12, false));
+        RView.setLayoutManager(manager);
 
         //refresh page by using Init()
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 swipeRefreshLayout.setRefreshing(false);
-                Toast.makeText(getApplicationContext(), "Reloading page", Toast.LENGTH_SHORT).show();
+                Toast.makeText(BookmarkActivity.this, "Reloading page", Toast.LENGTH_SHORT).show();
                 Init();
             }
         });
 
     }
 
+    //to initialize the page
     public void Init(){
-        pagecount = 0;
-
+        recipelist = new ArrayList<>();
+        getBookmark();
     }
 
-    public void startFunction(){
-        needanotherpage = false;
-        BookmarkPB.setVisibility(View.VISIBLE);
+    //to get default bookmark recipe data from rest db
+    public void getBookmark(){
         try {
-            defaultRecipe();
+            PBLoading.setVisibility(View.VISIBLE);
+            restDB.asyncGet("https://recipeheist-567c.restdb.io/rest/users?q={\"userID\":\"" + userID + "\"}&h={\"$fields\":{\"bookmark\":1}}", new SuccessListener() {
+                @Override
+                public void onSuccess(String jsonresponse){
+                    try {
+                        //get json array(bookmarks from user)
+                        JSONArray followingResponseArray = new JSONArray(jsonresponse);
+                        JSONObject jsonObject = (JSONObject) followingResponseArray.get(0);
+                        JSONArray bookmarkarray = jsonObject.getJSONArray("bookmark");
+                        //get recipes of bookmark
+
+                        getRecipe(bookmarkarray);
+                    }catch (IOException | JSONException e){
+                        e.printStackTrace();
+                    }
+                }
+            });
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    //to get default data from rest db
-    public void defaultRecipe() throws IOException, JSONException {
-
-
-        RestDB restDB = new RestDB();
-        restDB.asyncGet("https://recipeheist-567c.restdb.io/rest/recipe?h=",
+    //get recipes of bookmark 
+    public void getRecipe(JSONArray jsonArray) throws IOException {
+        restDB.asyncGet("https://recipeheist-567c.restdb.io/rest/recipe?q={\"_id\":{\"$in\":" + jsonArray +"}}&h={\"$fields\":{\"_id\":1,\"title\":1,\"duration\":1,\"imagePath\":1},\"$orderby\":{\"_created\":-1}}",
                 new SuccessListener() {
                     @Override
                     public void onSuccess(String jsonresponse) throws JSONException {
                         //if response is successful
                         if (jsonresponse != null) {
                             recipearray = new JSONArray(jsonresponse);
-                            //check whether if all the recipes had been gotten so that we will not send another api request
-
-                            try {
-                                getData();
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        //display data
+                                        getData();
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
                         }
                         //if response is unsuccessful
                         else {
-                            Toast.makeText(getApplicationContext(),"Check your Internet connection", Toast.LENGTH_SHORT).show();
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(BookmarkActivity.this, "Check your Internet connection", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         }
-
-                        //remove loading bar if user have already loaded all the recipes
-                        BookmarkPB.setVisibility(View.GONE);
                     }
                 }
         );
     }
 
+
+    //to display recipes from restdb jsonarray
     public void getData() throws JSONException {
         for (int i = 0; i < recipearray.length(); i++) {
+            //to convert json object into RecipePreview object to pass to recycler view
             JSONObject recipeobj = (JSONObject) recipearray.get(i);
             String id = recipeobj.getString("_id");
-            if (BookmarkID.length()!= 0){
-                for(int x = 0; x < BookmarkID.length(); i++){
-                    if(BookmarkID.get(x).equals(id)){
-                        String title = recipeobj.getString("title");
-                        String imagePath = recipeobj.getString("imagePath");
-                        String duration = recipeobj.getString("duration");
-                        RecipePreview recipePreview = new RecipePreview(id, title, imagePath, duration);
+            String title = recipeobj.getString("title");
+            String imagePath = recipeobj.getString("imagePath");
+            String duration = recipeobj.getString("duration");
+            RecipePreview recipePreview = new RecipePreview(id, title, imagePath, duration);
 
-                        BookmarkList.add(recipePreview);
-
-                        if(BookmarkList.size() != 0){
-                            browseAdapter = new BrowseAdapter(BookmarkActivity.this, BookmarkList, new RecipeLoadListener(){
-                                @Override
-                                public void onLoad(String recipeID) {goToRecipe(recipeID);}
-                            });
-                            SavedRView.setAdapter(browseAdapter);
-                        }
-                    }
+            recipelist.add(recipePreview);
+            //load recipelist into recyclerview
+            browseAdapter = new BrowseAdapter(this, recipelist, new RecipeLoadListener() {
+                @Override
+                public void onLoad(String recipeID) {
+                    goToRecipe(recipeID);
                 }
-            }
-
-
+            });
+            RView.setAdapter(browseAdapter);
         }
-
+        PBLoading.setVisibility(View.GONE);
     }
 
+    // go to recipe page
     public void goToRecipe(String recipeID)
     {
-
-        Intent intent = new Intent(BookmarkActivity.this, RecipeItem.class);
+        Intent intent = new Intent(this, RecipeItem.class);
         intent.putExtra("recipeID", recipeID);
-        startActivity(intent);
-
-    }
-
-    public String getUser(String userid){
-        RestDB example = new RestDB();
-        String response = null;
-        try {
-            response = example.get("https://recipeheist-567c.restdb.io/rest/users?q={\"userID\":\"" + userid + "\"}");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return response;
+        this.startActivity(intent);
     }
 }

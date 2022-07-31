@@ -22,14 +22,17 @@
         android:theme="@style/Theme.RecipeHeist">
         <activity
             android:name=".CountdownTimerActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".MyFollowingActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".EditProfileActivity"
             android:windowSoftInputMode="adjustResize"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".SettingsActivity"
             android:exported="false"
