@@ -85,8 +85,6 @@ public class TimerService extends Service {
                         notifications.setOnlyAlertOnce(false);
                         notificationManager.notify(2, notifications.build());
                     }
-                    // reduce time
-                    timerRemaining[0]--;
                 }
                 else {
                     // display it on notification
