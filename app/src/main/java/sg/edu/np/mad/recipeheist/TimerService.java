@@ -45,8 +45,7 @@ public class TimerService extends Service {
             final PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
             notifications = new NotificationCompat.Builder(this, CHANNEL_ID)
-                    .setContentTitle("Recipe Heist Timer")
-                    .setContentText("Timer: " + initialTimer.toString())
+                    .setContentTitle("Timer: " + initialTimer.toString() + "s")
                     .setSmallIcon(R.drawable.ic_baseline_timer_24)
                     .setColor(Color.RED)
                     .setContentIntent(pendingIntent)
@@ -73,23 +72,23 @@ public class TimerService extends Service {
                 timerRemaining[0]--;
 
 
-                //if left 3 second --> sound notification
-                if (timerRemaining[0] <= 3){
+                //if left 5 second --> sound notification
+                if (timerRemaining[0] <= 5){
                     //cancel when time is up
-                    if (timerRemaining[0] <= 0) {
+                    if (timerRemaining[0] <= -1) {
                         timer.cancel();
                     }
                     else{
-                        notifications.setProgress(initialTimer, timerRemaining[0], false);
-                        notifications.setContentText("Timer: " + timerRemaining[0].toString());
-                        notifications.setOnlyAlertOnce(false);
+                        notifications.setProgress(initialTimer, timerRemaining[0], false)
+                                .setContentTitle("Timer: " + timerRemaining[0].toString() + "s")
+                                .setOnlyAlertOnce(false);
                         notificationManager.notify(2, notifications.build());
                     }
                 }
                 else {
                     // display it on notification
-                    notifications.setProgress(initialTimer, timerRemaining[0], false);
-                    notifications.setContentText("Timer: " + timerRemaining[0].toString());
+                    notifications.setProgress(initialTimer, timerRemaining[0], false)
+                                .setContentTitle("Timer: " + timerRemaining[0].toString() + "s");
                     notificationManager.notify(2, notifications.build());
                 }
             }
