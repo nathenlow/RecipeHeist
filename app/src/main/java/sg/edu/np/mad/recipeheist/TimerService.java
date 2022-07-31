@@ -47,7 +47,7 @@ public class TimerService extends Service {
             notifications = new NotificationCompat.Builder(this, CHANNEL_ID)
                     .setContentTitle("Recipe Heist Timer")
                     .setContentText("Timer: " + initialTimer.toString())
-                    .setSmallIcon(R.mipmap.ic_launcher_foreground)
+                    .setSmallIcon(R.drawable.ic_baseline_timer_24)
                     .setColor(Color.RED)
                     .setContentIntent(pendingIntent)
                     .setOngoing(true)
@@ -55,10 +55,10 @@ public class TimerService extends Service {
                     .setProgress(initialTimer,100, false);
 
             notificationManager = NotificationManagerCompat.from(this);
-            notificationManager.notify(1,notifications.build());
-            startForeground(1, notifications.build());
+            notificationManager.notify(2,notifications.build());
+            startForeground(2, notifications.build());
 
-            NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, "Recipe Heist Timer", NotificationManager.IMPORTANCE_LOW);
+            NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, "Recipe Heist Timer", NotificationManager.IMPORTANCE_DEFAULT);
             notificationManager.createNotificationChannel(notificationChannel);
 
             firstLoad = false;
@@ -71,12 +71,26 @@ public class TimerService extends Service {
             public void run() {
                 // reduce time
                 timerRemaining[0]--;
-                // display it on notification
-                notifications.setProgress(initialTimer, timerRemaining[0], false);
-                notifications.setContentText("Timer: " + timerRemaining[0].toString());
-                notificationManager.notify(1, notifications.build());
-                if (timerRemaining[0] <= 0){
-                    timer.cancel();
+
+
+                //if left 3 second --> sound notification
+                if (timerRemaining[0] <= 3){
+                    //cancel when time is up
+                    if (timerRemaining[0] <= 0) {
+                        timer.cancel();
+                    }
+                    else{
+                        notifications.setProgress(initialTimer, timerRemaining[0], false);
+                        notifications.setContentText("Timer: " + timerRemaining[0].toString());
+                        notifications.setOnlyAlertOnce(false);
+                        notificationManager.notify(2, notifications.build());
+                    }
+                }
+                else {
+                    // display it on notification
+                    notifications.setProgress(initialTimer, timerRemaining[0], false);
+                    notifications.setContentText("Timer: " + timerRemaining[0].toString());
+                    notificationManager.notify(2, notifications.build());
                 }
             }
         }, 0, 1000);
