@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.IBinder;
 import android.widget.Toast;
 
@@ -52,20 +53,39 @@ public class UpdateService extends Service {
             onDestroy();
         }
         else {
-             if (intent.getAction() != null && intent.getAction().equals("AUTO_UPDATE")){
+            if (intent.getAction() != null && intent.getAction().equals("AUTO_UPDATE")){
                 savedata();
-             }
+            }
             DataBaseHandler dataBaseHandler = new DataBaseHandler(this);
 
             ////to view updates by clicking notification
             Intent activityIntent = new Intent(this, MainActivity.class);
-            PendingIntent contentIntent = PendingIntent.getActivity(this,
-                    0, activityIntent, 0);
+            PendingIntent contentIntent;
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                contentIntent = PendingIntent.getActivity(this,
+                        0, activityIntent, PendingIntent.FLAG_IMMUTABLE);
+            }
+            else
+            {
+                contentIntent = PendingIntent.getActivity(this,
+                        0, activityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            }
 
             //to stop service from notification
             Intent broadcastIntent = new Intent(this, NotificationReceiverDelete.class);
-            PendingIntent actionIntent = PendingIntent.getBroadcast(this,
-                    0, broadcastIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            PendingIntent actionIntent;
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                actionIntent = PendingIntent.getBroadcast(this,
+                        0, broadcastIntent, PendingIntent.FLAG_IMMUTABLE);
+            }
+            else
+            {
+                actionIntent = PendingIntent.getBroadcast(this,
+                        0, broadcastIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            }
 
             notification = new NotificationCompat.Builder(this, CHANNEL_1_ID)
                     .setSmallIcon(R.drawable.ic_baseline_refresh_24)
