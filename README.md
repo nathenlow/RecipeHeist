@@ -1,6 +1,9 @@
 # RecipeHeist
 RecipeHeist is an app that allows users to get inspirations and ideas for their next meal by allowing users to share their own recipes with others...
 
+## Release
+[Download](https://github.com/nathenlow/RecipeHeist/raw/main/app/release/app-release.apk)
+
 ## Team Members
 - Nathen Low (S10222101F)
 - Joseph Wong (S10204123E)
