@@ -4,9 +4,6 @@ RecipeHeist is an app that allows users to get inspirations and ideas for their 
 ## Team Members
 - Nathen Low (S10222101F)
 - Joseph Wong (S10204123E)
-- Denzel Lee (S10221799B)
-- Dhanasyam (10226152?)
-- Hsu Yuan (10223040?)
 
 ## Stage 1
 
